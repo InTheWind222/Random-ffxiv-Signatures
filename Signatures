@@ -261,3 +261,32 @@ NAME: WorldIDs_Chinese
 SIG:  9C 04 00 00 9F 04 00 00 A2 04 00 00 ...
 DESC: List of regional World (Server) IDs specifically for the Chinese client servers.
 ----------------------------------------
+NAME: Blacklist_Proxy_BlockedCount
+SIG:  Offset: 0x19F0
+DESC: Offset within InfoProxyBlacklist to the total count of currently blacklisted players.
+----------------------------------------
+NAME: Blacklist_Proxy_EntryArray
+SIG:  Offset: 0xF0
+DESC: Start of the array of blacklisted player structures within InfoProxyBlacklist.
+----------------------------------------
+NAME: Blacklist_Proxy_EntrySize
+SIG:  Size: 0x20
+DESC: Stride size of each entry in the InfoProxyBlacklist array.
+----------------------------------------
+NAME: Blacklist_Proxy_IdentifierOffset
+SIG:  Offset: 0x10
+DESC: Offset within a blacklist entry to the ContentID or AccountID (ulong).
+----------------------------------------
+NAME: Blacklist_Proxy_NamePointerOffset
+SIG:  Offset: 0x00
+DESC: Offset within a blacklist entry to the CString pointer of the player name.
+----------------------------------------
+NAME: ProcessChatBox
+SIG:  48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B F2 48 8B F9 45 84 C9
+DESC: Primary internal function responsible for processing outgoing chat commands and messages Programmatically execute blacklist commands.
+----------------------------------------
+NAME: UseAction_Hook
+SIG:  FFXIVClientStructs: ActionManager.UseAction
+DESC: Hook for the game's ActionManager.UseAction function. Intercepting this allows the plugin to block ability usage on players found in the blacklist.
+----------------------------------------
+
