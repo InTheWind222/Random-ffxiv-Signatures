@@ -1,7 +1,5 @@
 FFXIV PLUGIN SIGNATURE & DATA MAPPING
-============================================================
-
-NAME: ActionEffect
+============================================================NAME: ActionEffect
 SIG:  40 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24
 DESC: Triggered when a combat action (ability/spell) connects with a target. Contains data for damage and status application.
 ----------------------------------------
@@ -289,4 +287,1095 @@ NAME: UseAction_Hook
 SIG:  FFXIVClientStructs: ActionManager.UseAction
 DESC: Hook for the game's ActionManager.UseAction function. Intercepting this allows the plugin to block ability usage on players found in the blacklist.
 ----------------------------------------
+pvp
+============================================================
+CATEGORY: Limit Break
+----------------------------------------
+NAME: LimitBreakController_GetActionId
+SIG:  48 89 5C 24 08 57 48 83 EC 20 41 0F B6 D8 48 8B F9 48 85 D2 74 33 80 FB 03 73 2E
+DESC: Resolves the class-appropriate Limit Break action ID for a given actor and LB tier.
+----------------------------------------
+NAME: LimitBreakController_InstanceRef
+SIG:  48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 85 C0 75 0A B8 3E 02 00 00
+DESC: Reference path inside ActionManager.GetActionStatus that resolves the global LimitBreakController singleton used for LB validation.
+----------------------------------------
+NAME: LimitBreakController_IsValidLBActionForClass
+SIG:  40 53 48 83 EC 20 41 8B D8 45 85 C0 74 34 48 8D 8A A0 01 00 00 E8 ?? ?? ?? ?? 8B C8 E8 ?? ?? ?? ??
+DESC: Checks whether a specific Limit Break action ID is valid for the actor's current class/job.
+----------------------------------------
+NAME: LimitBreakController_SetValues
+SIG:  0F B6 44 24 28 88 41 0E 0F B6 44 24 30 88 41 0F 88 51 08 66 44 89 41 0A 66 44 89 49 0C C3
+DESC: Writes the current Limit Break controller state, including enabled flags and per-tier action IDs.
+----------------------------------------
+NAME: LimitBreakUI_Update
+SIG:  40 57 48 83 EC 50 F6 81 A1 01 00 00 01 48 8B F9 44 0F 29 44 24 20 44 0F 28 C1 0F 84 ?? ?? ?? ??
+DESC: Main UI refresh/update routine for the Limit Break addon, including gauge decay and segment timeline playback.
+----------------------------------------
+CATEGORY: Status Effects
+----------------------------------------
+NAME: StatusEffectListPlayerPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 28
+DESC: Network packet handler that applies the player-targeted status effect list into the local StatusManager via SetFirstHalf.
+----------------------------------------
+NAME: StatusManager_AddStatus
+SIG:  66 85 D2 0F 84 ?? ?? ?? ?? 48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40
+DESC: Adds or refreshes a live status effect entry in the actor's StatusManager and fires the OnGainStatus path.
+----------------------------------------
+NAME: StatusManager_EntryArray
+SIG:  83 FA 3C 72 08 48 8D 05 ?? ?? ?? ?? C3 8B C2 48 C1 E0 04 48 83 C0 08 48 03 C1 C3
+DESC: Accessor signature for retrieving a StatusManager entry by index; exposes the entry-array base/stride path.
+----------------------------------------
+NAME: StatusManager_EntryCount
+SIG:  45 33 D2 48 8D 41 10 45 8B CA 41 BB 00 00 00 E0 0F B7 48 F8 3B CA 75 0A 4D 3B C3 74 1B 4C 39 00 74 16 41 FF C2 49 FF C1 48 83 C0 10 49 83 F9 3C
+DESC: Loop-bounded StatusManager scan signature that carries the 0x3C slot count used for status entries.
+----------------------------------------
+NAME: StatusManager_EntryParamOffset
+SIG:  48 89 5C 24 08 48 89 7C 24 10 33 FF 4C 8D 49 10 44 8B DF 44 8B D7 BB 00 00 00 E0 0F 1F 44 00 00
+DESC: Accessor signature for resolving the parameter field inside a StatusManager entry.
+----------------------------------------
+NAME: StatusManager_EntryRemainingTimeOffset
+SIG:  83 FA 3C 72 04 0F 57 C0 C3 8B C2 48 03 C0 F3 0F 10 44 C1 0C
+DESC: Accessor signature for resolving the remaining-time field inside a StatusManager entry.
+----------------------------------------
+NAME: StatusManager_EntrySize
+SIG:  83 FA 3C 72 08 48 8D 05 ?? ?? ?? ?? C3 8B C2 48 C1 E0 04 48 83 C0 08 48 03 C1 C3
+DESC: Accessor signature for retrieving a StatusManager entry by index; exposes the 0x10 entry stride.
+----------------------------------------
+NAME: StatusManager_EntrySourceIdOffset
+SIG:  83 FA 3C 72 03 33 C0 C3 8B C2 48 FF C0 48 03 C0 48 8B 0C C1 48 B8 ?? ?? ?? ?? ?? ?? ?? ?? 48 85
+DESC: Accessor signature for resolving the source object ID field inside a StatusManager entry.
+----------------------------------------
+NAME: StatusManager_EntryStatusIdOffset
+SIG:  83 FA 3C 72 03 33 C0 C3 8B C2 48 03 C0 0F B7 44 C1 08 C3
+DESC: Accessor signature for resolving the status ID field inside a StatusManager entry.
+----------------------------------------
+NAME: StatusManager_GetRemainingTime
+SIG:  83 FA 3C 72 04 0F 57 C0 C3 8B C2 48 03 C0 F3 0F 10 44 C1 0C
+DESC: Returns the remaining duration for a status entry by index from StatusManager.
+----------------------------------------
+NAME: StatusManager_GetStatusId
+SIG:  83 FA 3C 72 03 33 C0 C3 8B C2 48 03 C0 0F B7 44 C1 08 C3
+DESC: Returns the status ID for a status-effect slot by index from StatusManager.
+----------------------------------------
+NAME: StatusManager_HasStatus
+SIG:  45 33 D2 48 8D 41 10 45 8B CA 41 BB 00 00 00 E0 0F B7 48 F8 3B CA 75 0A 4D 3B C3 74 1B 4C 39 00
+DESC: Scans the actor's StatusManager for a status ID, optionally filtered by source object ID.
+----------------------------------------
+NAME: StatusManager_SetFirstHalf
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 40 32 F6 C6 81 D8 03 00 00 1E
+DESC: Applies the first 30 entries from an incoming status-effect list packet into the local StatusManager.
+----------------------------------------
+CATEGORY: PvP Status and Buff UI
+----------------------------------------
+NAME: PvPTeamStatus_OnSetup
+SIG:  48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 70 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 60
+DESC: Initializes the PvP team status addon and binds the buttons/text nodes used by the PvP status window.
+----------------------------------------
+NAME: PvPTeamStatus_OnRequestedUpdate
+SIG:  48 89 74 24 10 57 48 83 EC 20 48 8B F9 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 8B CF 48 8B B0 C0 02 00 00
+DESC: Refreshes the PvP team status window from the current number/string array data.
+----------------------------------------
+NAME: PvPTeamStatus_ReceiveEvent
+SIG:  66 83 FA 19 0F 85 ?? ?? ?? ?? 48 89 5C 24 08 57 48 83 EC 30 49 8B D9 48 8B F9 41 83 F8 01 75 57
+DESC: Handles button/input callbacks for the PvP team status addon.
+----------------------------------------
+NAME: PvP_StatusEffectListPlayerPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 28 48 8B 03 48 8B CB
+DESC: Player status-effect packet handler used to populate the local StatusManager, including in PvP contexts.
+----------------------------------------
+NAME: PvP_StatusEffectListPlayerDoublePacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 2F 48 8B 03 48 8B CB
+DESC: Double-length player status-effect packet handler that populates the second half of the local StatusManager.
+----------------------------------------
+NAME: PvP_StatusManager_SetFirstHalf
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 40 32 F6 C6 81 D8 03 00 00 1E
+DESC: Writes the first 30 status entries from an incoming effect list into StatusManager.
+----------------------------------------
+NAME: PvP_StatusManager_SetSecondHalf
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 40 40 32 FF C6 81 D8 03 00 00 3C
+DESC: Writes both halves of a double-length incoming effect list into StatusManager.
+----------------------------------------
+NAME: StatusManager_GetSourceId
+SIG:  83 FA 3C 72 03 33 C0 C3 8B C2 48 FF C0 48 03 C0 48 8B 0C C1 48 B8 ?? ?? ?? ?? ?? ?? ?? ?? 48 85
+DESC: Returns the source object ID for a status-effect slot by index from StatusManager.
+----------------------------------------
+NAME: StatusManager_GetParamForStatus
+SIG:  48 89 5C 24 08 48 89 7C 24 10 33 FF 4C 8D 49 10 44 8B DF 44 8B D7 BB 00 00 00 E0 0F 1F 44 00 00
+DESC: Returns the parameter / stack-like value for a status effect matching ID and source.
+----------------------------------------
+NAME: StatusManager_GetStatusByIndex
+SIG:  83 FA 3C 72 08 48 8D 05 ?? ?? ?? ?? C3 8B C2 48 C1 E0 04 48 83 C0 08 48 03 C1 C3
+DESC: Returns a raw StatusManager entry pointer for a given status slot index.
+----------------------------------------
+NAME: StatusManager_GetStatusIndex
+SIG:  45 33 D2 48 8D 41 10 45 8B CA 41 BB 00 00 00 E0 0F B7 48 F8 3B CA 75 0A 4D 3B C3 74 1B 4C 39 00 74 16 41 FF C2 49 FF C1 48 83 C0 10 49 83 F9 3C
+DESC: Returns the slot index of a status effect matching ID and optional source.
+----------------------------------------
+NAME: StatusManager_SetSecondHalf
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 40 40 32 FF C6 81 D8 03 00 00 3C
+DESC: Applies both halves of a double-length incoming status-effect list packet into the local StatusManager.
+----------------------------------------
+NAME: BuffStatusUI_OnSetup
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 54 41 55 41 56 41 57 48 81 EC 80 00 00 00
+DESC: Initializes the HUD buff/status display addon.
+----------------------------------------
+NAME: BuffStatusUI_Update
+SIG:  40 56 48 83 EC 30 48 8B F1 E8 ?? ?? ?? ?? F6 86 A1 01 00 00 01 0F 84 ?? ?? ?? ?? 8B 86 98 01 00 00
+DESC: Updates the current buff/status HUD element, including focus and animation state.
+----------------------------------------
+CATEGORY: PvP State Checks
+----------------------------------------
+NAME: PvP_IsInPvP
+SIG:  48 89 5C 24 08 57 48 83 EC 20 8B 15 ?? ?? ?? ?? 48 8B F9 8B 1D ?? ?? ?? ?? 85 D2 0F 45 DA
+DESC: Checks whether the current character should be treated as in a PvP state.
+----------------------------------------
+NAME: PvP_IsInPvPArea
+SIG:  48 8B 05 ?? ?? ?? ?? 48 85 C0 75 01 C3 0F B6 40 3B C0 E8 ?? ?? ?? ?? C3
+DESC: Checks whether the current zone or content area is flagged as PvP.
+----------------------------------------
+NAME: PvP_IsInPvPInstance
+SIG:  40 53 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 85 DB 74 1E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0
+DESC: Checks whether the player is inside an active PvP instance rather than just a PvP-capable zone.
+----------------------------------------
+CATEGORY: PvP Profile and Rank Data
+----------------------------------------
+NAME: PvPProfile_ReadPacket
+SIG:  48 89 5C 24 08 8B 82 48 01 00 00 4C 8B D2 89 41 04 4C 8B C9 0F B6 82 69 08 00 00 41 B8 03 00 00 00
+DESC: Reads and copies incoming PvP profile/rank packet data into the PvPProfile structure.
+----------------------------------------
+NAME: PvPProfile_GetPvPRank
+SIG:  0F B6 05 ?? ?? ?? ?? FE C8 3C 02 77 09 0F B6 C0 0F B6 44 08 10 C3
+DESC: Returns the current PvP rank from the PvP profile state.
+----------------------------------------
+NAME: PvPProfile_GetCurrentRankExp
+SIG:  40 53 48 83 EC 20 0F B6 05 ?? ?? ?? ?? 48 8B D9 FE C8 3C 02 77 3D 48 89 7C 24 30
+DESC: Returns the current accumulated experience toward the current PvP rank.
+----------------------------------------
+NAME: PvPProfile_GetCurrentRankNeededExp
+SIG:  48 83 EC 28 0F B6 05 ?? ?? ?? ?? FE C8 3C 02 77 5D 48 89 5C 24 30 48 89 74 24 38
+DESC: Returns the required experience to reach the next PvP rank.
+----------------------------------------
+NAME: PvPProfile_InstanceRef
+SIG:  48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 85 C0 B9 7E 71 00 00 0F 45 C8
+DESC: Reference signature used to resolve the global PvPProfile instance pointer.
+----------------------------------------
+CATEGORY: PvP Map
+----------------------------------------
+NAME: PvPMap_OnSetup
+SIG:  48 89 5C 24 10 48 89 6C 24 20 56 57 41 56 48 83 EC 50 0F 29 74 24 40 48 8B F9
+DESC: Initializes the PvP map addon and binds its map widgets and state.
+----------------------------------------
+NAME: PvPMap_OnRequestedUpdate
+SIG:  4C 8B DC 53 56 57 41 57 48 81 EC E8 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 80 00 00 00
+DESC: Refreshes the PvP map addon from current PvP map/state data.
+----------------------------------------
+NAME: PvPMap_Update
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 ?? ?? ?? ?? 48 8D 05 ?? ?? ?? ?? 48 89 03 33 C0 48 89 83 38 02 00 00
+DESC: Runs the active update path for the PvP map addon.
+----------------------------------------
+NAME: PvPMap_GetWindowBounds
+SIG:  40 53 48 83 EC 20 48 83 B9 40 14 00 00 00 48 8B DA 74 15 48 8B 89 C8 00 00 00
+DESC: Returns the current PvP map window bounds used for layout and hit testing.
+----------------------------------------
+CATEGORY: PvP Screen Hotbar
+----------------------------------------
+NAME: PvPScreenHotbar_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B DA 49 8B F0 BA 01 00 00 00 48 8B F9
+DESC: Initializes the PvP screen-information hotbar addon.
+----------------------------------------
+NAME: PvPScreenHotbar_Update
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 ?? ?? ?? ?? 80 BB 40 02 00 00 00 74 22 48 8B 8B 38 02 00 00
+DESC: Updates the PvP screen-information hotbar, including its current active state.
+----------------------------------------
+NAME: PvPScreenHotbar_ReceiveEvent
+SIG:  83 FA 01 7C 20 53 48 83 EC 20 48 8B D9 49 8B C8 E8 ?? ?? ?? ?? 84 C0 74 07 C6 83 41 02 00 00 01
+DESC: Handles callbacks and interaction events for the PvP screen-information hotbar.
+----------------------------------------
+CATEGORY: Frontline Match UI
+----------------------------------------
+NAME: PvPFrontlineGauge_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 20 48 8B E9
+DESC: Initializes the Frontline gauge addon.
+----------------------------------------
+NAME: PvPFrontlineGauge_OnRefresh
+SIG:  48 83 EC 28 F6 81 A1 01 00 00 01 74 08 45 33 C9 E8 2B 00 00 00 B0 01 48 83 C4 28 C3
+DESC: Refreshes the Frontline gauge display from live match values.
+----------------------------------------
+NAME: PvPFrontlineHeader_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B FA 49 8B D8 BA 04 00 00 00 48 8B F1
+DESC: Initializes the Frontline header addon.
+----------------------------------------
+NAME: PvPFrontlineHeader_OnRequestedUpdate
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 48 8B B2 C0 03 00 00 48 8B E9 48 8B 46 28
+DESC: Refreshes the Frontline header from current match state and scoreboard data.
+----------------------------------------
+NAME: PvPFrontlineInfo_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B D9 49 8B F8 49 8B C8 8B F2
+DESC: Initializes the Frontline info window and associated state.
+----------------------------------------
+NAME: PvPFrontlineInfo_OnRefresh
+SIG:  48 83 EC 28 F6 81 A1 01 00 00 01 74 08 45 33 C9 E8 1B 00 00 00 B0 01 48 83 C4 28 C3
+DESC: Refreshes the Frontline info window from match data.
+----------------------------------------
+CATEGORY: PvP Character Window
+----------------------------------------
+NAME: PvPCharacter_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 54 41 56 41 57 48 83 EC 30
+DESC: Initializes the PvP character window and its PvP-specific panels.
+----------------------------------------
+NAME: PvPCharacter_OnRequestedUpdate
+SIG:  40 55 56 57 48 83 EC 50 F6 81 A1 01 00 00 01 49 8B F0 48 8B FA 48 8B E9 0F 84 ?? ?? ?? ??
+DESC: Refreshes the PvP character window from current PvP character/profile data.
+----------------------------------------
+NAME: PvPCharacter_ReceiveEvent
+SIG:  40 55 53 56 57 41 56 48 8D 6C 24 D1 48 81 EC E0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4
+DESC: Handles user interaction and callbacks in the PvP character window.
+----------------------------------------
+CATEGORY: Duel Request
+----------------------------------------
+NAME: PvPDuelRequest_Show
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 ?? ?? ?? ?? 80 8B A1 01 00 00 40 48 83 C4 20 5B C3
+DESC: Shows the PvP duel request window.
+----------------------------------------
+NAME: PvPDuelRequest_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 49 8B F0 0F 29 74 24 30 F3 0F 10 35 ?? ?? ?? ??
+DESC: Initializes the PvP duel request addon.
+----------------------------------------
+NAME: PvPDuelRequest_ReceiveEvent
+SIG:  66 83 FA 19 75 2E 53 48 83 EC 20 49 8B D9 45 85 C0 74 0B 41 83 F8 01 75 0C 41 8B D0
+DESC: Handles accept/decline and related callbacks for PvP duel requests.
+----------------------------------------
+CATEGORY: Spectator UI
+----------------------------------------
+NAME: PvPSpectatorList_OnSetup
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 48 81 EC B0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4
+DESC: Initializes the PvP spectator list addon.
+----------------------------------------
+NAME: PvPSpectatorList_OnRequestedUpdate
+SIG:  40 56 48 83 EC 30 48 89 5C 24 40 48 8B F1 48 8B 0D ?? ?? ?? ?? 49 8B D8 48 89 7C 24 50
+DESC: Refreshes the PvP spectator list from current spectator/camera state.
+----------------------------------------
+NAME: PvPSpectatorCameraList_OnSetup
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 62 04 00 00 BA 11 00 00 00 48 8B CB E8 ?? ?? ?? ?? 48 8B C8
+DESC: Initializes the PvP spectator camera list addon.
+----------------------------------------
+NAME: PvPSpectatorCameraList_OnRequestedUpdate
+SIG:  F6 81 A1 01 00 00 01 74 2D 48 8B 82 B0 03 00 00 48 8B 50 28 48 63 42 04 83 F8 07 77 19
+DESC: Refreshes the spectator camera list from the active PvP spectator state.
+----------------------------------------
+CATEGORY: PvP Team UI
+----------------------------------------
+NAME: PvPTeam_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 30 44 8B F2 49 8B E8
+DESC: Initializes the main PvP team addon.
+----------------------------------------
+NAME: PvPTeam_Update
+SIG:  40 53 48 83 EC 30 0F 29 74 24 20 48 8B D9 0F 28 F1 E8 ?? ?? ?? ?? 48 8D 8B B0 02 00 00
+DESC: Runs the per-frame update path for the main PvP team addon.
+----------------------------------------
+NAME: PvPTeam_ReceiveEvent
+SIG:  66 83 FA 19 0F 85 ?? ?? ?? ?? 4C 8B DC 49 89 73 20 41 56 48 83 EC 60 49 89 6B 10
+DESC: Handles input and callback events for the main PvP team addon.
+----------------------------------------
+NAME: PvPTeamActivity_OnSetup
+SIG:  40 53 55 56 57 41 56 48 81 EC 80 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 78
+DESC: Initializes the PvP team activity addon.
+----------------------------------------
+NAME: PvPTeamMember_OnSetup
+SIG:  40 53 55 56 57 41 56 48 81 EC 00 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 F0 00 00 00
+DESC: Initializes the PvP team member detail addon.
+----------------------------------------
+NAME: PvPTeamResult_OnSetup
+SIG:  40 53 55 56 57 41 56 48 81 EC 90 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 88 00 00 00
+DESC: Initializes the PvP team result addon.
+----------------------------------------
+CATEGORY: Crystalline Conflict / MKS UI
+----------------------------------------
+NAME: PvPMKSBattleLog_Update
+SIG:  40 53 48 83 EC 30 0F 29 74 24 20 48 8B D9 0F 28 F1 E8 1A 08 00 00 0F 28 CE 48 8B CB
+DESC: Updates the Crystalline Conflict / MKS battle log addon.
+----------------------------------------
+NAME: PvPMKSHeader_OnSetup
+SIG:  40 53 48 83 EC 20 48 8B D9 49 8D 48 10 E8 ?? ?? ?? ?? BA 19 00 00 00 88 83 30 03 00 00
+DESC: Initializes the Crystalline Conflict / MKS header addon.
+----------------------------------------
+NAME: PvPMKSIntroduction_OnSetup
+SIG:  48 89 5C 24 10 48 89 74 24 20 57 48 83 EC 20 48 83 B9 38 02 00 00 00 49 8B F8 8B DA 48 8B F1
+DESC: Initializes the Crystalline Conflict / MKS introduction addon.
+----------------------------------------
+NAME: PvPMKSRankRating_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 49 8B D8 48 8B F1 83 FA 10 0F 8C ?? ?? ?? ??
+DESC: Initializes the Crystalline Conflict / MKS rank rating addon.
+----------------------------------------
+CATEGORY: PvP Agents and Module Vtables
+----------------------------------------
+NAME: PvPAgentGauge_ReceiveEvent
+SIG:  C7 02 02 00 00 00 48 8B C2 C6 42 08 00 C3
+DESC: Small agent-side receive-event handler used by the PvP gauge agent to write event state.
+----------------------------------------
+NAME: PvpSetModule_VtableRef
+SIG:  48 8D 05 ?? ?? ?? ?? 48 89 03 0F 57 C0 33 C0 0F 11 43 48 0F 11 43 58 48 89 43 68
+DESC: Constructor-side vtable initialization signature for Client::UI::Misc::PvpSetModule.
+----------------------------------------
+NAME: InstanceContentPvpDirector_VtableRef
+SIG:  48 8D 05 ?? ?? ?? ?? C6 83 A0 1F 00 00 00 48 89 03 33 D2 48 8D 05 ?? ?? ?? ?? B9 00 02 00 00 48 89 83 60 04 00 00
+DESC: Constructor-side vtable initialization signature for Client::Game::InstanceContent::InstanceContentPvpDirector.
+----------------------------------------
+CATEGORY: PvP Core Systems and Persistence
+----------------------------------------
+NAME: Frontline_IsInFrontlineArea
+SIG:  80 3D 9D F9 EB 01 12 0F 94 C0 C3
+DESC: Boolean check used to determine whether the current territory is a Frontline area.
+----------------------------------------
+NAME: Frontline_GetDirector
+SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09
+DESC: Resolves the active Frontline director from EventFramework when the current content is Frontline.
+----------------------------------------
+NAME: Hotbar_ResetPvPHotbarsForClass
+SIG:  48 83 EC 28 41 8B D0 E8 44 16 00 00 B0 01 48 83 C4 28 C3
+DESC: Resets the PvP hotbar set for a class/job to its default configuration.
+----------------------------------------
+NAME: Hotbar_ResetPvPHotbarsForClassInner
+SIG:  40 55 57 48 83 EC 58 48 8B 0D 22 2F D0 01 8B EA E8 4B B2 5D FF 48 8B F8 48 85 C0 0F 84
+DESC: Internal worker used by the PvP hotbar reset path to rebuild PvP slot data.
+----------------------------------------
+NAME: RaptureHotbar_GetPvPSavedHotbarIndexForClassJobId
+SIG:  48 89 5C 24 08 57 48 83 EC 20 8B CA 41 0F B6 F8 8B DA E8 B9 C9 92 FF 84 C0 75 75
+DESC: Maps a class/job id to its saved PvP hotbar index inside RaptureHotbarModule.
+----------------------------------------
+NAME: RaptureHotbar_PvPStateUpdateTask
+SIG:  48 89 5C 24 18 56 48 83 EC 20 48 83 3D 96 87 23 02 00 48 8B D9 48 89 6C 24 30
+DESC: Background task that reacts to PvP state changes and updates saved hotbar state.
+----------------------------------------
+NAME: UIModule_GetPvpSetModule
+SIG:  48 8D 81 D8 65 09 00 C3
+DESC: Returns the PvpSetModule pointer from the UI module.
+----------------------------------------
+NAME: PvpSetModule_ReadFile
+SIG:  84 D2 74 48 4D 85 C0 74 43 B8 90 01 00 00 66 44 3B C8 72 38 41 0F 10 40 10 0F 11 41 48
+DESC: Reads persisted PvP set data from disk into PvpSetModule structures.
+----------------------------------------
+NAME: PvpSetModule_WriteFile
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 01 48 8B DA 48 8B F9 FF 50 40 C7 43 04 0F 00 00 00
+DESC: Writes the current PvP set/module configuration back to disk.
+----------------------------------------
+NAME: PvpSetModule_GetDataSize
+SIG:  B8 42 00 00 00 C3
+DESC: Returns the serialized data size used by PvpSetModule.
+----------------------------------------
+NAME: PvpSetModule_GetFileVersion
+SIG:  B8 00 04 00 00 C3
+DESC: Returns the file version constant for PvpSetModule persistence.
+----------------------------------------
+NAME: PvpSetModule_GetFileType
+SIG:  B8 90 01 00 00 C3
+DESC: Returns the file-type identifier used by PvpSetModule persistence.
+----------------------------------------
+NAME: ShellCommandChatPvp_ExecuteCommand
+SIG:  48 89 5C 24 20 56 57 41 56 48 81 EC 10 01 00 00 48 8B 05 C1 B6 ED 01 48 33 C4 48 89 84 24 00 01 00 00
+DESC: Executes the `/pvpteam` chat-command path and related PvP chat shell handling.
+----------------------------------------
+NAME: ShellCommandAddPvpAction_ExecuteCommand
+SIG:  40 55 41 55 48 81 EC 98 0C 00 00 48 8B 05 46 78 ED 01 48 33 C4 48 89 84 24 60 0C 00 00
+DESC: Executes the shell command used to add/configure PvP actions.
+----------------------------------------
+CATEGORY: PvP Profile Addons
+----------------------------------------
+NAME: PvpProfileAddon_OnSetup
+SIG:  48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 81 EC D0 00 00 00 48 8B 05 5A 97 57 01
+DESC: Initializes the main PvP profile addon and its sub-panels.
+----------------------------------------
+NAME: PvpProfileAddon_OnRequestedUpdate
+SIG:  4C 8B DC 56 57 48 83 EC 68 48 8B 05 38 91 57 01 48 33 C4 48 89 44 24 40 48 8B B2 48 03 00 00
+DESC: Refreshes the main PvP profile screen from profile and ranking data.
+----------------------------------------
+NAME: PvpProfileAddon_OnRefresh
+SIG:  4C 89 44 24 18 53 55 41 56 48 83 EC 70 4D 8B F0 8B EA 48 8B D9 4D 85 C0 0F 84 F3 03 00 00
+DESC: Rebuilds the visible PvP profile page contents.
+----------------------------------------
+NAME: PvpProfileAddon_ReceiveEvent
+SIG:  40 53 56 57 48 83 EC 70 48 8B 05 19 8B 57 01 48 33 C4 48 89 44 24 60 49 8B F1 48 8B F9
+DESC: Handles tab changes, button presses, and other input for the main PvP profile addon.
+----------------------------------------
+NAME: PvpProfileAction_OnSetup
+SIG:  48 8B C4 48 89 58 10 48 89 70 18 48 89 78 20 55 41 54 41 55 41 56 41 57 48 8D 68 A1
+DESC: Initializes the PvP profile action page.
+----------------------------------------
+NAME: PvpProfileAction_OnRequestedUpdate
+SIG:  48 8B C4 55 53 41 54 41 55 41 56 48 8D 68 A1 48 81 EC B0 00 00 00 48 89 70 D0 45 33 E4
+DESC: Refreshes the PvP profile action page from current action/profile data.
+----------------------------------------
+NAME: PvpProfileAction_ReceiveEvent
+SIG:  40 55 53 56 57 41 54 41 56 41 57 48 8D 6C 24 E1 48 81 EC C0 00 00 00 48 8B 05 7A 71 57 01
+DESC: Handles page-specific interaction for the PvP profile action page.
+----------------------------------------
+NAME: PvpProfileColosseum_OnSetup
+SIG:  48 8B C4 48 89 58 10 48 89 70 18 48 89 78 20 55 48 8D A8 68 FF FF FF 48 81 EC 90 01 00 00
+DESC: Initializes the Colosseum section inside the PvP profile UI.
+----------------------------------------
+NAME: PvpProfileColosseum_OnRequestedUpdate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 F2 0D 00 00 45 33 C9 41 B0 01 48 8B CB 41 8D 51 66
+DESC: Requests or performs a refresh of the PvP profile Colosseum page.
+----------------------------------------
+NAME: PvpProfileColosseum_ReceiveEvent
+SIG:  66 83 FA 23 0F 85 78 01 00 00 55 56 48 83 EC 78 48 8B 05 41 5F 57 01 48 33 C4 48 89 44 24 60
+DESC: Processes user interaction on the PvP profile Colosseum page.
+----------------------------------------
+NAME: PvpProfileFrontline_OnSetup
+SIG:  48 8B C4 48 89 58 10 48 89 70 18 48 89 78 20 55 41 54 41 55 41 56 41 57 48 8D A8 88 FC FF FF
+DESC: Initializes the Frontline section inside the PvP profile UI.
+----------------------------------------
+NAME: PvpProfileFrontline_OnRequestedUpdate
+SIG:  48 8B 89 38 02 00 00 48 85 C9 74 0A 48 8B 01 48 FF A0 B0 00 00 00 C3
+DESC: Thin dispatch/wrapper used to refresh the PvP profile Frontline page.
+----------------------------------------
+NAME: PvpProfileManeuvers_OnSetup
+SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 81 EC 90 00 00 00 0F 29 B4 24 80 00 00 00 48 8B 05 27 13 57 01
+DESC: Initializes the Maneuvers section inside the PvP profile UI.
+----------------------------------------
+NAME: PvpProfileManeuvers_OnRequestedUpdate
+SIG:  48 8B 42 08 41 B9 07 00 00 00 48 8B 10 44 8B 42 04 45 85 C0 74 1A 41 83 E8 01 74 0C
+DESC: Refreshes the PvP profile Maneuvers page through its child-node dispatch path.
+----------------------------------------
+NAME: PvpProfileQuickChat_OnSetup
+SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 81 EC B0 00 00 00 0F 29 B4 24 A0 00 00 00 48 8B 05 77 1D 57 01
+DESC: Initializes the PvP profile quick-chat configuration page.
+----------------------------------------
+NAME: PvpProfileQuickChat_OnRequestedUpdate
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 82 48 03 00 00 48 8B D9 48 8B 89 38 02 00 00 48 8B 50 28
+DESC: Refreshes the PvP profile quick-chat page from stored quick-chat data.
+----------------------------------------
+NAME: PvpProfileQuickChat_ReceiveEvent
+SIG:  48 89 5C 24 10 55 56 57 41 56 41 57 48 81 EC B0 00 00 00 48 8B 05 BE 19 57 01 48 33 C4 48 89 84 24 A0 00 00 00
+DESC: Handles interaction on the PvP profile quick-chat page.
+----------------------------------------
+CATEGORY: PvP Utility Addons
+----------------------------------------
+NAME: PvpActionSetView_OnSetup
+SIG:  40 55 56 57 48 81 EC A0 00 00 00 48 8B 05 66 0A 57 01 48 33 C4 48 89 84 24 90 00 00 00
+DESC: Initializes the PvP action-set selection/view addon.
+----------------------------------------
+NAME: PvpActionSetView_ReceiveEvent
+SIG:  40 57 48 83 EC 60 48 8B F9 66 83 FA 21 0F 85 01 01 00 00 48 89 B4 24 80 00 00 00 48 8B B4 24 90 00 00 00
+DESC: Handles user interaction in the PvP action-set view.
+----------------------------------------
+NAME: PvpCalendar_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30
+DESC: Initializes the PvP calendar addon.
+----------------------------------------
+NAME: PvpCalendar_Update
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 E2 C5 3E FF F6 83 A1 01 00 00 01 74 67 83 BB 00 03 00 00 00 7C 5E
+DESC: Runs the update path for the PvP calendar addon.
+----------------------------------------
+NAME: PvpCalendar_ReceiveEvent
+SIG:  40 53 55 56 57 41 57 48 83 EC 70 48 8B 05 96 FE 56 01 48 33 C4 48 89 44 24 60 4D 8B F9
+DESC: Processes user interaction and callbacks for the PvP calendar addon.
+----------------------------------------
+NAME: PvpReward_OnSetup
+SIG:  40 53 48 83 EC 20 BA FF FF FF FF 48 8B D9 E8 BD 8D 3E FF 48 8B CB 48 83 C4 20 5B E9
+DESC: Initializes the PvP reward addon.
+----------------------------------------
+NAME: PvpReward_ReceiveEvent
+SIG:  48 89 5C 24 08 57 48 83 EC 60 48 8B D9 49 8B F9 0F B7 CA 45 8B D0 83 E9 06 0F 84 A5 00 00 00
+DESC: Handles reward-claim and navigation events for the PvP reward addon.
+----------------------------------------
+NAME: PvpWelcome_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 54 41 56 41 57 48 83 EC 50
+DESC: Initializes the PvP welcome/tutorial addon.
+----------------------------------------
+NAME: PvpWelcome_ReceiveEvent
+SIG:  40 53 48 83 EC 20 44 0F B7 D2 49 8B D9 41 83 EA 19 74 32 41 83 EA 2F 74 06 41 83 FA 01 75 3F
+DESC: Handles confirmation and navigation input for the PvP welcome addon.
+----------------------------------------
+CATEGORY: PvP Agent Controllers
+----------------------------------------
+NAME: AgentPvpProfile_Show
+SIG:  40 53 48 81 EC 00 01 00 00 48 8B 05 78 FF 7D 01 48 33 C4 48 89 84 24 D0 00 00 00 48 8B 01
+DESC: Shows and initializes the AgentPvpProfile controller.
+----------------------------------------
+NAME: AgentPvpProfile_ReceiveEvent
+SIG:  40 53 55 56 57 41 56 41 57 48 81 EC F8 0F 00 00 48 8B 05 D1 F8 7D 01 48 33 C4 48 89 84 24 E0 0F 00 00
+DESC: Routes UI events to the PvP profile agent.
+----------------------------------------
+NAME: AgentPvpProfile_Update
+SIG:  48 89 5C 24 18 48 89 6C 24 20 57 48 83 EC 50 83 B9 F4 02 00 00 00 48 8B D9 0F 29 7C 24 30
+DESC: Per-frame update path for the PvP profile agent.
+----------------------------------------
+NAME: AgentPvPMap_Show
+SIG:  40 53 48 83 EC 20 48 83 79 28 00 48 8B D9 0F 85 DC 00 00 00 E8 67 E2 38 FF 4C 8B C0
+DESC: Shows the PvP map agent and binds it to the PvP map addon.
+----------------------------------------
+NAME: AgentPvPMap_Update
+SIG:  40 57 48 83 EC 20 48 8B 41 28 48 8B F9 48 85 C0 0F 84 58 01 00 00 66 83 38 01 75 0D
+DESC: Per-frame update path for the PvP map agent.
+----------------------------------------
+NAME: AgentPvPHeader_Show
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 82 30 F8 FF C7 83 30 02 00 00 01 00 00 00 48 83 C4 20 5B C3
+DESC: Shows the PvP header agent.
+----------------------------------------
+NAME: AgentPvPHeader_Update
+SIG:  40 53 48 83 EC 20 83 B9 A8 0A 00 00 00 48 8B D9 75 63 48 8B 89 A0 0A 00 00 48 89 7C 24 30
+DESC: Per-frame update path for the PvP header agent.
+----------------------------------------
+NAME: AgentPvPHeader_ReceiveEvent
+SIG:  4C 8B DC 55 41 55 41 56 48 81 EC A0 00 00 00 48 8B 05 F2 B8 AD 01 48 33 C4 48 89 44 24 70
+DESC: Routes callbacks and interactions for the PvP header agent.
+----------------------------------------
+NAME: AgentPvPDuelRequest_Show
+SIG:  40 53 48 83 EC 60 83 79 20 00 48 8B D9 0F 85 BA 00 00 00 48 8B 49 10 48 89 7C 24 70
+DESC: Shows the PvP duel request agent.
+----------------------------------------
+NAME: AgentPvPDuelRequest_Update
+SIG:  40 56 48 83 EC 70 48 8B 01 48 8B F1 FF 50 30 84 C0 0F 84 F0 01 00 00 48 8B 4E 16 48 8B 01
+DESC: Per-frame update path for the PvP duel request agent.
+----------------------------------------
+NAME: AgentPvPSpectator_Show
+SIG:  48 89 5C 24 10 48 89 74 24 18 55 57 41 54 41 56 41 57 48 8B EC 48 81 EC 80 00 00 00 48 8B 05 E5 7F AD 01
+DESC: Shows the PvP spectator agent.
+----------------------------------------
+NAME: AgentPvPSpectator_Update
+SIG:  40 53 56 57 48 83 EC 70 48 8B 05 B9 79 AD 01 48 33 C4 48 89 44 24 50 48 8B D9 E8 51 20 00 00
+DESC: Per-frame update path for the PvP spectator agent.
+----------------------------------------
+NAME: AgentPvpTeam_Show
+SIG:  40 57 48 81 EC 80 00 00 00 48 8B 05 E8 9A 26 02 48 33 C4 48 89 44 24 70 48 8B 01 48 8B F9
+DESC: Shows the PvP team-management agent.
+----------------------------------------
+NAME: AgentPvpTeam_ReceiveEvent
+SIG:  40 53 56 41 56 48 81 EC 80 00 00 00 48 8B 05 F5 95 26 02 48 33 C4 48 89 44 24 60 48 83 BC 24 C0 00 00 00 00
+DESC: Routes interaction and callback events for the PvP team-management agent.
+----------------------------------------
+CATEGORY: PvP Records and History
+----------------------------------------
+NAME: FrontlineRecord_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 A0 48 81 EC 60 01 00 00 48 8B 05 35 2B 67 01
+DESC: Initializes the Frontline record/history addon.
+----------------------------------------
+NAME: FrontlineRecord_OnRefresh
+SIG:  48 89 5C 24 10 57 48 83 EC 20 F6 81 A1 01 00 00 01 49 8B F8 48 8B D9 75 0D 32 C0
+DESC: Refreshes the Frontline record/history addon.
+----------------------------------------
+NAME: FrontlineRecordDetail_OnSetup
+SIG:  40 53 41 55 41 57 48 81 EC 90 00 00 00 48 8B 05 34 FB 66 01 48 33 C4 48 89 44 24 68 8B DA
+DESC: Initializes the Frontline record detail addon.
+----------------------------------------
+NAME: MKSRecord_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 B0 48 81 EC 50 01 00 00 48 8B 05 05 D0 66 01
+DESC: Initializes the Crystalline Conflict / MKS record/history addon.
+----------------------------------------
+NAME: ColosseumRecord_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 80 48 81 EC 80 01 00 00 48 8B 05 95 52 67 01
+DESC: Initializes the Colosseum record/history addon.
+----------------------------------------
+NAME: ManeuversHeader_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 81 EC B0 00 00 00 48 8B 05 0A B2 66 01 48 33 C4 48 89 84 24 A0 00 00 00
+DESC: Initializes the Maneuvers header addon used by the PvP-adjacent Maneuvers mode.
+----------------------------------------
+CATEGORY: Deep Internal and Hidden PvP
+----------------------------------------
+NAME: Hidden_ManeuversKillStreakAddon_CreateOrGet
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 57 41 54 41 56 41 57 48 83 EC 30 48 8B FA 48 8B D9 E8 ?? ?? ?? ?? 4C 8B 7F 08 48 8D 15 ?? ?? ?? ?? 44 0F B7 B3
+DESC: Undocumented internal path that creates or reuses the hidden `_AddonKillStreakForManeuvers` AtkUnitBase and opens it through the stage manager.
+----------------------------------------
+NAME: UIState_IsInstanceContentUnlocked_Deep
+SIG:  48 89 5C 24 08 48 89 6C 24 20 56 57 41 56 48 83 EC 20 8B F9 E8 ?? ?? ?? ?? 48 8B F0 48 85 C0 0F 84 ?? ?? ?? ?? 0F B6 88 9E 00 00 00
+DESC: Deep content-gating check used by UIState; it branches through player-state unlock bitsets including Crystalline Conflict and Frontlines.
+----------------------------------------
+NAME: UIState_IsInstanceContentCompleted_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B6 F2 8B D9 E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 0F B6 88 9E 00 00 00
+DESC: Deep completion-state check used by UIState; it routes completion queries through the completed bitsets for Frontlines and Crystalline Conflict.
+----------------------------------------
+NAME: UIState_UpdateMainCommands_PvPUnlockGateHelper
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 33 FF 4C 8D 15 ?? ?? ?? ?? 44 8B DF
+DESC: Internal helper called by UpdateMainCommands that scans unlock tables, including the Frontlines and Crystalline Conflict player-state arrays, to decide whether command entries should be enabled.
+----------------------------------------
+NAME: FrontlineRecord_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 63 3D FC 00 41 B0 01 E9 CB F9 4E FF
+DESC: Hidden ULD-loader thunk for FrontlineRecord; loads the `PVPFrontlineResult` resource node rather than the outer addon itself.
+----------------------------------------
+NAME: FrontlineRecordDetail_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 FB 33 FC 00 45 33 C0 E9 BB C9 4E FF
+DESC: Hidden ULD-loader thunk for FrontlineRecordDetail; loads the `PVPFrontlineResultDetail` resource node.
+----------------------------------------
+NAME: ColosseumRecord_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 F3 56 FC 00 41 B0 01 E9 2B 21 4F FF
+DESC: Hidden ULD-loader thunk for ColosseumRecord; loads the `PVPColosseumResult` resource node.
+----------------------------------------
+NAME: MKSRecord_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 BB 0D FC 00 45 33 C0 E9 9B 9E 4E FF
+DESC: Hidden ULD-loader thunk for MKSRecord; loads the `PvPMKSResult` resource node used by the Crystalline Conflict result screen.
+----------------------------------------
+NAME: PvPTeamResult_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 DB 8C BD 00 45 33 C0 E9 3B 52 08 FF
+DESC: Hidden ULD-loader thunk for PvPTeamResult; internal resource loader used before the team-result addon is shown.
+----------------------------------------
+CATEGORY: Hidden PvP Resource Loaders
+----------------------------------------
+NAME: PvPSpectatorList_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 A3 EA DE 00 45 33 C0 E9 FB 72 31 FF
+DESC: Hidden ULD-loader thunk for the PvP spectator list resource node.
+----------------------------------------
+NAME: PvPTeam_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 93 AC BD 00 45 33 C0 E9 2B 75 08 FF
+DESC: Hidden ULD-loader thunk for the main PvP team window resource node.
+----------------------------------------
+NAME: PvPTeamStatus_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 63 75 BD 00 45 33 C0 E9 FB 39 08 FF
+DESC: Hidden ULD-loader thunk for the PvP team status resource node.
+----------------------------------------
+NAME: PvPTeamActivity_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 83 7D BD 00 45 33 C0 E9 7B 42 08 FF
+DESC: Hidden ULD-loader thunk for the PvP team activity resource node.
+----------------------------------------
+NAME: PvPTeamInputString_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 63 9F BD 00 45 33 C0 E9 BB 67 08 FF
+DESC: Hidden ULD-loader thunk for the PvP team input-string popup resource node.
+----------------------------------------
+NAME: PvPTeamOrganization_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 53 6D BD 00 45 33 C0 E9 AB 31 08 FF
+DESC: Hidden ULD-loader thunk for the PvP team organization resource node.
+----------------------------------------
+NAME: PvpWelcome_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 03 D5 E4 00 45 33 C0 E9 1B AD 37 FF
+DESC: Hidden ULD-loader thunk for the PvP welcome/tutorial resource node.
+----------------------------------------
+NAME: PvpReward_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 2B 3B EC 00 45 33 C0 E9 5B C7 3E FF
+DESC: Hidden ULD-loader thunk for the PvP reward resource node.
+----------------------------------------
+NAME: PvpProfileFrontline_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 13 85 EC 00 45 33 C0 E9 0B 18 3F FF
+DESC: Hidden ULD-loader thunk for the Frontline tab inside the PvP profile addon.
+----------------------------------------
+NAME: PvpProfileManeuvers_LoadUldResourceHandle_Deep
+SIG:  41 B9 06 00 00 00 48 8D 15 8B 52 EC 00 45 33 C0 E9 BB E1 3E FF
+DESC: Hidden ULD-loader thunk for the Maneuvers tab inside the PvP profile addon.
+----------------------------------------
+CATEGORY: Hidden PvP Team Controllers
+----------------------------------------
+NAME: AgentPvpTeamCrestEditor_Show_Deep
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 30 48 8B CB 84 C0 74 0C 48 8B 03 48 83 C4 20 5B 48 FF 60 28
+DESC: Controller-side show path for the PvP team crest editor; a light wrapper that dispatches into the crest-editor agent vtable.
+----------------------------------------
+NAME: AgentPvpTeamCrestEditor_ReceiveEvent_Deep
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 30 41 8B D9 49 8B F0 4C 8B F2 48 8B F9
+DESC: Routes UI interaction into the PvP team crest editor controller.
+----------------------------------------
+NAME: AgentPvpTeamCrestEditor_Update_Deep
+SIG:  40 53 48 83 EC 20 83 79 20 00 48 8B D9 0F 84 91 00 00 00 83 B9 98 00 00 00 01 75 7B 48 8B 49 10
+DESC: Per-frame update path for the PvP team crest editor controller.
+----------------------------------------
+NAME: AgentPvpTeamInputString_Show_Deep
+SIG:  40 57 48 81 EC 00 01 00 00 48 8B 05 F8 8F 26 02 48 33 C4 48 89 84 24 F0 00 00 00 4C 8B 05 BE C5 AD 01
+DESC: Controller-side show path for the PvP team input-string popup.
+----------------------------------------
+NAME: AgentPvpTeamInputString_ReceiveEvent_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 40 48 8B F9 C7 02 02 00 00 00 C6 42 08 01 48 8B DA 48 8B 49 28 48 85 C9 74 2D
+DESC: Handles text-confirmation and callback events for the PvP team input-string controller.
+----------------------------------------
+NAME: AgentPvPTeamOrganization_Show_Deep
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 30 84 C0 74 0F 48 8B 03 48 8B CB 48 83 C4 20 5B 48 FF 60 28
+DESC: Controller-side show path for the PvP team organization window.
+----------------------------------------
+NAME: AgentPvPTeamOrganization_ReceiveEvent_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 49 8B F8 48 8B D9 44 8B 44 24 50 41 8B F1 4C 8B F2
+DESC: Handles interaction and callbacks for the PvP team organization controller.
+----------------------------------------
+NAME: AgentPvPTeamOrganization_Update_Deep
+SIG:  48 89 5C 24 10 57 48 81 EC 00 01 00 00 48 8B 05 34 2D 26 02 48 33 C4 48 89 84 24 F0 00 00 00 48 8B 01 0F B6 DA 48 8B F9
+DESC: Per-frame update path for the PvP team organization controller.
+----------------------------------------
+CATEGORY: PvP Director and Map Internals
+----------------------------------------
+NAME: EventFramework_GetFrontlinesDirector_Deep
+SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09 80 B8 CE 0D 00 00 06 74 02 33 C0 C3
+DESC: Low-level EventFramework lookup that returns the active Frontlines director after validating the current instance-content family.
+----------------------------------------
+NAME: GameMain_IsInFrontlineArea_Deep
+SIG:  80 3D 9D F9 EB 01 12 0F 94 C0 C3
+DESC: Minimal territory-state gate used to test whether the player is currently inside a Frontline area.
+----------------------------------------
+NAME: EventFramework_GetRivalWingDirector_Deep
+SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09 80 B8 CE 0D 00 00 0C 74 02 33 C0 C3
+DESC: Low-level EventFramework lookup that returns the active Rival Wings director when the current instance-content type matches.
+----------------------------------------
+NAME: GameMain_IsInRivalWingsArea_Deep
+SIG:  80 3D 4D F9 EB 01 27 0F 94 C0 C3
+DESC: Minimal territory-state gate used to test whether the player is currently inside a Rival Wings area.
+----------------------------------------
+NAME: EventFramework_GetEventMapMarkers_Deep
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 49 8B F0 0F B7 EA 48 8B F9 E8 ?? ?? ?? ?? 84 C0 74 13 E8 ?? ?? ?? ?? 4C 8B C6 0F B7
+DESC: Shared EventFramework helper that resolves event-owned map markers for content directors and PvP map consumers.
+----------------------------------------
+NAME: FrontlineDirector_Terminate_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B F9 48 8B 0D 2C B2 EF 00 E8 57 35 7D FE 48 8B C8 48 8B D8 48 8B 10 FF 92 28 01 00 00
+DESC: Frontline director shutdown path; tears down director-owned state and dispatches termination through the content vtable.
+----------------------------------------
+NAME: FrontlineDirector_SetSequence_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 41 0F B6 F0 0F B6 DA 48 8B F9 E8 12 42 37 FF 80 FB 14 75 1D 40 80 FE 15 75 17
+DESC: Frontline sequence-transition handler; updates director sequence, optionally shows a screen image, refreshes internal state, and marks the director dirty.
+----------------------------------------
+NAME: FrontlineDirector_PopulateMapMarkers_Deep
+SIG:  48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 57 41 54 41 55 41 56 41 57 48 81 EC D0 00 00 00 0F 29 70 C8 48 8D 99 5C 20 00 00
+DESC: Core Frontline map-marker builder; walks director-owned objective arrays and writes marker payloads into the event-marker output vector.
+----------------------------------------
+NAME: Frontline01_PopulateMapMarkers_Deep
+SIG:  48 8B C4 48 89 58 08 66 89 50 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 68 A1 48 81 EC F0 00 00 00 0F 29 70 B8 48 8D B9 94 34 00 00
+DESC: Frontline mode-specific marker builder for the first Frontline ruleset; generates objective markers from a dedicated director layout.
+----------------------------------------
+NAME: Frontline02_PopulateMapMarkers_Deep
+SIG:  48 8B C4 57 41 54 41 55 41 56 41 57 48 81 EC E0 00 00 00 45 33 E4 49 8B F8 44 0F B7 EA 4C 8B F9 45 8B F4 44 39 A1 10 34 00 00
+DESC: Frontline mode-specific marker builder for the second Frontline ruleset; iterates a different internal marker table layout than the shared base director.
+----------------------------------------
+NAME: Frontline03_PopulateMapMarkers_Deep
+SIG:  48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 57 41 54 41 55 41 56 41 57 48 81 EC D0 00 00 00 0F 29 70 C8 4C 8D B9 F4 34 00 00
+DESC: Frontline mode-specific marker builder for the third Frontline ruleset; emits specialized objective markers from a variant director layout.
+----------------------------------------
+NAME: Frontline04_PopulateMapMarkers_Deep
+SIG:  48 8B C4 48 89 58 18 66 89 50 10 48 89 48 08 55 56 57 41 54 41 55 41 56 41 57 48 8D 68 A1 48 81 EC 00 01 00 00 0F 29 70 B8 48 8D 99 A4 34 00 00
+DESC: Frontline mode-specific marker builder for the fourth Frontline ruleset; uses its own objective/marker structure offsets and output pass.
+----------------------------------------
+NAME: RivalWingDirector_Terminate_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B D9 48 8B 0D DC 12 EA 00 E8 07 96 77 FE 48 8B F8 48 85 C0 74 57 48 8B 10 48 8B C8 FF 92 28 01 00 00
+DESC: Rival Wings director shutdown path; tears down director-owned state and dispatches termination through the content vtable.
+----------------------------------------
+NAME: RivalWingDirector_PopulateMapMarkers_Deep
+SIG:  48 8B C4 48 89 58 08 48 89 70 10 48 89 78 18 55 41 54 41 55 41 56 41 57 48 8D 68 A1 48 81 EC D0 00 00 00 41 BE 30 00 00 00 0F 29 70 C8 41 8B F6
+DESC: Core Rival Wings map-marker builder; merges several director-owned marker tables and special objective slots into the event-marker output list.
+----------------------------------------
+CATEGORY: Hidden PvP Director Vtable Methods
+----------------------------------------
+NAME: FrontlineDirector_vf319_Deep
+SIG:  48 83 EC 28 45 33 C9 45 33 C0 33 D2 E8 ?? ?? ?? ?? 32 C0 48 83 C4 28 C3
+DESC: Undocumented Frontline vtable helper that clears or reinitializes a director-side state block through a private reset routine.
+----------------------------------------
+NAME: FrontlineDirector_vf281_Deep
+SIG:  48 83 EC 28 8B 81 D8 1F 00 00 83 F8 03 73 2C 48 C1 E0 05 0F B6 94 08 D0 24 00 00 80 FA 03 73 1B 8B 94 91 30 25 00 00 85 D2 74 10 E8 80 AA 34 FF 84 C0 74 07 B0 01
+DESC: Hidden Frontline gate that checks the current team/objective slot against an internal objective resolver and returns true on a positive match.
+----------------------------------------
+NAME: FrontlineDirector_vf375_Deep
+SIG:  48 83 EC 28 8B 81 D8 1F 00 00 83 F8 03 73 2C 48 C1 E0 05 0F B6 94 08 D0 24 00 00 80 FA 03 73 1B 8B 94 91 30 25 00 00 85 D2 74 10 E8 60 A9 34 FF 84 C0 74 07 32 C0
+DESC: Complementary hidden Frontline gate paired with `vf281`; resolves the same team/objective state but returns the inverse success condition.
+----------------------------------------
+NAME: FrontlineDirector_vf320_Deep
+SIG:  40 53 48 83 EC 20 48 89 6C 24 30 48 8B D9 48 89 7C 24 40 BD 30 00 00 00 4C 89 74 24 48 48 8D B9 54 20 00 00 41 BE 00 00 00 E0
+DESC: Per-frame hidden Frontline director update; refreshes tracked actor positions, drives map/UI refreshes, updates objective-state timers, then chains into the base PvP director update.
+----------------------------------------
+NAME: FrontlineDirector_vf378_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 8D 42 FD 41 8B F1 41 8B F8 48 8B D9 83 F8 06 0F 87 F3 04 00 00 48 8D 0D 95 14 70 FE
+DESC: Large undocumented Frontline event dispatcher; handles score/team updates, objective ownership changes, agent notifications, and bulk reset/init cases for director-owned arrays.
+----------------------------------------
+NAME: FrontlineDirector_vf385_Deep
+SIG:  4C 8B DC 55 56 48 8B EC 48 83 EC 78 48 8B 05 25 79 ED 00 48 33 C4 48 89 45 E8 8B 81 C4 33 00 00 48 8B F1 D1 E8 A8 01 0F 85 E5 04 00 00
+DESC: Deferred Frontline UI/text refresh builder; formats addon text parameters and objective display strings when the director marks its UI state dirty.
+----------------------------------------
+NAME: RivalWingDirector_vf252_Deep
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 48 8B 02 48 8B E9 48 8B CA 41 0F B7 F9 41 0F B7 F0 48 8B DA FF 50 10 83 F8 07 75 3B
+DESC: Special-case Rival Wings event handler that intercepts a specific event-object signature and dispatches a custom path before falling back to the generic event handler.
+----------------------------------------
+NAME: RivalWingDirector_vf289_Deep
+SIG:  40 53 48 83 EC 20 49 8B 08 49 8B D8 48 89 74 24 30 48 89 7C 24 38 49 8B F9 4C 89 74 24 40 4C 8B F2 48 85 C9 74 4E 48 8B 01 FF 50 10
+DESC: Hidden Rival Wings resolver that normalizes two object references, upgrading generic event handles into battle-character pointers when possible.
+----------------------------------------
+NAME: RivalWingDirector_vf290_Deep
+SIG:  40 53 48 83 EC 20 48 8B 02 48 8B CA 48 8B DA FF 50 10 83 F8 02 75 32 48 8B 03 48 8B CB FF 50 10 83 F8 02 75 0D 0F B6 83 91 00 00 00
+DESC: Single-target Rival Wings object normalizer; resolves a passed event handle to a battle character when the source object is an eligible proxy entity.
+----------------------------------------
+NAME: RivalWingDirector_vf319_Deep
+SIG:  40 53 48 83 EC 30 44 8B 81 E8 1F 00 00 41 B9 01 00 00 00 BA A2 02 00 00 C7 44 24 20 A2 02 00 00 48 8B D9 E8 18 D0 31 FF 48 89 83 F0 1F 00 00
+DESC: Hidden Rival Wings handle-acquisition method; resolves and caches a director-owned object or event handle keyed by the internal id `0x2A2`.
+----------------------------------------
+NAME: RivalWingDirector_vf320_Deep
+SIG:  40 53 48 83 EC 50 0F 29 74 24 40 48 8B D9 0F 29 7C 24 30 44 0F 29 44 24 20 E8 02 CE F8 FF 48 8B 05 8B 0E EA 00 48 8B CB
+DESC: Per-frame hidden Rival Wings director update; drives match-phase banners, team-specific announcements, countdown timers, and delayed objective refresh helpers before chaining into base PvP logic.
+----------------------------------------
+NAME: RivalWingDirector_vf378_Deep
+SIG:  40 55 53 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 E8 48 81 EC 18 01 00 00 48 8B 05 08 DC E7 00 48 33 C4 48 89 45 D0 44 8B BD 80 00 00 00
+DESC: Large undocumented Rival Wings event dispatcher; updates objective layout ids, localized UI text, camera transitions, score state, and multiple director-owned counters/timers.
+----------------------------------------
+NAME: RivalWingDirector_vf392_Deep
+SIG:  48 83 EC 28 85 D2 74 07 32 C0 48 83 C4 28 C3 E8 6C 20 00 00 B0 01 48 83 C4 28 C3
+DESC: Conditional Rival Wings refresh hook; only runs its private helper when the supplied flag is zero, otherwise exits immediately.
+----------------------------------------
+NAME: RivalWingDirector_vf399_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 62 8C 31 FF 3C 17 75 08 32 C0 48 83 C4 20 5B C3 48 8B CB 48 83 C4 20 5B E9 E9 FD F8 FF
+DESC: Hidden Rival Wings state gate that suppresses the inherited director behavior while the match is in internal phase `0x17`.
+----------------------------------------
+NAME: RivalWingDirector_vf404_Deep
+SIG:  48 83 EC 28 48 8B 0D 55 06 EA 00 E8 80 89 77 FE 48 85 C0 74 2C 48 8B 10 48 8B C8 FF 92 28 01 00 00 48 8B C8 BA 19 01 00 00 E8 52 3D B2 FE
+DESC: Hidden UI-open path that resolves AgentModule internal id `0x119` and shows a Rival Wings-related window or controller on demand.
+----------------------------------------
+CATEGORY: Crystalline Conflict State and Discovery
+----------------------------------------
+NAME: GameMain_IsInCrystallineConflictArea_Deep
+SIG:  0F B6 05 7D F9 EB 01 3C 2A 77 13 48 B9 00 00 00 10 20 04 00 00 48 0F A3 C1 73 03 B0 01 C3 32 C0
+DESC: Territory and content-state gate used to test whether the player is currently inside a Crystalline Conflict area.
+----------------------------------------
+NAME: ContentFinderCondition_IsCrystallineConflict_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 0F B7 49 08 E8 6E ED CC FF 80 78 6D 1D 74 16 48 8B 03 48 8B CB FF 90 98 00 00 00 84 C0 75 06
+DESC: ContentFinderCondition predicate that identifies a queue entry as Crystalline Conflict and falls back through virtual content checks when needed.
+----------------------------------------
+NAME: ContentFinderCondition_GetCrystallineConflictGameplayFeatureCount_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B7 49 08 E8 98 E1 CC FF 48 8B F0 8B 48 5C 85 C9 74 30
+DESC: Returns the number of Crystalline Conflict gameplay-feature rows exposed by a given content-finder condition.
+----------------------------------------
+NAME: ContentFinderCondition_GetCrystallineConflictGameplayFeatureAddonId_Deep
+SIG:  48 83 EC 28 0F B7 49 08 E8 13 E1 CC FF 33 C9 BA 02 00 00 00 80 78 6D 1E 0F 44 CA 8B C1 48 83 C4 28 C3
+DESC: Resolves the addon or feature id for a Crystalline Conflict gameplay-feature entry within the content-finder data.
+----------------------------------------
+NAME: EventFramework_GetCrystallineConflictDirector_Deep
+SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09 80 B8 CE 0D 00 00 05 74 02 33 C0 C3
+DESC: EventFramework lookup that returns the active Crystalline Conflict director after validating the current instance-content subtype.
+----------------------------------------
+NAME: GetInstanceContentCrystallineConflictDirector_Deep
+SIG:  48 83 EC 28 48 83 3D FC D4 06 01 00 74 11 E8 6D 53 30 FF 48 8B C8 48 83 C4 28 E9 51 25 31 FF 33 C0
+DESC: Thin global accessor that returns the current Crystalline Conflict director from EventFramework, or null when the framework is unavailable.
+----------------------------------------
+CATEGORY: Hidden Crystalline Conflict Director Methods
+----------------------------------------
+NAME: CrystallineConflictDirector_Terminate_Deep
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 57 41 56 48 81 EC A0 00 00 00 48 8B 05 9C CF E5 00 48 33 C4 48 89 84 24 90 00 00 00 4C 8B F1
+DESC: Crystalline Conflict director shutdown path; tears down director-owned state and dispatches termination through the instance-content vtable.
+----------------------------------------
+NAME: CrystallineConflictDirector_SetSequence_Deep
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 41 0F B6 F8 0F B6 F2 48 8B E9 80 FA 14 74 5A 41 80 F8 14 75 4E
+DESC: Crystalline Conflict sequence-transition handler; coordinates agent `0x6F` visibility around match phases and injects a localized banner when entering sequence `0x15`.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf323_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 E8 A1 1B F7 FF 48 8B 0D 4A FE E7 00 E8 75 81 75 FE 48 8B C8 48 8B F8 48 8B 10 FF 92 28 01 00 00
+DESC: Hidden post-setup CC hook; chains base setup, marks agent `0x100` dirty if needed, nudges its controller, and forces a UIModule refresh pass.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf380_Deep
+SIG:  48 89 5C 24 18 55 48 8B EC 48 81 EC 80 00 00 00 48 8B 1D 09 56 05 01 48 85 DB 0F 84 8E 01 00 00 0F 57 C0
+DESC: Hidden CC banner helper that shows or queues the standard Crystalline intro screen image (`0x6B`) using either EventSceneModule or the queued-text system.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf320_Deep
+SIG:  40 53 56 57 48 83 EC 20 48 8B 05 51 FA E7 00 33 FF 4C 8B 81 E8 1F 00 00 48 BB 07 69 90 06 69 90 06 69
+DESC: Per-frame hidden Crystalline director update; ticks per-player timers, refreshes director-owned UI flags, updates phase banners, and copies player-display names through blacklist-aware logic before chaining into base PvP update.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf378_Deep
+SIG:  40 55 53 57 41 54 41 56 41 57 48 8D AC 24 08 FF FF FF 48 81 EC F8 01 00 00 48 8B 05 18 C7 E5 00 48 33 C4
+DESC: Large undocumented Crystalline event dispatcher; handles match-state transitions, screen-image toggles, agent notifications, object highlighting, roster updates, and banner construction.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf287_Deep
+SIG:  48 89 5C 24 08 44 8B DA 48 8B D9 81 FA 00 00 00 E0 74 50 48 8B 89 E8 1F 00 00 48 B8 07 69 90 06 69 90 06 69
+DESC: Hidden roster lookup that scans cached Crystalline participant entries by entity id and returns a per-entry state byte.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf281_Deep
+SIG:  48 83 EC 28 F6 81 EA 20 00 00 01 74 10 E8 5E 7E 2F FF 3C 15 75 07 B0 01 48 83 C4 28 C3
+DESC: Hidden CC phase gate that returns true only when the director phase flag is armed and the current sequence equals `0x15`.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf375_Deep
+SIG:  48 83 EC 28 F6 81 EA 20 00 00 01 74 10 E8 2E 7E 2F FF 3C 15 75 07 32 C0 48 83 C4 28 C3 B0 01
+DESC: Complementary hidden CC phase gate paired with `vf281`; returns the inverse condition for the same internal phase/flag combination.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf399_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 02 7E 2F FF 3C 17 75 08 32 C0 48 83 C4 20 5B C3 48 8B CB 48 83 C4 20 5B E9 89 EF F6 FF
+DESC: Hidden state gate that suppresses inherited director behavior while Crystalline Conflict is in internal phase `0x17`.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf252_Deep
+SIG:  48 89 5C 24 18 55 56 57 48 83 EC 30 48 8B 02 48 8B F9 48 8B CA 41 0F B7 E9 41 0F B7 F0 48 8B DA FF 50 10 83 F8 07 0F 85 CF 00 00 00
+DESC: Special-case CC event handler for interactable/event objects; updates object state masks on eligible event objects before falling back to the generic handler.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf404_Deep
+SIG:  40 53 48 83 EC 20 88 15 C8 11 05 01 48 8B D9 48 8B 01 FF 90 88 0C 00 00 48 8B CB 48 83 C4 20 5B E9 4B A9 2F FF
+DESC: Hidden CC global toggle hook; stores a single-byte global, invokes the director refresh path, and forces a UI refresh.
+----------------------------------------
+NAME: CrystallineConflictDirector_vf319_Deep
+SIG:  48 83 EC 38 44 0F B6 81 D0 0D 00 00 BA 3A 02 00 00 41 B9 01 00 00 00 C7 44 24 20 00 00 00 00 E8 1C B1 2F FF 32 C0
+DESC: Hidden CC broadcast/helper path keyed by event id `0x23A`; emits a director-side message using the byte stored at offset `0xDD0`.
+----------------------------------------
+CATEGORY: Crystalline Conflict UI Addons
+----------------------------------------
+NAME: PvPMKSBattleLog_OnSetup_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 4C 89 74 24 20 41 57 48 83 EC 20 48 8B D9 49 8D 48 10
+DESC: Initializes the Crystalline Conflict battle-log addon and binds its node tree/resources.
+----------------------------------------
+NAME: PvPMKSBattleLog_OnRefresh_Deep
+SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 20 F6 81 A1 01 00 00 01 49 8B F0 8B FA 48 8B D9 0F 84 91 01 00 00
+DESC: Refreshes the Crystalline Conflict battle-log UI using director-owned battle event data.
+----------------------------------------
+NAME: PvPMKSBattleLog_OnRequestedUpdate_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 82 A8 03 00 00 48 8B D9 4D 8B 88 48 03 00 00 48 8B 48 40 8B B9 60 09 00 00
+DESC: Requested-update path for the Crystalline Conflict battle log; pulls external data and decides whether a visible refresh is necessary.
+----------------------------------------
+NAME: PvPMKSHeader_OnRefresh_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 F6 81 A1 01 00 00 01 49 8B D8 48 8B F9 74 2C 85 D2 74 28 48 85 DB 74 23
+DESC: Refreshes the Crystalline Conflict header addon, including phase/state-sensitive text and visible indicators.
+----------------------------------------
+NAME: PvPMKSHeader_OnRequestedUpdate_Deep
+SIG:  48 89 5C 24 18 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 40 4C 8B B2 A8 03 00 00 33 ED 4D 8B A8 48 03 00 00
+DESC: Requested-update path for the Crystalline Conflict header; arbitrates whether the header needs a fresh draw from incoming state.
+----------------------------------------
+NAME: PvPMKSIntroduction_Initialize_Deep
+SIG:  48 89 5C 24 20 55 48 83 EC 20 4C 89 74 24 40 48 8B E9 E8 79 CC 31 FF E8 D4 9B D5 FE 33 D2 4C 8B C0
+DESC: Initializes the Crystalline Conflict introduction addon and allocates its internal UI/resource state.
+----------------------------------------
+NAME: PvPMKSIntroduction_LoadUldResourceHandle_Deep
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 57 41 54 41 56 41 57 48 83 EC 40 48 8B 05 2B 03 4A 01 48 33 C4
+DESC: Loads the ULD resource handle for the Crystalline Conflict introduction screen.
+----------------------------------------
+NAME: PvPMKSIntroduction_IsFullyLoaded_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 32 D2 31 FF 84 C0 74 39 48 8B 93 48 02 00 00 33 C0 0F 1F 44 00 00
+DESC: Checks whether the Crystalline Conflict introduction addon has finished loading all required resources.
+----------------------------------------
+NAME: PvPMKSIntroduction_Update_Deep
+SIG:  40 53 48 83 EC 30 8B 81 50 02 00 00 48 8B D9 0F 29 74 24 20 0F 28 F1 83 F8 02 75 44
+DESC: Per-frame update path for the Crystalline Conflict introduction addon, including timing and animation-state progression.
+----------------------------------------
+NAME: PvPMKSIntroduction_OnRefresh_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 42 04 00 00 BA 01 00 00 00 48 8B CB E8 95 DC 31 FF 48 85 C0 74 0D
+DESC: Refreshes the introduction addon content after resource load or state changes.
+----------------------------------------
+NAME: PvPMKSIntroduction_ReceiveEvent_Deep
+SIG:  66 83 FA 4A 75 66 48 89 5C 24 08 57 48 83 EC 20 41 F6 41 2A 01 49 8B F9 48 8B D9 75 45
+DESC: Handles button presses and close/advance events on the Crystalline Conflict introduction screen.
+----------------------------------------
+NAME: PvPMKSRankRating_LoadUldResourceHandle_Deep
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 54 41 55 41 56 41 57 48 81 EC 90 00 00 00 48 8B 05 A2 F5 49 01
+DESC: Loads the ULD resource handle for the Crystalline Conflict rank-rating screen.
+----------------------------------------
+NAME: PvPMKSRankRating_IsFullyLoaded_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 12 C4 31 FF 84 C0 74 39 48 8D 93 58 04 00 00 33 C0 0F 1F 44 00 00
+DESC: Checks whether the rank-rating addon has finished loading all required resources.
+----------------------------------------
+NAME: PvPMKSRankRating_Update_Deep
+SIG:  40 53 48 83 EC 30 0F 29 74 24 20 48 8B D9 0F 28 F1 E8 FA BD 31 FF 80 BB 34 03 00 00 00 74 21
+DESC: Per-frame update path for the Crystalline Conflict rank-rating addon, including timer-driven transitions and animation state.
+----------------------------------------
+NAME: PvPMKSRankRating_OnRefresh_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 85 D2 7E 25 49 8B C8 E8 5B 00 2E FF 84 C0 74 19 48 8B 8B 40 03 00 00 BA 69 00 00 00
+DESC: Refreshes the rank-rating addon with the newest rating/rank presentation state.
+----------------------------------------
+NAME: PvPMKSRankRating_ReceiveEvent_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 49 8B F9 48 8B D9 66 83 FA 09 74 7A 66 83 FA 0F 74 1D 66 83 FA 4A 75 63
+DESC: Handles interaction and dismissal events for the Crystalline Conflict rank-rating screen.
+----------------------------------------
+CATEGORY: Crystalline Conflict Agents and History
+----------------------------------------
+NAME: AgentPvPMKSIntroduction_ReceiveEvent_Deep
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B D9 48 8B FA 49 8B C8 40 32 F6 E8 20 41 91 FF 44 8D 40 02
+DESC: Agent-side event handler for the Crystalline introduction flow; mediates UI callbacks before dispatching into the addon.
+----------------------------------------
+NAME: AgentPvPMKSIntroduction_Hide_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 E2 7C 76 FF 48 8B 4B 28 48 85 C9 74 13 48 8B 01 BA 01 00 00 00 FF 50 10
+DESC: Hides and tears down the Crystalline introduction agent's active view or task object.
+----------------------------------------
+NAME: AgentPvPMKSIntroduction_Update_Deep
+SIG:  48 89 6C 24 18 56 48 83 EC 40 48 8B 01 8B EA 48 8B F1 FF 50 30 84 C0 0F 84 ED 00 00 00 48 89 5C 24 50
+DESC: Per-frame controller update for the Crystalline introduction agent.
+----------------------------------------
+NAME: AgentPvPMKSRankRating_ReceiveEvent_Deep
+SIG:  40 53 55 56 57 41 54 41 56 41 57 48 81 EC D0 00 00 00 48 8B 05 AF AB B1 01 48 33 C4 48 89 84 24 C0 00 00 00
+DESC: Agent-side event handler for the Crystalline rank-rating flow; mediates confirmation and close actions before addon dispatch.
+----------------------------------------
+NAME: AgentPvPMKSRankRating_Hide_Deep
+SIG:  40 53 48 83 EC 50 48 8B 01 48 8B D9 FF 50 30 84 C0 74 6B 48 8B 4B 18 48 85 C9 74 4C C7 44 24 30 03 00 00 00
+DESC: Hides the rank-rating agent and releases its current UI task state.
+----------------------------------------
+NAME: AgentPvPMKSRankRating_Update_Deep
+SIG:  40 53 48 83 EC 40 48 8B D9 48 8B 49 40 48 85 C9 74 6F 83 B9 F4 01 00 00 01 75 66 48 8B 53 10
+DESC: Per-frame controller update for the Crystalline rank-rating agent.
+----------------------------------------
+NAME: MKSRecord_OnRefresh_Deep
+SIG:  48 89 6C 24 18 56 48 83 EC 20 F6 81 A1 01 00 00 01 49 8B F0 48 8B E9 75 0D 32 C0 48 8B 6C 24 40 48 83 C4 20 5E C3
+DESC: Refreshes the Crystalline Conflict record/history addon using stored result data.
+----------------------------------------
+NAME: MKSRecord_ReceiveEvent_Deep
+SIG:  66 83 FA 19 0F 85 33 01 00 00 48 89 5C 24 08 57 48 83 EC 40 48 8B F9 41 8B D8 49 8B C9 33 D2 E8 1C 63 4B FF
+DESC: Handles interaction events on the Crystalline Conflict record/history screen.
+----------------------------------------
+NAME: MKSRecord_HandleCustomInput_Deep
+SIG:  40 53 48 83 EC 30 80 7A 04 00 48 8B D9 75 46 83 3A 02 75 41 48 8B 91 50 02 00 00 45 33 C9 41 B0 01
+DESC: Processes controller/custom-input paths for the Crystalline Conflict record/history screen.
+----------------------------------------
+NAME: MKSRecord_OnOpenTransitionStarted_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 12 98 4E FF 48 8B 50 20 48 8B 82 50 91 00 00 48 85 C0 74 09
+DESC: Open-transition hook for the Crystalline Conflict record screen; primes resources and early UI state before display.
+----------------------------------------
+NAME: MKSRecord_HandleBackButtonInput_Deep
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 50 33 F6 4C 8D 99 D8 02 00 00 45 33 D2 48 8B E9
+DESC: Back-button handler for the Crystalline Conflict record screen.
+----------------------------------------
+NAME: AgentColosseumRecord_ReceiveEvent_Deep
+SIG:  4C 8B DC 49 89 5B 20 41 54 41 56 41 57 48 81 EC D0 00 00 00 48 8B 84 24 10 01 00 00 49 8B D8 4C 8B FA 4C 8B F1
+DESC: Agent-side event handler for the Colosseum record/history controller that fronts competitive PvP history data.
+----------------------------------------
+NAME: AgentColosseumRecord_Update_Deep
+SIG:  40 53 48 83 EC 20 48 8B 41 28 48 8B D9 48 85 C0 0F 84 66 01 00 00 80 B8 07 38 00 00 00
+DESC: Per-frame update for the Colosseum record/history agent.
+----------------------------------------
+NAME: AgentColosseumRecord_Hide_Deep
+SIG:  48 89 5C 24 18 56 57 41 57 48 83 EC 20 48 89 6C 24 40 45 33 FF 48 8B 69 28 48 8B F1 48 85 ED 74 76
+DESC: Hides the Colosseum record/history agent and tears down its active task state.
+----------------------------------------
+NAME: ColosseumRecord_OnRefresh_Deep
+SIG:  48 89 6C 24 18 56 48 83 EC 20 F6 81 A1 01 00 00 01 49 8B F0 48 8B E9 75 0D 32 C0 48 8B 6C 24 40 48 83 C4 20 5E C3
+DESC: Refreshes the Colosseum record/history addon using stored ranked-history data.
+----------------------------------------
+NAME: ColosseumRecord_ReceiveEvent_Deep
+SIG:  66 83 FA 19 0F 85 33 01 00 00 48 89 5C 24 08 57 48 83 EC 40 48 8B F9 41 8B D8 49 8B C9 33 D2 E8 1C E3 4B FF
+DESC: Handles interaction events on the Colosseum record/history screen.
+----------------------------------------
+NAME: ColosseumRecord_HandleCustomInput_Deep
+SIG:  40 53 48 83 EC 30 80 7A 04 00 48 8B D9 75 46 83 3A 02 75 41 48 8B 91 50 02 00 00 45 33 C9 41 B0 01
+DESC: Processes controller/custom-input paths for the Colosseum record/history screen.
+----------------------------------------
+NAME: ColosseumRecord_OnOpenTransitionStarted_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 12 18 4F FF 48 8B 50 20 48 8B 82 50 91 00 00 48 85 C0 74 09
+DESC: Open-transition hook for the Colosseum record screen; primes early state before the history view is shown.
+----------------------------------------
+NAME: ColosseumRecord_HandleBackButtonInput_Deep
+SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 50 80 B9 F8 02 00 00 00 41 0F B6 F8 48 8B F1 0F 84 36 01 00 00
+DESC: Back-button handler for the Colosseum record/history screen.
+----------------------------------------
+NAME: PvpProfileColosseum_HandleCustomInput_Deep
+SIG:  40 53 48 83 EC 30 83 3A 02 48 8B D9 75 5B 80 7A 04 00 75 55 E8 77 37 3F FF 0F B7 93 E8 01 00 00 48 8B 48 20
+DESC: Handles custom-input routing on the PvP profile's Colosseum page.
+----------------------------------------
+NAME: PvpProfileColosseum_OnRequestedUpdate_Deep2
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 F2 0D 00 00 45 33 C9 41 B0 01 48 8B CB 41 8D 51 66 48 83 C4 20 5B E9 4B 24 3F FF
+DESC: Alternate requested-update path for the PvP profile Colosseum page that forces a refresh task through the agent/controller layer.
+----------------------------------------
+CATEGORY: PvP Map Objects and Pickups
+----------------------------------------
+NAME: EventFramework_InteractWithReactionEventObject_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B FA 48 8B D9 E8 3B 6D C4 00 4C 8D 83 80 3C 00 00 48 8B D7 48 8B C8
+DESC: Shared EventFramework path used to interact with reaction event objects in the world, including pickup-style and map-interactable objects.
+----------------------------------------
+NAME: ReactionEventObject_Update_Deep
+SIG:  40 53 48 83 EC 20 80 B9 B4 01 00 00 00 48 8B D9 74 4A 48 89 7C 24 30 48 8B B9 08 01 00 00 48 85 FF 74 34
+DESC: Per-frame update for reaction event objects; syncs attached layout/object state and drives a time-based interaction animation or fade path before chaining into the generic GameObject update.
+----------------------------------------
+NAME: PacketDispatcher_HandleSpawnObjectPacket_Deep
+SIG:  40 53 57 48 83 EC 58 F6 42 02 02 48 8B DA 40 0F 97 C7 83 3D 5F C3 DF 01 03 0F 84 75 03 00 00
+DESC: Core spawn-object packet handler. Ground pickups and other map interactables likely enter the client here as spawned event objects before being handed to the world-object managers.
+----------------------------------------
+NAME: EventObjectManager_CreateEventObject_Deep
+SIG:  48 89 5C 24 18 48 89 6C 24 20 57 41 54 41 57 48 83 EC 40 8B 9C 24 90 00 00 00 45 0F B7 F9 41 8B E8 44 8B E2 48 8B F9
+DESC: Creates a standard EventObject in the fixed event-object table. In Crystalline Conflict, ground pickups are likely represented by these type-7 event-object spawns.
+----------------------------------------
+NAME: EventObject_InitFromDataRow_Deep
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B6 44 24 58 48 8B D9 88 81 B9 01 00 00 8B FA 0F B6 44 24 60 88 81 BA 01 00 00 66 C7 81 90 00 00 00 07 00 0F B6 81 91 00 00 00 66 44 89 81 B0 01 00 00 89 91 84 00 00 00
+DESC: Initializes a type-7 EventObject from its object id, resolves sheet 0x6A row data, applies default event-state and flags, and may load the object's resource. This is the closest static constructor path to Crystalline Conflict ground-pickup identity.
+----------------------------------------
+NAME: EventObject_GetDataRow_Deep
+SIG:  48 83 EC 28 48 8B 05 25 CB FE 01 44 8D 81 80 7B E1 FF BA 6A 00 00 00 48 8B 88 40 2B 00 00 E8 BD 7E DC FF 48 85 C0 75 05 48 83 C4 28 C3 48 8B 00
+DESC: Resolves an EventObject definition row from EXD sheet 0x6A using objectId minus 2000000. This is the strongest static link between spawned Crystalline Conflict pickup object ids and their underlying data definitions.
+----------------------------------------
+NAME: EventFramework_CheckInteractRangeEx_Deep
+SIG:  40 53 57 41 56 48 83 EC 70 48 8B 02 48 8B CA 41 0F B6 F9 4D 8B F0 48 8B DA FF 50 10 83 F8 01 74 19 48 8B 84 24 B0 00 00 00 C7 00 01 00 00 00 32 C0 48 83 C4 70 41 5E 5F 5B C3
+DESC: Central interaction-range gate. For type-7 event objects it consults the same EventObject data row before deciding whether interaction is allowed, making it directly relevant to pickup usability and range checks.
+----------------------------------------
+NAME: EventObject_ApplyStateTransition_Deep
+SIG:  40 53 55 56 57 41 56 48 81 EC 40 01 00 00 48 8B 05 13 C0 14 01 48 33 C4 48 89 84 24 30 01 00 00 0F B7 B1 B2 01 00 00
+DESC: Applies an EventObject state transition and dispatches the change either through the object vtable or an attached layout listener. This is the helper hit both by spawn-object handling and by Crystalline Conflict director object updates.
+----------------------------------------
+CATEGORY: Crystalline Conflict Labels and Feature Text
+----------------------------------------
+NAME: CrystallineConflict_FormatRecoveryFeatureLabel_Deep
+SIG:  48 89 5C 24 10 48 89 6C 24 18 57 48 83 EC 20 48 8B 0D CA 9C E5 01 49 8B D8 48 8B EA E8 EF 1F 73 FF 48 8B F8 48 85 C0 75 1A 48 8B D5 48 8B CB 48 8B 5C 24 38 48 8B 6C 24 40 48 83 C4 20 5F
+DESC: Formats localized gameplay-feature labels, including Recovery and Maintenance, through Addon text rows 0x21AF and 0x21AE. This is a Crystalline Conflict UI clue for the healing-pickup mechanic, but not the pickup object id itself.
+----------------------------------------
+
 
