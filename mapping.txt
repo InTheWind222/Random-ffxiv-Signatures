@@ -1,0 +1,263 @@
+FFXIV PLUGIN SIGNATURE & DATA MAPPING
+============================================================
+
+NAME: ActionEffect
+SIG:  40 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24
+DESC: Triggered when a combat action (ability/spell) connects with a target. Contains data for damage and status application.
+----------------------------------------
+NAME: ActorVfx_Create
+SIG:  40 53 55 56 57 48 81 EC ?? ?? ?? ?? 0F 29 B4 24 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 0F B6 AC 24 ?? ?? ?? ?? 0F 28 F3 49 8B F8
+DESC: Internal constructor/spawner for Visual Effects attached to game actors.
+----------------------------------------
+NAME: ActorVfx_Destructor
+SIG:  48 89 5C 24 ?? 57 48 83 EC ?? 48 8D 05 ?? ?? ?? ?? 48 8B D9 48 89 01 8B FA 48 8D 05 ?? ?? ?? ?? 48 89 81 ?? ?? ?? ?? 48 8B 89 ?? ?? ?? ?? 48 85 C9 74 ?? 48 8B 01 48 8B D3
+DESC: Destructor for visual effects attached to game actors, used for cleanup.
+----------------------------------------
+NAME: AtkUnitBase_ReceiveEvent
+SIG:  48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 30 0F B7 FA
+DESC: The primary UI event handler responsible for processing clicks and keypresses in game windows.
+----------------------------------------
+NAME: AutoMoveController
+SIG:  48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 74 23
+DESC: Static address for the game's automatic movement (autorun) controller structure.
+----------------------------------------
+NAME: BaseClassJobIDs
+SIG:  01 00 00 00 02 00 00 00 03 00 00 00 ...
+DESC: List of Row IDs for the primary class system (Gladiator, Marauder, etc.) before they are upgraded to Jobs.
+----------------------------------------
+NAME: Blacklist_DataPointer
+SIG:  89 50 4E 48 48 A5 41 0E 4C
+DESC: Version-specific pointer used to access the game's internal blacklist or party member data for tracking.
+----------------------------------------
+NAME: CutsceneHandleInput
+SIG:  48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 40 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 80 79 28 00
+DESC: Hook point for the game's cutscene input state machine. Intercepting this allows the plugin to force-skip cutscenes by simulating skip flags.
+----------------------------------------
+NAME: Cutscene_SkipCondition
+SIG:  75 11 BA ?? ?? ?? ?? 48 8B CF E8 ?? ?? ?? ?? 84 C0 74 4C
+DESC: Determines if the game's cutscene skip logic is active.
+----------------------------------------
+NAME: DirectorUpdate
+SIG:  40 53 57 48 83 EC 58 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 41 8B F9
+DESC: The main logic loop for 'Directors' which manage dungeons, raids, and world events.
+----------------------------------------
+NAME: DynamicHousingSig_LotteryResult
+SIG:  48 8B 70 FD ?? ?? 18 41 B5 ?? ?? 4C 20 50 68 0F ?? ?? E4
+DESC: Memory signature for identifying the start of the 'Housing Lottery Result' buffer in the game client's memory.
+----------------------------------------
+NAME: DynamicHousingSig_Placard
+SIG:  33 78 C0 DA 8D ?? ?? ?? ?? 2F F2 18 BA 10 5B 0F CB 49 BA 40
+DESC: Heuristic signature used to find the internal 'Placard' structure for the currently selected housing plot.
+----------------------------------------
+NAME: DynamicHousingSig_PlotData
+SIG:  0F ?? ?? 4D D5 40 ?? ?? DD BA 41 ?? ?? ?? ?? CD ?? ?? 4D BA 89 08 70 4D ?? ?? BA 8D EB C4 58 ?? ?? ?? ?? 89 E5
+DESC: Pattern-based signature for finding the offset of the 'Housing Plot Data' within the global game state.
+----------------------------------------
+NAME: DynamicHousingSig_WardInfo
+SIG:  4C 8D FC 89 41 40 CA ED F0 CB ?? ?? E6 41 CD 12 F8
+DESC: Runtime signature used to locate the 'Ward Info' memory structure which updates dynamically as you change zones.
+----------------------------------------
+NAME: FlyText_PatchDisable
+SIG:  E9 80 02 00 00 90
+DESC: Byte sequence used to disable/revert the fly-text system patch.
+----------------------------------------
+NAME: FlyText_PatchEnable
+SIG:  0F 85 7F 02 00 00
+DESC: Byte sequence used to enable the main fly-text system patch.
+----------------------------------------
+NAME: FlyText_PatchSig
+SIG:  83 3D ?? ?? ?? ?? ?? 0F 85 ?? ?? ?? ?? F3 0F 10 0F
+DESC: Signature for patching the game's fly-text system to control or disable popups.
+----------------------------------------
+NAME: FlyText_SubPatchDisable
+SIG:  75 58 F3 0F 10 0F
+DESC: Byte sequence for disabling/reverting the fly-text sub-patch.
+----------------------------------------
+NAME: FlyText_SubPatchEnable
+SIG:  EB 58 F3 0F 10 0F
+DESC: Byte sequence used to enable specific fly-text sub-patches.
+----------------------------------------
+NAME: FlyText_SubPatchSig
+SIG:  83 3D ?? ?? ?? ?? ?? 75 58
+DESC: Secondary signature for granular fly-text system patching.
+----------------------------------------
+NAME: GameObject_ctor
+SIG:  48 8D 05 ?? ?? ?? ?? C7 81 ?? ?? ?? ?? ?? ?? ?? ?? 48 89 01 48 8B C1 C3
+DESC: Base constructor for all 3D game entities (players, NPCs, objects).
+----------------------------------------
+NAME: GameVersion_DataPointer
+SIG:  E8 ?? ?? E0 0F F1 ?? ?? EB 4C DA 05 8B ?? ?? ?? ?? C2 CF
+DESC: Global pointer used to verify the current game version and ensure data compatibility across updates.
+----------------------------------------
+NAME: GetNameplateColor
+SIG:  48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B 35 ?? ?? ?? ?? 48 8B F9
+DESC: Function responsible for calculating the specific RGBA color values for entity nameplates.
+----------------------------------------
+NAME: GrandCompanyRankIDs
+SIG:  00 00 00 00 01 00 00 00 02 00 00 00 ...
+DESC: Collection of Excel Row IDs representing the different ranks across all three Grand Companies.
+----------------------------------------
+NAME: HousingDataPointer_YGirK
+SIG:  48 8B CD 49 18 38 D2 E4 D0 ?? ?? ?? ?? 8B 41 95 49 D1
+DESC: Primary internal pointer used to access the HousingManager's plot availability and lottery bid data structures.
+----------------------------------------
+NAME: HousingDataPointer_xefoT
+SIG:  48 89 5C 24 8D F1 50 ?? ?? ?? ?? 30 ?? ?? F8 ?? ?? ?? ?? 9F CD 58 C0 28 68 41 33 CB
+DESC: Secondary housing data pointer used for resolving ward-specific details and placard information.
+----------------------------------------
+NAME: HousingItemCategories_Special
+SIG:  64 00 00 00 27 00 00 00 70 00 00 00
+DESC: Targeted category IDs for specialized housing items like Exterior Furnishings and Large Garden ornaments.
+----------------------------------------
+NAME: HousingPriceDepreciationConstants
+SIG:  EA 07 00 00 02 00 00 00 01 00 00 00
+DESC: Hardcoded depreciation rate constants used to calculate how housing prices drop over time.
+----------------------------------------
+NAME: HousingPriceIndex_Lookup
+SIG:  00 2D 31 01 04 5C 36 00 70 38 39 00 ...
+DESC: Internal lookup table for matching plot indices to their respective base costs and grade levels.
+----------------------------------------
+NAME: HousingPriceScale_Ward
+SIG:  80 A8 12 01 C0 C6 2D 00 E0 CA D4 02 ...
+DESC: Reference table for plot price scaling factors based on specific ward locations or regional server settings.
+----------------------------------------
+NAME: HousingPriceTable_Large
+SIG:  C0 EA 21 01 E0 CA D4 02 2C A3 30 00 ...
+DESC: Static data table containing the base purchase prices for Large housing plots across land grades.
+----------------------------------------
+NAME: HousingPriceTable_Medium
+SIG:  70 38 39 00 C0 EA 21 01 C0 C6 2D 00 ...
+DESC: Static data table containing the base purchase prices for Medium housing plots across land grades.
+----------------------------------------
+NAME: HousingPriceTable_Small
+SIG:  70 38 39 00 2C A3 30 00 98 7F 33 00 ...
+DESC: Static data table containing the base purchase prices for Small housing plots across land grades.
+----------------------------------------
+NAME: InternalData_PjBOC
+SIG:  E5 17 01 00 00 00 00 00 E5 17 01 00 00 00 00 00 E5 17 01 00 00 00 00 00 E5 17 01 00 00 00 00 00 E5 17 01 00 00 00 00 00 AE 00 01 00 00 00 00 00 AD 00 01 00 00 00 00 00 AE 00 01 00 00 00 00 00 AD 00 01 00 00 00 00 00 AE 00 01 00 00 00 00 00
+DESC: Hardcoded byte array data used for internal state verification or packet construction.
+----------------------------------------
+NAME: InternalState_GlobalPointer
+SIG:  48 83 EC ?? ?? F3 45 ED ?? ?? 87 ?? ?? ?? ?? ?? ?? 78 ?? ?? 49 ?? ?? ?? ?? F4 C0 49 E3 ?? ?? ?? ?? 83 68 4D 93 28 E8 40 F9
+DESC: High-level pointer to a global state object tracking targeting prevention, relogging, and other core plugin states.
+----------------------------------------
+NAME: Inventory_SortHandler
+SIG:  48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 30 83 B9 ?? ?? ?? ?? ?? 41 8B F0
+DESC: Logic handler for triggering or processing item sorting within the inventory system.
+----------------------------------------
+NAME: ItemUICategoryIDs_Consumable
+SIG:  08 00 00 00 28 00 00 00 0A 00 00 00 ...
+DESC: Full list of Row IDs for all usable items including Meals, Potions, and Tinctures.
+----------------------------------------
+NAME: ItemUICategoryIDs_Crafting
+SIG:  10 00 00 00 11 00 00 00 08 00 00 00 ...
+DESC: Collection of IDs for materials used in the Crafting (DoH) and Gathering (DoL) systems.
+----------------------------------------
+NAME: ItemUICategoryIDs_Currency
+SIG:  2C 00 00 00 2E 00 00 00 21 00 00 00
+DESC: List of Excel IDs for game currencies like Gil, Grand Company Seals, and special tokens.
+----------------------------------------
+NAME: ItemUICategoryIDs_Gear
+SIG:  0E 00 0F 00 0A 00 1E 00 0B 00 20 00 ...
+DESC: Massive collection of Row IDs for all equipment types (Head, Body, Hands, Legs, Feet, Weapons, Shields).
+----------------------------------------
+NAME: ItemUICategoryIDs_Medicine
+SIG:  08 00 00 00 28 00 00 00 0A 00 00 00
+DESC: Specific Row IDs for high-priority recovery items and status-cleansing potions.
+----------------------------------------
+NAME: ItemUICategoryIDs_Misc
+SIG:  08 00 00 00 0A 00 00 00 28 00 00 00 ...
+DESC: Category IDs for items that are used in various side systems (Orchestrion rolls, Minions, Mounts).
+----------------------------------------
+NAME: ItemUICategoryIDs_Other
+SIG:  03 00 00 00 04 00 00 00 39 00 00 00 ...
+DESC: Filter list for miscellaneous item categories that do not fall into standard Gear or Consumable buckets.
+----------------------------------------
+NAME: Lifestream_SupportSig
+SIG:  48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 8B ?? ?? ?? ?? 48 85 C9 74 11 48 8B 01
+DESC: Address for interacting with world visit/teleportation logic, used for Lifestream plugin integration.
+----------------------------------------
+NAME: MapEffect
+SIG:  48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 8B FA 41 0F B7 E8
+DESC: Handles visual and state-based effects triggered by the map itself, such as environmental transitions.
+----------------------------------------
+NAME: MarketBoard_ConfirmPurchase
+SIG:  0F B6 FC ?? ?? ?? ?? 4C EC 18 ?? ?? ?? ?? E8 EA EB 0F 50
+DESC: Signature for the internal function that triggers the purchase confirmation dialog on the Market Board.
+----------------------------------------
+NAME: MarketBoard_ItemRequest
+SIG:  48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 83 EC 30 48 8B 5C 24 ?? 41 8B F0
+DESC: Handles requests for item data from the Market Board system.
+----------------------------------------
+NAME: MarketBoard_PurchaseHandler
+SIG:  48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 41 56 48 83 EC 20 45 0F B6 F1
+DESC: Network handler for processing Market Board purchase packets.
+----------------------------------------
+NAME: MarketBoard_PurchaseState
+SIG:  4C 8B 8B ?? ?? CF 40 E8 FA 4C B8
+DESC: Tracks the internal state of a pending Market Board purchase while waiting for server verification.
+----------------------------------------
+NAME: MarketBoard_ResultPointer
+SIG:  4D 48 D5 8B EF 83 B8 50 83 DB ?? ?? ?? ?? 70 E8 4C 8B FD 18 41 DE C2 83 ?? ?? ?? ?? C8 F2 48 D6 ?? ?? 8E 5B C2 E8
+DESC: Memory signature used to locate the structure storing Market Board search results and price data.
+----------------------------------------
+NAME: MarketBoard_ScoutListPointer
+SIG:  48 89 5C 24 20 ?? ?? 70 BA B8 D3 ?? ?? ?? ?? D4 ?? ?? 83 CE
+DESC: Internal pointer for managing the list of scouted worlds and prices in the Market Board module.
+----------------------------------------
+NAME: PartyKick_SB
+SIG:  48 83 EC 28 E8 ?? ?? ?? ?? 84 C0 74 09
+DESC: Internal game signature.
+----------------------------------------
+NAME: ProcessChatBox
+SIG:  48 89 5C 24 ?? 48 89 74 24 ?? 57 48 83 EC 20 48 8B F2 48 8B F9 45 84 C9
+DESC: Primary internal function responsible for processing outgoing chat commands and messages.
+----------------------------------------
+NAME: ProcessMapEffectEx
+SIG:  40 55 41 57 48 83 EC ?? 48 83 B9
+DESC: An extended handler for complex map-based visual effects involving multiple parameters.
+----------------------------------------
+NAME: ProcessZonePacketUp
+SIG:  48 89 5C 24 ?? 48 89 74 24 ?? 4C 89 64 24 ?? 55 41 56 41 57 48 8B EC 48 83 EC 70
+DESC: Internal network handler for processing outgoing packets during zone transitions.
+----------------------------------------
+NAME: QuestManager
+SIG:  48 8D 0D ?? ?? ?? ?? 0F B6 D8 E8 ?? ?? ?? ?? 44 0F B6 C0
+DESC: Static address for the game's quest management system.
+----------------------------------------
+NAME: Relogger_CharacterPointer
+SIG:  83 08 49 ?? ?? ?? ?? 58 CA DF 48 ?? ?? ?? ?? 49 89 0F 0F 8D C0 83 50 40
+DESC: Memory pointer used to track or manage character context during automated relogging sequences.
+----------------------------------------
+NAME: SanitizeString
+SIG:  48 89 5C 24 ?? 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 70 4D 8B F8 4C 89 44 24 ?? 4C 8B 05 ?? ?? ?? ?? 44 8B E2
+DESC: A utility function used to filter and format strings for the game's chat system.
+----------------------------------------
+NAME: SendAction
+SIG:  48 89 5C 24 ?? 48 89 6C 24 ?? 48 89 74 24 ?? 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 48 8B E9 41 0F B7 D9
+DESC: Low-level function responsible for dispatching ability execution requests to the game server.
+----------------------------------------
+NAME: StaticVfx_Run
+SIG:  E8 ?? ?? ?? ?? B0 02 EB 02
+DESC: The execution loop for static visual effects, handling the animation frames and coordinate updates.
+----------------------------------------
+NAME: StaticVfx_ctor
+SIG:  E8 ?? ?? ?? ?? F3 0F 10 35 ?? ?? ?? ?? 48 89 43 08
+DESC: Constructor for Visual Effects spawned at static world coordinates rather than attached to a character.
+----------------------------------------
+NAME: StaticVfx_dtor
+SIG:  40 53 48 83 EC 20 48 8B D9 48 8B 89 ?? ?? ?? ?? 48 85 C9 74 28 33 D2 E8 ?? ?? ?? ?? 48 8B 8B ?? ?? ?? ?? 48 85 C9
+DESC: Destructor for static visual effects, responsible for releasing internal resources when the effect is removed from the world.
+----------------------------------------
+NAME: TargetingGuard_Hook
+SIG:  40 53 48 83 EC 60 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 48 85 D2
+DESC: Low-level hook for the game's internal targeting function. This interceptor is the core of the privacy system, allowing the plugin to suppress 'Open Target' packets while maintaining a local-only target pointer. This prevents other players or the server from seeing who you are currently selecting.
+----------------------------------------
+NAME: TargetingGuard_State
+SIG:  B8 30 E1 CF C9 ?? ?? 38 FD ?? ?? 41 CD 00 4C 10 0F ED ?? ?? ?? ?? ?? ?? D3 40 8F E8 0F
+DESC: A complex memory signature used to find the global state pointer for the Targeting Guard. This structure tracks which players, NPCs, or objects are currently flagged for silent targeting or exclusion from the open targeting system.
+----------------------------------------
+NAME: WorldIDs_Chinese
+SIG:  9C 04 00 00 9F 04 00 00 A2 04 00 00 ...
+DESC: List of regional World (Server) IDs specifically for the Chinese client servers.
+----------------------------------------
