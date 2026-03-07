@@ -1377,6 +1377,611 @@ NAME: CrystallineConflict_FormatRecoveryFeatureLabel_Deep
 SIG:  48 89 5C 24 10 48 89 6C 24 18 57 48 83 EC 20 48 8B 0D CA 9C E5 01 49 8B D8 48 8B EA E8 EF 1F 73 FF 48 8B F8 48 85 C0 75 1A 48 8B D5 48 8B CB 48 8B 5C 24 38 48 8B 6C 24 40 48 83 C4 20 5F
 DESC: Formats localized gameplay-feature labels, including Recovery and Maintenance, through Addon text rows 0x21AF and 0x21AE. This is a Crystalline Conflict UI clue for the healing-pickup mechanic, but not the pickup object id itself.
 ----------------------------------------
+CATEGORY: Quest Interaction Gates - Core Quest State Gates
+----------------------------------------
+NAME: QuestManager_Instance
+SIG:  48 8D 0D ?? ?? ?? ?? 0F B6 D8 E8 ?? ?? ?? ?? 44 0F B6 C0 8D 53 01 41 3B D0 72 07 BA B6 07 00 00
+DESC: Static signature used to resolve the game's QuestManager singleton, which backs most quest acceptance and completion checks.
+----------------------------------------
+NAME: QuestManager_IsQuestComplete
+SIG:  40 53 48 83 EC 20 8B D9 E8 73 32 AC 00 0F B7 D3 48 8B C8 48 83 C4 20 5B E9 D3 D1 CA 00
+DESC: Static quest-completion gate used when code wants a quick global answer for whether a quest is finished.
+----------------------------------------
+NAME: QuestManager_IsQuestComplete1
+SIG:  0F B7 C2 4C 8B C9 44 8B C0 49 C1 E8 03 49 81 F8 EF 02 00 00 72 03 32 C0 C3 24 07 BA 80 00 00 00
+DESC: Instance-backed quest-completion check that reads the local QuestManager quest bitfield directly.
+----------------------------------------
+NAME: QuestManager_IsQuestAccepted
+SIG:  45 33 C0 48 8D 41 18 66 39 10 74 10 49 FF C0 48 83 C0 18 49 83 F8 1E 7C EE 32 C0 C3 B0 01 C3
+DESC: Core acceptance gate that scans the active quest slots and returns whether the quest is currently accepted.
+----------------------------------------
+NAME: QuestManager_GetQuestSequence
+SIG:  40 53 48 83 EC 20 0F B7 D9 E8 32 5D E1 FF 45 33 C0 41 8B D0 48 83 C0 10 66 39 58 08 74 18 41 FF
+DESC: Returns the current quest sequence value, which is a major gate for quest-object and event progression.
+----------------------------------------
+NAME: QuestManager_GetQuestClassJob
+SIG:  40 53 48 83 EC 20 0F B7 D9 E8 32 5C E1 FF 45 33 C0 41 8B D0 48 83 C0 10 66 39 58 08 74 18 41 FF
+DESC: Resolves the class/job requirement attached to a quest, making it part of the job-gating path.
+----------------------------------------
+NAME: QuestManager_IsMapMarkerUnlocked
+SIG:  40 53 48 83 EC 20 0F B7 DA 66 85 DB 74 30 E8 3D 60 E1 FF 44 8B C3 49 C1 E8 03 49 83 F8 40 73 1E
+DESC: Checks whether a quest-driven map marker is unlocked for the local player.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Event Framework Interaction Gates
+----------------------------------------
+NAME: EventFramework_InteractWithObject
+SIG:  40 55 56 57 41 55 48 81 EC 88 01 00 00 48 8B 05 14 66 B5 01 48 33 C4 48 89 84 24 60 01 00 00 48
+DESC: High-level event framework object interaction entrypoint used by quest NPCs, quest objects, and scripted event targets.
+----------------------------------------
+NAME: EventFramework_CheckInteractRange
+SIG:  48 83 EC 48 0F B6 44 24 70 88 44 24 28 48 8D 44 24 30 48 89 44 24 20 E8 74 34 00 00 48 83 C4 48
+DESC: Primary quest interaction distance check used before event-driven interaction is allowed.
+----------------------------------------
+NAME: EventFramework_CheckInteractRangeEx
+SIG:  40 53 57 41 56 48 83 EC 70 48 8B 02 48 8B CA 41 0F B6 F9 4D 8B F0 48 8B DA FF 50 10 83 F8 01 74
+DESC: Extended interaction-range gate that adds object-type aware checks on top of the basic range test.
+----------------------------------------
+NAME: EventFramework_IsDailyQuestAvailable
+SIG:  48 83 EC 38 48 81 C1 D8 42 00 00 C7 44 24 20 FF FF FF FF E8 48 2C 11 00 48 85 C0 0F 95 C0 48 83
+DESC: Daily-quest availability gate used by the event framework before offering certain repeatable quest content.
+----------------------------------------
+NAME: EventFramework_GetEventMapMarkers
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 49 8B F0 0F B7 EA 48 8B F9 E8 CE 66
+DESC: Resolves quest and event map markers that the UI and quest systems use to expose active objectives.
+----------------------------------------
+NAME: EventFramework_GetQuestBattleDirector
+SIG:  48 8B 81 00 01 00 00 4C 8B 81 08 01 00 00 49 3B C0 74 2C 41 B9 06 80 00 00 0F 1F 80 00 00 00 00
+DESC: Fetches the quest-battle director for instanced or scripted quest combat phases.
+----------------------------------------
+NAME: TargetSystem_InteractWithObject
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 48 8B E9 41 0F B6 F0 48 8B CA 48 8B DA E8 0F 54 4D
+DESC: Lower-level interaction call from TargetSystem that ultimately drives object interaction when quest logic uses the standard targeting path.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Quest Availability Calculation
+----------------------------------------
+NAME: DailyQuestMap_GetQuestIfAvailable
+SIG:  40 56 57 41 56 48 81 EC 80 00 00 00 48 8B 05 D5 40 A3 01 48 33 C4 48 89 44 24 68 48 8B 31 49 8B
+DESC: Filters a daily-quest candidate down to only quests that are currently available to the player.
+----------------------------------------
+NAME: DailyQuestMap_CalculateAvailableQuests
+SIG:  48 89 5C 24 08 44 88 4C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 83 EC 50 49 8B 58 30
+DESC: Main availability calculator that builds the current list of quests the player is allowed to pick up.
+----------------------------------------
+NAME: QuestEventHandler_OnQuestRowRead
+SIG:  40 55 56 48 81 EC B8 00 00 00 48 8B 05 87 C2 A3 01 48 33 C4 48 89 84 24 A0 00 00 00 48 83 3D BC
+DESC: Quest row ingestion hook that populates internal quest-event state from sheet data before gates are evaluated.
+----------------------------------------
+NAME: UI_UpdateQuestCompletion
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 F2 7D C6 00 48 85 C0 74 23 C6 43 28 00 8B 08 85 C9 74 15 E8 4E 46
+DESC: Updates quest completion state on the UI-side agent layer after quest progress changes.
+----------------------------------------
+NAME: UI_UpdateQuestToDo
+SIG:  40 55 53 56 57 41 54 41 55 41 56 48 8D 6C 24 A0 48 81 EC 60 01 00 00 48 8B 05 FA 7D 86 01 48 33
+DESC: Rebuilds the quest todo list shown to the player, reflecting the current quest gate and sequence state.
+----------------------------------------
+NAME: QuestUI_PlayQuestGimmickReaction
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 50 48 8D 4C 24 20 E8 93 74 EE FE BA 01 00
+DESC: Plays the scripted quest gimmick reaction used when a quest object or event target changes state.
+----------------------------------------
+NAME: QuestUI_EquipQuestModel
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 41 56 48 83 EC 50 48 8B F1 48 8D 4C 24 20 E8 BE 1F
+DESC: Equips quest-specific presentation models during scripted event scenes and quest interactions.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Quest-State Packet Feeds and Received Flags
+----------------------------------------
+NAME: PacketDispatcher_HandleCompletedQuestsPacket
+SIG:  48 83 EC 28 4C 8B C1 48 81 FA EF 02 00 00 0F 85 1D 01 00 00 48 8D 05 B5 EB E3 01 B9 05 00 00 00
+DESC: Network feed that imports the completed-quest bitset into local quest state.
+----------------------------------------
+NAME: PacketDispatcher_HandleUnlockedMapMarkersPacket
+SIG:  48 83 EC 28 48 83 FA 40 75 57 0F 10 01 0F 11 05 6B ED E3 01 0F 10 49 10 0F 11 0D 70 ED E3 01 0F
+DESC: Network handler that updates unlocked quest and event map markers.
+----------------------------------------
+NAME: PacketDispatcher_HandleQuestCompletePacket
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 56 41 57 48 83 EC 20 0F B7 E9 49 8B F1 8B DD
+DESC: Incremental quest-complete packet handler used when a quest completion state changes live.
+----------------------------------------
+NAME: PacketDispatcher_HandleCompletedLegacyQuestsPacket
+SIG:  48 83 EC 28 48 83 FA 28 0F 85 25 01 00 00 80 3D 59 F6 E3 01 00 0F 10 01 0F 11 05 8D EC E3 01 0F
+DESC: Imports legacy completed-quest flags for older quest content.
+----------------------------------------
+NAME: PacketDispatcher_HandleQuestRepeatFlagsPacket
+SIG:  48 83 FA 02 75 45 53 48 83 EC 20 80 3D 56 F4 E3 01 00 41 0F B6 D8 0F B7 01 66 89 05 AF E9 E3 01
+DESC: Updates repeatability flags that gate daily and repeatable quest availability.
+----------------------------------------
+NAME: QuestManager_MapMarkersReceivedFlag
+SIG:  0F 82 82 FE FF FF 44 38 2D 37 FC E3 01 75 14 C6 05 2E FC E3 01 01 E8 CD
+DESC: Byte-pattern for the write path that flips the unlocked quest map-marker received flag after the server feed is applied.
+----------------------------------------
+NAME: QuestManager_CompletedQuestsReceivedFlag
+SIG:  48 6C 66 89 48 6C 41 0F B6 48 6E 88 48 6E 75 38 C6 05 AE F8 E3 01 01 E8
+DESC: Byte-pattern for the write path that marks the completed quest bitset as received from the server.
+----------------------------------------
+NAME: QuestManager_CompletedLegacyQuestsReceivedFlag
+SIG:  48 8D 0D 87 E5 E3 01 48 89 74 24 38 BA F8 00 00 00 48 89 7C 24 20 C6 05
+DESC: Byte-pattern for the write path that marks legacy completed-quest state as received.
+----------------------------------------
+NAME: QuestManager_DailyQuestsReceivedFlag
+SIG:  E9 01 75 E4 44 38 0D EC F4 E3 01 75 14 C6 05 E3 F4 E3 01 01 E8 7F 73 0D
+DESC: Byte-pattern for the write path that marks daily-quest state as hydrated from the server.
+----------------------------------------
+NAME: QuestManager_QuestRepeatFlagsReceivedFlag
+SIG:  41 0F B6 D8 0F B7 01 66 89 05 AF E9 E3 01 75 14 C6 05 3F F4 E3 01 01 E8
+DESC: Byte-pattern for the write path that marks quest repeatability flags as available for gating logic.
+----------------------------------------
+NAME: QuestManager_LeveQuestsReceivedFlag
+SIG:  0F 82 43 FF FF FF 80 3D 95 F2 E3 01 00 75 14 C6 05 8C F2 E3 01 01 E8 1E
+DESC: Byte-pattern for the write path that marks levequest acceptance data as received.
+----------------------------------------
+NAME: QuestManager_CompletedLeveQuestsReceivedFlag
+SIG:  0F B7 41 60 66 89 42 60 75 18 C6 05 33 F0 E3 01 01 E8 C4 6E 0D 00 48 8B
+DESC: Byte-pattern for the write path that marks completed levequest state as received.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Journal and Accept-Result UI Gates
+----------------------------------------
+NAME: Journal_AbandonQuest
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 41 8B F8 8B DA 48 8B F1 E8 64 1C 16 00 48 8B C8 E8
+DESC: Journal-side abandon entrypoint used when the player drops an accepted quest.
+----------------------------------------
+NAME: Journal_IsQuestAccepted
+SIG:  40 53 48 83 EC 20 0F B7 DA 66 85 D2 74 2A E8 6D A2 08 00 32 C9 66 66 66 0F 1F 84 00 00 00 00 00
+DESC: Journal-specific quest acceptance check used when the UI decides whether to show accepted-state actions.
+----------------------------------------
+NAME: AgentQuest_Journal_OpenForQuest
+SIG:  40 53 41 55 41 56 41 57 48 81 EC 28 02 00 00 48 8B 05 42 6F C2 01 48 33 C4 48 89 84 24 00 02 00
+DESC: Primary agent entrypoint for opening the quest journal directly to a specific quest.
+----------------------------------------
+NAME: QuestUI_QuestTodoList_vf1
+SIG:  40 53 55 56 57 41 56 41 57 48 81 EC 58 01 00 00 48 8B 05 41 2F CB 01 48 33 C4 48 89 84 24 40 01
+DESC: Primary QuestTodoList virtual entrypoint used by the quest todo UI callback path.
+----------------------------------------
+NAME: QuestRecompleteManager_IsQuestRecompleteComplete
+SIG:  40 53 48 83 EC 20 33 C0 48 8B D9 66 3B C2 74 40 0F B7 CA 0F BA E9 10 E8 64 7A F5 FE 48 85 C0 74
+DESC: Seasonal quest replay completion check used by QuestRecompleteManager.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Deep Quest UI and Director Internals
+----------------------------------------
+NAME: QuestBattleDirector_IsUnlocked
+SIG:  48 83 EC 28 48 8B 02 48 8B CA FF 50 10 83 F8 02 0F 95 C0 48 83 C4 28 C3
+DESC: Low-level quest-battle gate that reports whether the current quest-battle director considers itself unlocked and active.
+----------------------------------------
+NAME: QuestBattleDirector_SetSequence
+SIG:  40 53 56 57 48 81 EC B0 00 00 00 48 8B 05 C6 12 A3 01 48 33 C4 48 89 84 24 A0 00 00 00 41 0F B6
+DESC: Internal quest-battle sequence mutator used when scripted quest combat advances to a new stage.
+----------------------------------------
+NAME: QuestBattleDirector_Update
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 C2 60 EB FF 84 C0 0F 85 8D 00 00 00 38 83 70 04 00 00 0F 84 81 00
+DESC: Main quest-battle director update loop that evaluates state transitions during scripted quest encounters.
+----------------------------------------
+NAME: QuestBattleDirector_Update2
+SIG:  48 89 5C 24 10 48 89 74 24 18 55 57 41 56 48 8B EC 48 81 EC 80 00 00 00 48 8B 05 C9 17 A3 01 48
+DESC: Secondary quest-battle update routine used by the director when handling more complex scripted progression.
+----------------------------------------
+NAME: QuestRedoMapMarkerManager_Initialize
+SIG:  48 83 EC 28 48 83 3D 4C 08 14 01 00 0F 85 D3 00 00 00 48 89 5C 24 30 45 33 C0 33 D2 48 89 7C 24
+DESC: Initialization path that brings up the quest redo map-marker manager and its replay marker state.
+----------------------------------------
+NAME: AgentQuest_JournalAccept_ReceiveEvent
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 48 8B BC 24 80 00 00 00 40 32 F6 45 8B F9 49 8B E8 4C 8B F2 48 8B D9 48 83 FF 02 75 2D 48 8B 49 10 48 8B 01 FF 90 88 00 00 00
+DESC: Agent-side accept-quest event dispatcher that reacts to confirmation UI actions and button presses.
+----------------------------------------
+NAME: AgentQuest_JournalResult_ReceiveEvent
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 54 41 56 41 57 48 83 EC 40 48 8B BC 24 80 00 00 00 40 32 F6 45 8B E1 49 8B E8 4C 8B FA 48 8B D9 48 83 FF 02 75 2D 48 8B 49 10 48 8B 01 FF 90 88 00 00 00
+DESC: Agent-side result-window event dispatcher that handles reward confirmation and close actions.
+----------------------------------------
+NAME: AddonQuest_JournalAccept_ReceiveEvent
+SIG:  48 89 5C 24 18 48 89 6C 24 20 56 48 83 EC 40 49 8B E9 48 8B F1 66 83 FA 0F 0F 84 1B 02 00 00 48
+DESC: Addon-level event handler for the quest accept window, processing clicks and gamepad input.
+----------------------------------------
+NAME: AddonQuest_JournalResult_ReceiveEvent
+SIG:  48 89 5C 24 18 48 89 74 24 20 55 57 41 57 48 8B EC 48 83 EC 50 4D 8B F9 48 8B F1 66 83 FA 19 0F
+DESC: Addon-level event handler for the quest result window, including accept/close progression actions.
+----------------------------------------
+NAME: AgentQuest_QuestRedoHud_OnGameEvent
+SIG:  83 FA 07 0F 85 AA 00 00 00 53 48 83 EC 20 48 8B D9 E8 0A CA 28 00 66 83 78 08 00 0F 84 8D 00 00
+DESC: Quest redo HUD game-event hook that responds to relevant quest replay events rather than only UI input.
+----------------------------------------
+NAME: AddonQuest_QuestRedoHud_ReceiveEvent
+SIG:  66 83 FA 19 75 1F 53 48 83 EC 20 41 8B D0 49 8B D9 E8 1A 33 36 FF 33 D2 48 8B CB E8 00 38 33 FF
+DESC: Addon-level event handler for the quest redo HUD overlay.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Deep Quest Managers and Event Handlers
+----------------------------------------
+NAME: QuestRecompleteManager_Initialize
+SIG:  48 83 EC 28 48 83 3D FC 36 14 01 00 0F 85 A3 00 00 00 48 89 6C 24 38 45 33 C0 33 D2 48 89 7C 24
+DESC: Initialization path that allocates and wires up seasonal quest replay state.
+----------------------------------------
+NAME: QuestEffectManager_Initialize
+SIG:  48 83 EC 28 48 83 3D 24 90 14 01 00 75 2F 45 33 C0 33 D2 B9 88 01 00 00 E8 C3 BA 7D FE 48 85 C0
+DESC: Initialization path for QuestEffectManager and its quest-linked effect containers.
+----------------------------------------
+NAME: QuestRedoManager_Initialize
+SIG:  48 83 EC 28 48 83 3D 14 CE B9 01 00 0F 85 34 01 00 00 48 89 5C 24 30 45 33 C0 33 D2 48 89 7C 24
+DESC: Initialization path for the main New Game Plus quest redo manager.
+----------------------------------------
+NAME: QuestTodoList_CallbackSheetWaiter_vf0
+SIG:  48 89 5C 24 08 57 48 83 EC 20 8B DA 48 8B F9 E8 BC 9A 43 01 F6 C3 01 74 0D BA 50 00 00 00 48 8B
+DESC: Callback-sheet waiter entrypoint that feeds quest todo data into the QuestTodoList object.
+----------------------------------------
+NAME: QuestTodoList_ListenItemCallback_vf0
+SIG:  40 53 48 83 EC 20 48 8D 05 BB 00 55 01 48 8B D9 48 89 01 F6 C2 01 74 0A BA 10 00 00 00 E8 56 1B
+DESC: Listener callback used when quest todo items change and the todo list must react.
+----------------------------------------
+NAME: QuestTodoList_vf0
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8D 05 87 39 55 01 48 8B F9 48 89 01 8B DA 48 8D 05 88 F9 54 01
+DESC: Primary virtual entrypoint on QuestTodoList itself, useful when tracing todo list object behavior.
+----------------------------------------
+NAME: QuestEventHandler_CancelInteraction
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 48 8B D9 40 32 FF 48 8B 0D 4F D7 A6
+DESC: Cancels an active quest interaction through the quest event handler.
+----------------------------------------
+NAME: QuestEventHandler_GetIconId
+SIG:  48 83 EC 38 8B 44 24 60 C6 44 24 28 00 89 44 24 20 E8 7A 05 00 00 48 83 C4 38 C3
+DESC: Resolves the icon id used by quest interactions and quest-driven objects.
+----------------------------------------
+NAME: QuestEventHandler_GetNameplateIconForObject
+SIG:  48 89 5C 24 20 55 41 56 41 57 48 83 EC 30 48 8B 2D 1B 49 C1 01 4C 8B F2 4C 8B F9 48 85 ED 74 5D
+DESC: Maps a quest object to the icon shown on its nameplate, tying object presentation to quest-gate state.
+----------------------------------------
+NAME: QuestEventHandler_GetTodoArgs
+SIG:  40 53 55 57 41 55 41 56 48 81 EC A0 00 00 00 48 8B 05 02 F1 A3 01 48 33 C4 48 89 44 24 78 48 8B
+DESC: Builds the argument payload used by quest todo entries and objective presentation.
+----------------------------------------
+NAME: QuestEventHandler_IsTodoChecked
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 30 41 0F B6 E8 48 8B DA 48 8B F1 E8 C2 4F ED FF 84 C0
+DESC: Checks whether a quest todo entry is already satisfied or ticked off.
+----------------------------------------
+NAME: QuestEventHandler_Initialize
+SIG:  48 89 5C 24 08 57 48 83 EC 40 48 8B D9 E8 DE 6A ED FF 0F B7 BB E0 02 00 00 E8 82 6C E1 FF 33 C9
+DESC: Main quest event handler initialization path that prepares quest object and event state.
+----------------------------------------
+NAME: QuestEventHandler_IsUnlocked
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 F6 81 14 05 00 00 04 48 8B F2 48 8B D9 74 69 0F B7
+DESC: Reports whether the quest event handler considers its associated quest interaction unlocked.
+----------------------------------------
+NAME: AgentQuest_QuestRedo_IsActivatable
+SIG:  48 83 EC 28 E8 B7 E8 28 00 84 C0 74 33 E8 0E 51 52 FF 84 C0 75 2A 48 89 5C 24 20 BB AF 0E 00 00
+DESC: Gate used by the quest redo agent to determine whether the replay UI can currently be activated.
+----------------------------------------
+NAME: AddonQuest_QuestRedo_HandleBackButtonInput
+SIG:  40 53 48 83 EC 30 48 83 B9 98 03 00 00 00 48 8B D9 0F 84 90 00 00 00 48 83 B9 A0 03 00 00 00 0F
+DESC: Back-button handling path inside the quest redo addon, useful for tracing replay UI navigation gates.
+----------------------------------------
+NAME: AddonQuest_QuestRedo_HandleDPadInput
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 70 45 0F B6 F8
+DESC: D-pad navigation handling path inside the quest redo addon.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Extended Journal and Redo Flow
+----------------------------------------
+NAME: AgentQuest_Journal_IsActivatable
+SIG:  40 53 48 83 EC 20 BA 04 00 00 00 48 8B D9 E8 FD B9 8B FF 48 85 C0 74 17 BA 04 00 00 00 48 8B C8
+DESC: Gate used before the quest journal agent can be activated or shown to the player.
+----------------------------------------
+NAME: AgentQuest_Journal_ReceiveEvent
+SIG:  4C 8B DC 55 53 41 54 41 56 41 57 49 8D 6B C8 48 81 EC 10 01 00 00 48 8B 05 7B 7C C2 01 48 33 C4
+DESC: Main event dispatcher for the quest journal agent, handling UI-driven journal actions.
+----------------------------------------
+NAME: AddonQuest_JournalDetail_ReceiveEvent
+SIG:  48 89 5C 24 10 48 89 74 24 18 4C 89 74 24 20 55 48 8B EC 48 83 EC 50 4D 8B F1 41 8B D8 48 8B F1
+DESC: Event handler for the quest detail window, processing quest-detail interactions.
+----------------------------------------
+NAME: AgentQuest_QuestRedo_ReceiveEvent
+SIG:  48 89 5C 24 10 57 48 83 EC 20 48 83 79 28 00 4D 8B D0 48 8B FA 48 8B D9 0F 84 C5 00 00 00 45 85
+DESC: Main event dispatcher for the quest redo agent.
+----------------------------------------
+NAME: AddonQuest_QuestRedo_ReceiveEvent
+SIG:  66 83 FA 19 0F 85 F0 03 00 00 56 41 57 48 83 EC 48 48 89 5C 24 60 4D 8B F9 41 0F B6 D0 48 8B F1
+DESC: Addon-level event handler for the quest redo window.
+----------------------------------------
+NAME: AgentQuest_QuestRedoHud_ReceiveEvent
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 4D 85 C0 74 69 49 8B C8 E8 C3 A1 A5 FF 83 E8 0B
+DESC: Event dispatcher for the quest redo HUD helper agent.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Exhaustive Named Surface and Deep Unknowns
+----------------------------------------
+NAME: AddonQuest_JournalDetail_HandleCustomInput
+SIG:  40 53 48 83 EC 30 80 7A 04 00 48 8B D9 75 5B 83 3A 02 75 56 E8 D7 99 4F FF 0F B7 93 E8 01 00 00
+DESC: Custom-input handler for the quest detail addon, useful for tracing non-default quest-detail controls.
+----------------------------------------
+NAME: QuestBattleDirector_vf2_Deep
+SIG:  40 57 48 83 EC 20 48 8B F9 8B 0D 91 66 BF 01 E8 6C 66 A6 FF 48 85 C0 0F 84 B3 00 00 00 48 89 5C
+DESC: Deep unnamed quest battle director method. Included because it is still part of the signable quest-battle control surface.
+----------------------------------------
+NAME: QuestBattleDirector_vf3_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 C2 62 EB FF 84 C0 74 1E 48 8B 8B 80 06 00 00 48 85 C9 74 12 48 8B
+DESC: Deep unnamed quest battle director method. Likely participates in the battle-state dispatch chain.
+----------------------------------------
+NAME: QuestBattleDirector_vf4_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 E2 62 EB FF 84 C0 75 1E 48 8B 8B 80 06 00 00 48 85 C9 74 0A 48 8B
+DESC: Deep unnamed quest battle director method adjacent to the main quest-battle update chain.
+----------------------------------------
+NAME: QuestBattleDirector_vf49_Deep
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 72 32 EC FF 84 C0 75 08 48 8B CB E8 26 EA FF FF B0 01 48 83 C4 20
+DESC: Deep unnamed quest battle director method with quest-battle state dependencies.
+----------------------------------------
+NAME: QuestBattleDirector_vf62_Deep
+SIG:  81 FA 01 00 00 10 0F 85 0A 01 00 00 48 81 EC 38 01 00 00 48 8B 05 9E 19 A3 01 48 33 C4 48 89 84
+DESC: Deep unnamed quest battle director method that handles a larger quest-battle state payload.
+----------------------------------------
+NAME: QuestBattleDirector_vf276_Deep
+SIG:  41 56 48 81 EC D0 00 00 00 48 8B 05 38 08 A3 01 48 33 C4 48 89 84 24 B0 00 00 00 4C 8B F1 84 D2
+DESC: Deep unnamed quest battle director method later in the vtable, included for exhaustive signature coverage.
+----------------------------------------
+NAME: QuestEventHandler_IsOccupied33
+SIG:  48 83 EC 38 8B 44 24 60 89 44 24 20 E8 7F 0F 01 00 83 F8 21 0F 94 C0 48 83 C4 38 C3
+DESC: Named quest event-handler occupancy/state check used by the quest interaction pipeline.
+----------------------------------------
+NAME: QuestEventHandler_vf88_Deep
+SIG:  4C 8B DC 55 57 41 56 41 57 49 8D AB A8 FE FF FF 48 81 EC 38 02 00 00 48 8B 05 1A 97 A4 01 48 33
+DESC: High-signal unnamed QuestEventHandler vtable method with many xrefs. Included as a deep quest-event signature.
+----------------------------------------
+NAME: QuestEventHandler_vf211_Deep
+SIG:  48 89 5C 24 10 57 48 83 EC 20 48 8B DA 48 8B F9 48 8B 15 C9 28 C1 01 48 85 D2 0F 84 B7 00 00 00
+DESC: Deep unnamed QuestEventHandler method in the later vtable region, likely part of advanced event dispatch.
+----------------------------------------
+NAME: QuestEventHandler_vf252_Deep
+SIG:  48 89 4C 24 08 53 55 57 41 55 41 56 48 83 EC 40 4C 8B AA 08 01 00 00 41 0F B7 E9 41 0F B7 D8 4C
+DESC: Deep unnamed QuestEventHandler method that accepts a richer quest-event payload.
+----------------------------------------
+NAME: QuestEventHandler_vf271_Deep
+SIG:  40 56 41 54 41 55 41 56 48 83 EC 38 4C 8B EA 4C 8B F1 E8 69 01 01 00 49 8B D5 49 8B CE 44 0F B6
+DESC: Deep unnamed QuestEventHandler method near the late-stage vtable dispatch group.
+----------------------------------------
+NAME: QuestEventHandler_vf272_Deep
+SIG:  41 55 41 56 41 57 48 83 EC 40 4C 8B FA 4C 8B F1 48 85 D2 0F 84 7C 02 00 00 4C 8B 2D F0 18 C1 01
+DESC: Deep unnamed QuestEventHandler method adjacent to vf271, included for exhaustive quest-event coverage.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Remaining Named UI Lifecycle and Early QuestEventHandler Vtable Surface
+----------------------------------------
+NAME: QuestTodoList_vf1
+SIG:  40 53 55 56 57 41 56 41 57 48 81 EC 58 01 00 00 48 8B 05 41 2F CB 01 48 33 C4 48 89 84 24 40 01
+DESC: Secondary virtual dispatch entry for QuestTodoList.
+----------------------------------------
+NAME: QuestEventHandler_vf2
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 18 84 C0 75 67 48 8B 03 48 8B CB FF 50 20 84 C0 75 5A
+DESC: Early quest-event virtual method in the core dispatch chain.
+----------------------------------------
+NAME: QuestEventHandler_vf5
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 E2 05 ED FF 84 C0 74 14 48 8B CB E8 A6 1B EE FF 84 C0 74 08 B0 01
+DESC: Early quest-event virtual method tied to quest-state gating checks.
+----------------------------------------
+NAME: QuestEventHandler_vf8
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 02 07 ED FF F6 43 6C 02 74 22 BA 01 80 00 00 66 39 93 12 05 00 00
+DESC: Early quest-event virtual method that inspects quest-event state flags.
+----------------------------------------
+NAME: QuestEventHandler_vf9
+SIG:  48 89 5C 24 18 55 56 57 48 83 EC 40 48 8B 2D DD 7D C1 01 41 0F B7 F8 48 C7 44 24 78 00 00 00 00
+DESC: Early quest-event virtual method with a wider quest-state payload.
+----------------------------------------
+NAME: QuestEventHandler_vf10
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 02 06 ED FF F6 43 6C 02 74 22 BA 01 80 00 00 66 39 93 12 05 00 00
+DESC: Early quest-event virtual method adjacent to vf8 in the unlock and occupancy path.
+----------------------------------------
+NAME: QuestEventHandler_vf15
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B 3D 5A 7C C1 01 48 8B F2 48 8B D9 48 85 FF 74
+DESC: Early quest-event virtual method that dispatches through quest-event globals.
+----------------------------------------
+NAME: QuestEventHandler_vf16
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 92 06 ED FF F6 43 6C 02 74 22 BA 01 80 00 00 66 39 93 12 05 00 00
+DESC: Early quest-event virtual method in the same gating cluster as vf8 and vf10.
+----------------------------------------
+NAME: QuestEventHandler_vf17
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 20 57 48 83 EC 40 48 8B 3D 65 7B C1 01 48 8B F2 48 8B
+DESC: Early quest-event virtual method with broader quest-event dispatch state.
+----------------------------------------
+NAME: QuestEventHandler_vf18
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 A2 05 ED FF F6 43 6C 02 74 22 BA 01 80 00 00 66 39 93 12 05 00 00
+DESC: Early quest-event virtual method that checks the same quest-event state mask family.
+----------------------------------------
+NAME: QuestEventHandler_vf19
+SIG:  48 89 5C 24 10 48 89 74 24 18 41 56 48 83 EC 40 4C 8B 35 F9 79 C1 01 0F B7 DA 48 8B F1 4D 85 F6
+DESC: Early quest-event virtual method with a richer dispatch context and high xref count.
+----------------------------------------
+NAME: QuestEventHandler_vf20
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 02 05 ED FF 48 83 3D 2A 79 C1 01 00 74 28 F6 43 6C 02 74 22 BA 01
+DESC: Early quest-event virtual method that branches through a quest-event global before checking state flags.
+----------------------------------------
+NAME: QuestEventHandler_vf21
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 56 41 57 48 83 EC 40 F6 81 B0 05 00 00 04 45
+DESC: Early quest-event virtual method in the broader event dispatch and gating surface.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Mid QuestEventHandler Dispatch Surface
+----------------------------------------
+NAME: QuestEventHandler_vf22
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 C2 03 ED FF F6 43 6C 02 74 22 BA 01 80 00 00 66 39 93 12 05 00 00
+DESC: Mid-stage quest-event virtual method in the same state-mask family as the other early unlock and occupancy checks.
+----------------------------------------
+NAME: QuestEventHandler_vf29
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B DA 48 8B F9 E8 F6 01 ED FF 48 8B 35 4F 73 C1
+DESC: Mid-stage quest-event virtual method with a shared quest-event dependency chain.
+----------------------------------------
+NAME: QuestEventHandler_vf30
+SIG:  48 89 5C 24 08 4C 89 4C 24 20 4C 89 44 24 18 48 89 54 24 10 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 70 4C 8B 35 06 77 C1 01 4C 8B E9 0F 29 74 24 60 4D 85 F6 0F 84 09 03 00 00 F6 81 B0 05 00 00 04
+DESC: Mid-stage quest-event virtual method with a wide argument payload and heavier dispatch logic.
+----------------------------------------
+NAME: QuestEventHandler_vf31
+SIG:  40 53 48 83 EC 30 48 8B D9 E8 D2 02 ED FF F6 43 6C 02 74 22 BA 01 80 00 00 66 39 93 12 05 00 00
+DESC: Mid-stage quest-event virtual method that reuses the common quest-event state-bit gate.
+----------------------------------------
+NAME: QuestEventHandler_vf35
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 49 8B F1 41 0F B7 E8 48 8B DA 48 8B
+DESC: Mid-stage quest-event virtual method with richer sequence and state inputs.
+----------------------------------------
+NAME: QuestEventHandler_vf41
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 41 0F B6 D8 49 8B E9 48 8B FA 48 8B
+DESC: Mid-stage quest-event virtual method that operates on byte-oriented quest-event state.
+----------------------------------------
+NAME: QuestEventHandler_vf42
+SIG:  48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 70 FF FF FF 48 81 EC 90 01 00 00 48 8B 05 32 AF A4 01 48 33 C4 48 89 85 80 00 00 00 33 C0 0F B6 F2 89 44 24 78 4C 8B F1 89 44 24 44 8B F8
+DESC: Mid-stage quest-event virtual method with a large local frame and complex quest-event dispatch.
+----------------------------------------
+NAME: QuestEventHandler_vf47
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 48 8B D9 49 8B F9 48 8D 0D 47 59 C4
+DESC: Mid-stage quest-event virtual method tied to a shared global dispatch table.
+----------------------------------------
+NAME: QuestEventHandler_vf49
+SIG:  40 55 41 57 48 8D 6C 24 B1 48 81 EC A8 00 00 00 48 8B 05 81 A5 A4 01 48 33 C4 48 89 45 07 4C 8B
+DESC: High-signal quest-event virtual method in the mid vtable range.
+----------------------------------------
+NAME: QuestEventHandler_vf53
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 90 80 07 00 00 48 8B 03 48 8B CB FF 90 90 06 00 00 48 8B 03 48 8B CB FF 90 00 07 00 00 48 8B 03 48 8B CB FF 90 C0 06 00 00 48 8B 03 48 8B CB FF 90 C8 06 00 00 B0 01 48 83 C4 20 5B C3 CC CC CC CC CC CC 40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 90 80 07 00 00 48 8B 03 48 8B CB FF 90 90 06 00 00 48 8B 03 48 8B CB FF 90 00 07 00 00 48 8B 03 48 8B CB FF 90 C0 06 00 00 48 8B 03 48 8B CB FF 90 C8 06 00 00 B0 01 48 83 C4 20 5B C3 CC CC CC CC CC CC 40 55 57 41 57 48 83 EC 40 48 8B 3D 40 4D C1 01
+DESC: Mid-stage quest-event virtual method that forwards through later vtable entries.
+----------------------------------------
+NAME: QuestEventHandler_vf54
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 90 80 07 00 00 48 8B 03 48 8B CB FF 90 90 06 00 00 48 8B 03 48 8B CB FF 90 00 07 00 00 48 8B 03 48 8B CB FF 90 C0 06 00 00 48 8B 03 48 8B CB FF 90 C8 06 00 00 B0 01 48 83 C4 20 5B C3 CC CC CC CC CC CC 40 55 57 41 57 48 83 EC 40 48 8B 3D 40 4D C1 01 45 8B F9 48 8B E9 48 85 FF
+DESC: Sister method to vf53 in the forward-dispatch quest-event chain.
+----------------------------------------
+NAME: QuestEventHandler_vf57
+SIG:  40 53 48 83 EC 20 48 8B 59 70 48 85 DB 74 3D 41 83 F9 01 74 37 0F B6 83 90 00 00 00 3C 0E 77 2C
+DESC: Mid-stage quest-event virtual method that branches on embedded quest-event mode values.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Late QuestEventHandler Dispatch Surface
+----------------------------------------
+NAME: QuestEventHandler_vf58
+SIG:  48 89 74 24 20 41 54 41 56 41 57 48 83 EC 20 48 8B F1 48 89 5C 24 40 48 8B 0D B2 CF A6 01 45 8B
+DESC: Late-stage quest-event virtual method that reaches into shared quest-event globals and mode values.
+----------------------------------------
+NAME: QuestEventHandler_vf59
+SIG:  40 55 53 56 48 8B EC 48 81 EC 80 00 00 00 48 8B 05 23 9D A4 01 48 33 C4 48 89 45 E0 48 83 B9 00
+DESC: Late-stage quest-event virtual method with a larger local frame and higher-signal state handling.
+----------------------------------------
+NAME: QuestEventHandler_vf62
+SIG:  40 55 57 41 57 48 83 EC 40 48 8B 3D 40 4D C1 01 45 8B F9 48 8B E9 48 85 FF 0F 84 13 01 00 00 48
+DESC: Late-stage quest-event virtual method with a heavier dispatch path and global quest-event state access.
+----------------------------------------
+NAME: QuestEventHandler_vf63
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 E8 6B 1B EE FF 84 C0 74 48 48 8B 15 A0 7F C1 01
+DESC: Late-stage quest-event virtual method adjacent to the early unlock/cancel path.
+----------------------------------------
+NAME: QuestEventHandler_vf69
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 E8 5B F1 EC FF 48 8B D3 48 8B CF 48 8B 5C 24 30
+DESC: Late-stage quest-event virtual method that forwards through a separate quest-event processing helper.
+----------------------------------------
+NAME: QuestEventHandler_vf71
+SIG:  48 89 5C 24 18 48 89 6C 24 20 41 56 48 83 EC 60 45 8B F0 48 8B DA 48 8B E9 E8 42 E6 ED FF 84 C0
+DESC: Late-stage quest-event virtual method with a richer argument payload and quest-state result handling.
+----------------------------------------
+NAME: QuestEventHandler_vf72
+SIG:  48 89 5C 24 10 48 89 7C 24 18 55 48 8B EC 48 83 EC 70 48 8B 05 6F 82 A4 01 48 33 C4 48 89 45 F0
+DESC: Late-stage quest-event virtual method with a wide stack frame and more complex dispatch behavior.
+----------------------------------------
+NAME: QuestEventHandler_vf76
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 20 57 41 54 41 55 41 56 41 57 48 83 EC 40 48 8B BC 24
+DESC: Late-stage quest-event virtual method with a wide multi-register payload.
+----------------------------------------
+NAME: QuestEventHandler_vf77
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 48 8B 15 69 25 C1 01 48 85 D2 74 27 80 BB 90 00
+DESC: Late-stage quest-event virtual method that checks an embedded mode byte against shared quest-event globals.
+----------------------------------------
+NAME: QuestEventHandler_vf78
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 48 8B 15 09 25 C1 01 48 85 D2 74 27 80 BB 90 00
+DESC: Late-stage quest-event virtual method adjacent to vf77 in the same mode-check cluster.
+----------------------------------------
+NAME: QuestEventHandler_vf79
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 48 8B 15 A9 24 C1 01 48 85 D2 74 27 80 BB 90 00
+DESC: Late-stage quest-event virtual method that continues the same state-byte family as vf77 and vf78.
+----------------------------------------
+NAME: QuestEventHandler_vf82
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 48 83 3D 89 4B C1 01 00 48 8B F9 0F 84 C1 00 00 00
+DESC: Late-stage quest-event virtual method that first checks a shared quest-event global before dispatching.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Deep High-Numbered QuestEventHandler Vtable Surface
+----------------------------------------
+NAME: QuestEventHandler_vf205
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B FA 48 8B D9 E8 7B 8E E1 FF 0F B7 8B E0 02 00 00 45 33 C0 48
+DESC: High-numbered quest-event virtual method that reads replay-style quest-event state fields.
+----------------------------------------
+NAME: QuestEventHandler_vf212
+SIG:  48 89 5C 24 08 48 89 6C 24 10 56 57 41 54 41 56 41 57 48 83 EC 40 4C 8B F9 48 8B FA 48 8B CA E8
+DESC: High-numbered quest-event virtual method with a broad multi-register payload.
+----------------------------------------
+NAME: QuestEventHandler_vf214
+SIG:  48 8B C4 55 56 57 41 54 48 83 EC 48 48 8B 35 1D 37 C1 01 45 33 E4 48 8B FA 48 8B E9 48 85 F6 0F
+DESC: High-numbered quest-event virtual method that depends on a shared quest-event global and wider stack frame.
+----------------------------------------
+NAME: QuestEventHandler_vf215
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 18 84 C0 74 11 F6 83 B0 05 00 00 04 75 08 B0 01 48 83
+DESC: High-numbered quest-event virtual method that branches through a quest-event flag byte after a nested dispatch.
+----------------------------------------
+NAME: QuestEventHandler_vf219
+SIG:  40 53 55 41 56 48 83 EC 30 49 8B D8 4C 8B F2 48 8B E9 E8 B9 D5 ED FF 84 C0 0F 84 3F 01 00 00 48
+DESC: High-numbered quest-event virtual method with a larger control-flow surface and strong xref count.
+----------------------------------------
+NAME: QuestEventHandler_vf220
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 56 48 83 EC 40 45 8B E0 48 8B DA 48 8B E9 E8 42 D4 ED FF 84 C0
+DESC: High-numbered quest-event virtual method adjacent to vf219 with a similar multi-register dispatch path.
+----------------------------------------
+NAME: QuestEventHandler_vf222
+SIG:  41 57 48 81 EC A0 02 00 00 48 8B 05 98 73 A4 01 48 33 C4 48 89 84 24 70 02 00 00 4C 8B F9 E8 8D
+DESC: High-numbered quest-event virtual method with a very large local frame and deep quest-event state handling.
+----------------------------------------
+NAME: QuestEventHandler_vf223
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 99 E0 02 00 00 48 8B F9 E8 67 7D E1 FF 45 33 D2 45 8B C2 41
+DESC: High-numbered quest-event virtual method that reads quest-event replay-style fields before dispatch.
+----------------------------------------
+NAME: QuestEventHandler_vf224
+SIG:  40 56 41 56 48 81 EC 08 01 00 00 48 8B 05 96 70 A4 01 48 33 C4 48 89 84 24 E0 00 00 00 48 8B 35
+DESC: High-numbered quest-event virtual method with a large frame and quest-event global dependency.
+----------------------------------------
+NAME: QuestEventHandler_vf225
+SIG:  40 53 41 54 41 56 41 57 48 83 EC 38 4C 8B 3D DD 45 C1 01 4C 8B F2 4C 8B E1 4D 85 FF 0F 84 E0 00
+DESC: High-numbered quest-event virtual method that reaches through a later shared quest-event table.
+----------------------------------------
+NAME: QuestEventHandler_vf227
+SIG:  48 89 5C 24 18 55 41 56 41 57 48 83 EC 30 48 8B 2D 3B 3E C1 01 4C 8B F2 4C 8B F9 48 85 ED 0F 84
+DESC: High-numbered quest-event virtual method in the late dispatch cluster with shared global state access.
+----------------------------------------
+NAME: QuestEventHandler_vf228
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 50 48 8B 3D 4F 3D C1
+DESC: High-numbered quest-event virtual method adjacent to vf227 with a broader register set and stack frame.
+----------------------------------------
+CATEGORY: Quest Interaction Gates - Ultra Deep QuestEventHandler Tail
+----------------------------------------
+NAME: QuestEventHandler_vf229
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B 01 48 8B F1 FF 50 18 84 C0 0F 84 4A 01 00 00 F6 86 B0 05 00 00 04 0F 85 3D 01 00 00 0F B7 9E E0 02 00 00 E8 17 97 E1 FF 33 D2 8B CA 48 83 C0 10 66 39 58 08
+DESC: Deep high-numbered quest-event virtual method that reads replay-state fields and then walks the active quest-event slots.
+----------------------------------------
+NAME: QuestEventHandler_vf235
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 0F B6 51 64 48 8B F9 48 8B 59 70 48 8B 35 AF 2C C1 01 83 EA 01 74 2F 83 FA 07 75 13 48 85 DB 74 0E 48 8B 03 48 8B CB FF 50 10 83 F8 02 74 78 48 8B CF 48 8B 5C 24 40
+DESC: Deep quest-event virtual method that branches on embedded event-mode bytes and then dispatches through a quest-event object.
+----------------------------------------
+NAME: QuestEventHandler_vf237
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 57 41 56 48 83 EC 30 0F B7 99 E0 02 00 00 41 0F B6 F1 49 8B E8 4C 8B F2 48 8B F9 E8 75 7B E1 FF 45 33 DB 45 33 D2 48 83 C0 10 66 39 58 08 74 12 41 FF C3 49 FF C2 48 83 C0 18
+DESC: Deep quest-event virtual method with a richer payload and a loop across active quest-event entries.
+----------------------------------------
+NAME: QuestEventHandler_vf238
+SIG:  48 89 6C 24 20 56 57 41 54 48 83 EC 50 48 8B F2 45 8B E1 B2 12 49 8B F8 48 8B E9 E8 E0 DF EC FF 84 C0 75 11 48 8B AC 24 88 00 00 00 48 83 C4 50 41 5C 5F 5E C3 48 8B 07 48 8B CF 48 89 5C 24 70 4C 89 74 24 78
+DESC: Deep quest-event virtual method that swaps between a fast-fail path and a larger object-dispatch path.
+----------------------------------------
+NAME: QuestEventHandler_vf240
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 18 84 C0 0F 84 9D 00 00 00 48 8B 15 82 29 C1 01 48 85 D2 0F 84 8D 00 00 00 48 8B CB E8 C1 D6 00 00 48 8B CB 84 C0 74 16 E8 25 C5 ED FF 84 C0 75 75 48 8B CB 48 83 C4 20
+DESC: Deep quest-event virtual method that combines nested virtual dispatch with global quest-event state checks.
+----------------------------------------
+NAME: QuestEventHandler_vf241
+SIG:  48 89 5C 24 18 48 89 6C 24 20 57 41 54 41 57 48 83 EC 30 48 8B FA 48 8B E9 E8 72 C2 ED FF 84 C0 0F 84 02 01 00 00 48 8B 1D A3 26 C1 01 48 85 DB 0F 84 F2 00 00 00 48 8B CB E8 62 52 ED FF 4C 8B E0 48 85 C0 0F 84
+DESC: Deep quest-event virtual method with multiple global lookups before continuing into a larger quest-state chain.
+----------------------------------------
+NAME: QuestEventHandler_vf254
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B7 99 E0 02 00 00 41 8B F8 48 8B F1 E8 DF E8 E0 FF 45 33 C9 41 8B D1 48 83 C0 10 0F 1F 44 00 00 66 39 58 08 74 35 41 FF C1 48 FF C2 48 83 C0 18 48 83 FA 1E 7C EA
+DESC: Deep quest-event virtual method that iterates the active quest-event list and then inspects replay-style object state.
+----------------------------------------
+NAME: QuestEventHandler_vf276
+SIG:  4C 8B DC 41 56 48 81 EC D0 00 00 00 48 8B 05 05 54 A4 01 48 33 C4 48 89 84 24 B0 00 00 00 80 A1 B0 05 00 00 FB 4C 8B F1 84 D2 0F 84 86 01 00 00 48 8B 81 50 02 00 00 49 89 73 F0 80 38 00 0F 85 4A 01 00 00 49 89
+DESC: Very deep quest-event virtual method with a large frame and a full quest-event state payload.
+----------------------------------------
+NAME: QuestEventHandler_vf277
+SIG:  48 83 EC 38 44 0F B6 D2 48 8B 15 E1 47 C1 01 48 85 D2 75 07 33 C0 48 83 C4 38 C3 8B 44 24 60 89 44 24 28 44 89 4C 24 20 45 8B C8 45 0F B6 C2 E8 3C 14 01 00 48 83 C4 38 C3 CC CC CC CC CC CC CC 48 89 5C 24 08
+DESC: Very deep quest-event virtual method that pivots through a compact quest-state helper before falling through to the next handler.
+----------------------------------------
+NAME: QuestEventHandler_vf280
+SIG:  40 53 57 41 56 41 57 48 83 EC 68 48 8B 05 D6 5B A4 01 48 33 C4 48 89 44 24 58 80 BC 24 C0 00 00 00 00 45 8B F9 4D 8B F0 48 8B DA 48 8B F9 0F 85 DD 00 00 00 48 89 74 24 60 0F B6 B4 24 B8 00 00 00 44 0F B6 C6
+DESC: Very deep quest-event virtual method with a wide stack frame and byte-oriented quest-state branching.
+----------------------------------------
+NAME: QuestEventHandler_vf283
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B7 99 E0 02 00 00 41 8B F8 48 8B F1 E8 DF E7 E0 FF 45 33 C9 41 8B D1 48 83 C0 10 0F 1F 44 00 00 66 39 58 08 74 35 41 FF C1 48 FF C2 48 83 C0 18 48 83 FA 1E 7C EA
+DESC: Very deep quest-event virtual method adjacent to vf254 in the later replay-state dispatch region.
+----------------------------------------
+
 
 
 
