@@ -1,0 +1,45 @@
+CATEGORY: General and Core Signatures
+CATEGORY: Limit Break
+CATEGORY: Status Effects
+CATEGORY: PvP Status and Buff UI
+CATEGORY: PvP State Checks
+CATEGORY: PvP Profile and Rank Data
+CATEGORY: PvP Map
+CATEGORY: PvP Screen Hotbar
+CATEGORY: Frontline Match UI
+CATEGORY: PvP Character Window
+CATEGORY: Duel Request
+CATEGORY: Spectator UI
+CATEGORY: PvP Team UI
+CATEGORY: Crystalline Conflict / MKS UI
+CATEGORY: PvP Agents and Modules
+CATEGORY: PvP Core Systems
+CATEGORY: PvP Profile UI
+CATEGORY: PvP Utility UI
+CATEGORY: PvP Agent UI
+CATEGORY: PvP Records
+CATEGORY: Hidden PvP Internals
+CATEGORY: PvP Resource Loaders
+CATEGORY: PvP Team Controllers
+CATEGORY: PvP Directors and Map Internals
+CATEGORY: PvP Director Vtable Methods
+CATEGORY: Crystalline Conflict State
+CATEGORY: Crystalline Conflict Director Methods
+CATEGORY: Crystalline Conflict UI
+CATEGORY: Crystalline Conflict Agents and Records
+CATEGORY: PvP Map Objects and Pickups
+CATEGORY: Crystalline Conflict Labels
+CATEGORY: Quest Gates - Core State
+CATEGORY: Quest Gates - Event Framework
+CATEGORY: Quest Gates - Availability
+CATEGORY: Quest Gates - Packet Feeds and Flags
+CATEGORY: Quest Gates - Journal and Accept UI
+CATEGORY: Quest Gates - Deep UI and Directors
+CATEGORY: Quest Gates - Managers and Event Handlers
+CATEGORY: Quest Gates - Journal and Redo Flow
+CATEGORY: Quest Gates - Named Surface and Deep Unknowns
+CATEGORY: Quest Gates - UI Lifecycle and Early Vtable
+CATEGORY: Quest Gates - Mid Vtable Dispatch
+CATEGORY: Quest Gates - Late Vtable Dispatch
+CATEGORY: Quest Gates - Deep High-Numbered Vtable
+CATEGORY: Quest Gates - Ultra Deep Tail  put it in gere
