@@ -1,1 +1,1 @@
-Go to Use CATEGORY first
+Use CATEGORY first
