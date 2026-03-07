@@ -1654,3 +1654,584 @@ NAME: AddonWKSReward_OnRefresh
 SIG:  40 55 56 48 83 EC 28 49 8B E8 48 8B F1 85 D2 0F 8E 0E 03 00 00 48 89 5C 24 40 49 8D 48 10 48 89 7C 24 48 4C 89 74 24 58 E8 83 81 1A FF 48 8B D0 48 8D 8E 50 03 00 00 E8 D4 8D C1 FE 48 8B 9E 48
 DESC: What it is: The refresh path for the Cosmic reward window. When it runs: When the game redraws reward contents, counts, or state after a change. Why you would care: Use this if you want the UI-side hook for visible reward updates.
 ----------------------------------------
+
+CATEGORY: Gold Saucer - Core State and Director
+----------------------------------------
+NAME: InventoryManager_GetGoldSaucerCoin
+SIG:  40 53 48 83 EC 20 BA D0 07 00 00 E8 10 97 FE FF 48 85 C0 74 36 48 8B 08 BA 09 00 00 00 4C 8B 41 28 48 8B C8 41 FF D0 48 8B D8 48 85 C0 74 1C 48 8B 10 48 8B C8 FF 52 18 84 C0 75 0F 48 8B 13 48
+DESC: What it is: The read-side function that returns the player's current MGP amount. When it runs: When the game needs the current Gold Saucer coin value for display or logic. Why you would care: Use this as the cleanest hook for live MGP reads instead of scraping the UI.
+----------------------------------------
+NAME: EventFramework_GetGoldSaucerDirector
+SIG:  66 83 3D 74 FB D0 01 00 74 38 48 8B 81 00 01 00 00 4C 8B 81 08 01 00 00 49 3B C0 74 25 41 B9 0A 80 00 00 48 8B 10 48 85 D2 74 0E 48 8B 8A D8 02 00 00 66 44 39 49 02 74 0C 48 83 C0 08 49 3B C0
+DESC: What it is: The event-framework accessor for the live Gold Saucer director. When it runs: When the game needs the active Gold Saucer event controller for GATEs or other Saucer content. Why you would care: Use this as the main entry point into live Gold Saucer director state.
+----------------------------------------
+NAME: GoldSaucerDirector_IsPlayCutscene
+SIG:  48 89 5C 24 08 57 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 69 D5 7D FF 48 8B 4C 24 28 BA 02 00 00 00 B3 01 E8 D8 9D A4 00 48 8B 0D 11 A6 A0 01 BA DE 00 00 00 48 83 C1 10 48 8B F8 E8 F0 93 2A FF
+DESC: What it is: The Gold Saucer cutscene gate used by the director-side flow. When it runs: When the game decides whether a Gold Saucer event should move into or stay behind a cutscene-like presentation step. Why you would care: Use this if you need to track director flow around cutscene-locked Gold Saucer content.
+----------------------------------------
+NAME: GoldSaucerManager_Update
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 F6 41 48 01 48 8B D9 74 0B 48 83 C1 30 E8 1F F8 FF FF EB 4E 48 8B 0D 96 62 9F 01 E8 C1 E5 2C FF 48 85 C0 74 3D 48 8B 10 48 8B C8 FF 92 28 01 00 00
+DESC: What it is: The main live update path for the Gold Saucer manager. When it runs: Repeatedly while Gold Saucer state is active and the client is refreshing gate or manager-side data. Why you would care: Use this if you want one broad hook that sees live Gold Saucer manager changes as they happen.
+----------------------------------------
+NAME: GoldSaucerManager_IsJoinedGATE
+SIG:  40 53 48 83 EC 20 48 8B C2 48 8B D9 48 8B C8 45 33 C0 33 D2 E8 97 A8 A6 FF 84 C0 74 1A 48 8B 43 28 48 85 C0 74 11 F6 80 A4 07 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The Gold Saucer manager check for whether the player has joined the current GATE. When it runs: When the game needs to decide if the player is already registered in the active Gold Saucer event. Why you would care: Use this if you want a direct gate-join state check instead of inferring it from UI.
+----------------------------------------
+NAME: GoldSaucerManager_IsFinishedGATE
+SIG:  40 53 48 83 EC 20 48 8B C2 48 8B D9 48 8B C8 45 33 C0 33 D2 E8 47 A8 A6 FF 84 C0 74 1D 48 8B 43 28 48 85 C0 74 14 8B 80 A4 07 00 00 D1 E8 A8 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20
+DESC: What it is: The Gold Saucer manager check for whether the current GATE has been finished. When it runs: When the client decides if the active Gold Saucer event has already ended for the player. Why you would care: Use this if you want a direct finished-state hook for GATE tracking.
+----------------------------------------
+NAME: GoldSaucerManager_IsAcceptingGate
+SIG:  48 8B 49 28 48 85 C9 74 0A 48 8B 01 48 FF A0 80 09 00 00 32 C0 C3
+DESC: What it is: The Gold Saucer manager check for whether the current GATE is still accepting entries. When it runs: When the game needs to decide if the player can still join the active GATE. Why you would care: Use this if you want the cleanest direct hook for join-window availability.
+----------------------------------------
+NAME: GoldSaucerManager_IsRunningGate
+SIG:  48 83 EC 28 48 8B 49 28 48 85 C9 74 11 48 8B 01 FF 50 18 84 C0 74 07 B0 01 48 83 C4 28 C3 32 C0 48 83 C4 28 C3
+DESC: What it is: The Gold Saucer manager check for whether a GATE is currently running. When it runs: When the client decides if there is an active live Gold Saucer event in progress. Why you would care: Use this as the broad running-state hook for GATE activity.
+----------------------------------------
+NAME: GoldSaucerManager_GetRunningGateType
+SIG:  48 8B 41 28 48 85 C0 74 08 0F B6 80 9E 07 00 00 C3 C3 CC CC CC CC
+DESC: What it is: The Gold Saucer manager getter for the active GATE type. When it runs: When the client needs to know which specific GATE is currently running. Why you would care: Use this if you want to identify the active GATE directly instead of only knowing that some GATE is running.
+----------------------------------------
+NAME: GoldSaucerManager_GetRunningGatePositionType
+SIG:  48 8B 41 28 48 85 C0 74 08 0F B6 80 9F 07 00 00 C3 C3 CC CC CC CC
+DESC: What it is: The Gold Saucer manager getter for the active GATE position type. When it runs: When the client needs to know which location or position bucket the current GATE is using. Why you would care: Use this if you want to tell not just which GATE is active, but where the game thinks that GATE belongs.
+----------------------------------------
+
+CATEGORY: Gold Saucer - Module State and Collectibles
+----------------------------------------
+NAME: GoldSaucerModule_SetDeckName
+SIG:  48 89 5C 24 08 57 48 81 EC 90 00 00 00 48 63 DA 49 8B C0 48 8B F9 83 FB 09 77 30 4C 8B 05 AE EA 88 01 48 8D 4C 24 20 48 8B D0 E8 B1 C6 8C FF 48 6B D3 3A 48 8D 4F 48 4C 8B C0 48 03 CA BA 30 00
+DESC: What it is: The Gold Saucer module function that writes a Triple Triad deck name. When it runs: When the player saves or renames one of their stored deck slots. Why you would care: Use this if you want a direct hook for deck-name changes instead of watching the UI after the save.
+----------------------------------------
+NAME: GoldSaucerModule_SetDeckCard
+SIG:  83 FA 09 77 1D 41 83 F8 04 77 17 48 63 C2 48 6B D0 1D 49 63 C0 48 03 D0 66 44 89 4C 51 78 C6 41 44 01 C3
+DESC: What it is: The Gold Saucer module function that writes a card into a saved Triple Triad deck slot. When it runs: When the player edits one of the card positions in a deck. Why you would care: Use this if you want a clean hook for deck composition changes.
+----------------------------------------
+NAME: GoldSaucerModule_GetDeck
+SIG:  83 FA 09 77 0F 48 63 C2 48 6B D0 3A 48 8D 41 48 48 03 C2 C3 33 C0 C3
+DESC: What it is: The Gold Saucer module getter for a saved Triple Triad deck. When it runs: When the client reads one of the stored deck entries for display or use. Why you would care: Use this if you want the exact stored deck data without scraping deck UI elements.
+----------------------------------------
+NAME: GoldSaucerModule_SetHotbarMinion
+SIG:  83 FA 17 77 10 48 63 C2 66 44 89 84 41 8C 02 00 00 C6 41 44 01 C3
+DESC: What it is: The Gold Saucer module function that writes a Lord of Verminion hotbar minion slot. When it runs: When the player saves or changes one of the minions in their Verminion hotbar setup. Why you would care: Use this if you want a direct hook for Verminion hotbar edits.
+----------------------------------------
+NAME: GoldSaucerModule_AddUnseenCard
+SIG:  48 83 EC 28 33 C0 4C 8D 81 BC 02 00 00 0F 1F 00 66 41 39 10 0F 84 AE 00 00 00 FF C0 49 83 C0 02 83 F8 0A 72 EB 66 66 66 0F 1F 84 00 00 00 00 00 0F B7 81 CC 02 00 00 66 89 81 CE 02 00 00
+DESC: What it is: The Gold Saucer module function that marks a card as newly seen. When it runs: When the player acquires or reveals a card that should be flagged as unseen in the card UI. Why you would care: Use this if you want a direct hook for new-card discovery state.
+----------------------------------------
+NAME: GoldSaucerModule_RemoveUnseenCard
+SIG:  40 57 48 83 EC 20 45 33 C9 48 8D B9 BC 02 00 00 41 8B C1 4C 8B C1 66 39 17 74 16 FF C0 48 83 C7 02 83 F8 0A 72 F0 B8 FF FF FF FF 48 83 C4 20 5F C3 83 F8 FF 75 06 48 83 C4 20 5F C3 48 63 D0 48
+DESC: What it is: The Gold Saucer module function that clears the unseen flag for a card. When it runs: When the game decides a newly seen card has been acknowledged and should no longer be marked as unseen. Why you would care: Use this if you want to track when card-discovery notifications are consumed.
+----------------------------------------
+NAME: GoldSaucerModule_IsUnseenCard
+SIG:  33 C0 48 81 C1 BC 02 00 00 0F 1F 80 00 00 00 00 66 39 11 74 10 FF C0 48 83 C1 02 83 F8 0A 72 F0 B8 FF FF FF FF 83 F8 FF 0F 95 C0 C3
+DESC: What it is: The Gold Saucer module check for whether a card is still marked as unseen. When it runs: When the client needs to decide whether a card should still show as newly discovered. Why you would care: Use this if you want the exact unseen-card state without rebuilding the logic yourself.
+----------------------------------------
+
+CATEGORY: Gold Saucer - Reward Flow
+----------------------------------------
+NAME: UIModule_ShowGoldSaucerReward
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B 01 41 8B D9 49 8B F8 48 8B F2 FF 50 40 44 8B CB 4C 8B C7 48 8B C8 48 8B D6 48 8B 5C 24 30 48 8B 74 24 38 48 83 C4 20 5F E9 B2 E0 98 FF
+DESC: What it is: The UI module entry point that opens the Gold Saucer reward window. When it runs: When the game wants to show the reward popup after a Gold Saucer result or payout event. Why you would care: Use this as the cleanest high-level hook for reward-window appearance.
+----------------------------------------
+NAME: UIModule_HideGoldSaucerReward
+SIG:  48 83 EC 28 48 8B 01 FF 50 40 48 8B C8 48 83 C4 28 E9 EA E0 98 FF
+DESC: What it is: The UI module entry point that closes the Gold Saucer reward window. When it runs: When the game dismisses the reward popup or moves away from that reward state. Why you would care: Use this if you want a clean hook for reward-window closure.
+----------------------------------------
+NAME: AgentGoldSaucerReward_ReceiveEvent
+SIG:  48 89 74 24 18 48 89 7C 24 20 55 48 8B EC 48 83 EC 50 48 8B F2 48 8B F9 45 85 C9 0F 8E EA 01 00 00 41 8B 00 83 E0 0F 3C 03 0F 85 DC 01 00 00 49 8B C8 4C 89 74 24 68 E8 D4 A9 72 FF 45 33 F6
+DESC: What it is: The main input handler for the Gold Saucer reward agent. When it runs: When the player clicks or confirms something while the reward flow is active. Why you would care: Use this if you want a direct hook for reward-claim interaction instead of polling the UI afterward.
+----------------------------------------
+NAME: AgentGoldSaucerReward_Hide
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 82 D7 57 FF 48 8D 4B 28 E8 C9 B8 03 00 C7 43 50 00 00 00 00 48 83 C4 20 5B C3
+DESC: What it is: The agent-side hide path for the Gold Saucer reward flow. When it runs: When the reward agent clears its state and shuts down after the reward popup is done. Why you would care: Use this if you want the lower-level end of the reward flow, not just the UI module close request.
+----------------------------------------
+NAME: AddonGoldSaucerReward_OnSetup
+SIG:  48 89 5C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 50 F3 0F 10 0D 63 D6 A7 00 49 8B F0 0F 29 74 24 40 41 B9 1E 00 00 00 F3 0F 10 35 55 21 A2 00 45 33 C0 F3 0F 11 74 24 20 48 8B F9
+DESC: What it is: The setup path for the Gold Saucer reward addon window. When it runs: Right as the reward popup is being built and filled with its first visible state. Why you would care: Use this if you want the first reliable hook after the reward window has actually been created.
+----------------------------------------
+NAME: AddonGoldSaucerReward_ReceiveEvent
+SIG:  48 89 5C 24 10 57 48 83 EC 60 48 8B D9 41 8B F8 0F B7 CA 83 E9 06 74 4F 83 E9 01 74 2A 83 F9 12 0F 85 E3 00 00 00 33 D2 49 8B C9 E8 30 84 FF FE 48 8B 03 48 8B CB 48 8B 5C 24 78 48 83 C4 60
+DESC: What it is: The input handler for the visible Gold Saucer reward popup. When it runs: When the player moves over or clicks elements inside the reward window itself. Why you would care: Use this if you need the addon-side interaction hook after the reward popup is already on screen.
+----------------------------------------
+
+CATEGORY: Gold Saucer - Chocobo Racing and Gameplay
+----------------------------------------
+NAME: RaceChocoboManager_RequestParameters
+SIG:  48 83 EC 38 C7 41 04 01 00 00 00 45 33 C9 B9 6C 07 00 00 C7 44 24 20 00 00 00 00 45 33 C0 33 D2 E8 AB F8 D9 FF 48 83 C4 38 C3
+DESC: What it is: The race manager request that asks the game to refresh the local Chocobo Racing data block. When it runs: When the client wants the latest race chocobo parameters before showing or using them. Why you would care: Use this as a strong hook for when the game actively reloads racing stats instead of only reading cached values.
+----------------------------------------
+NAME: RaceChocoboManager_GetPedigreeLevel
+SIG:  80 79 1A 00 77 03 33 C0 C3 B8 FF FF FF FF 48 8D 51 0E 41 B9 09 00 00 00 44 8D 40 03 0F 1F 40 00 0F B7 0A C1 E9 0C 83 F9 0A 41 0F 43 C9 85 C0 78 04 3B C1 7E 02 8B C1 48 83 C2 02 49 83 E8 01
+DESC: What it is: The race manager getter that works out the chocobo pedigree level. When it runs: When the game needs the pedigree tier for menus, progression checks, or retirement and breeding logic. Why you would care: Use this if you want direct access to one of the most important long-term Chocobo Racing progression values.
+----------------------------------------
+NAME: RaceChocoboManager_GetAttributesCurrent
+SIG:  48 89 5C 24 08 48 89 74 24 18 57 48 83 EC 30 48 8B 05 12 C0 9E 01 48 33 C4 48 89 44 24 28 4C 8D 51 0E 4C 8B D9 B9 02 00 00 00 4C 8D 4C 24 08 8B F9 48 8B F2 49 8B DA 66 0F 1F 84 00 00 00 00 00
+DESC: What it is: The race manager function that fills out the chocobo's current racing attributes. When it runs: When the client needs the live current stats for display or racing logic. Why you would care: Use this if you want the real current attribute values without rebuilding the stat calculation yourself.
+----------------------------------------
+NAME: RaceChocoboManager_GetAttributesMaximum
+SIG:  48 89 5C 24 08 48 89 74 24 18 57 48 83 EC 30 48 8B 05 32 BD 9E 01 48 33 C4 48 89 44 24 28 4C 8D 49 0E 41 BB 02 00 00 00 48 8B F9 4C 8D 54 24 08 49 8B C9 41 8B DB 48 8B F2 0F 1F 80 00 00 00 00
+DESC: What it is: The race manager function that fills out the chocobo's maximum possible racing attributes. When it runs: When the game needs the capped or maximum stat values for display and progression comparisons. Why you would care: Use this if you want to compare current stats against the stored maximums without scraping multiple UI elements.
+----------------------------------------
+NAME: RaceChocoboManager_GetAttributesStars
+SIG:  48 83 EC 38 48 8B 05 9D BA 9E 01 48 33 C4 48 89 44 24 28 4C 8B D2 4C 8B C9 48 8D 51 0E 41 BB 02 00 00 00 48 8D 4C 24 08 0F 1F 84 00 00 00 00 00 44 0F B7 02 48 8D 49 14 41 8B C0 48 8D 52 02
+DESC: What it is: The race manager function that fills out the star ratings for the chocobo's racing attributes. When it runs: When the game needs the inherited or capped star values for display and breeding-related logic. Why you would care: Use this if you want the attribute-star breakdown that players actually care about when judging racing chocobos.
+----------------------------------------
+NAME: RaceChocoboManager_CanLearnRacingChocoboAbility
+SIG:  33 C0 BA 01 00 00 00 83 FA 03 73 18 80 7C 01 13 00 74 11 FF C2 48 FF C0 48 83 F8 01 7C E9 B8 FF FF FF FF C3 8B C2 C3
+DESC: What it is: The race manager check for whether the chocobo can learn a racing ability in the requested slot. When it runs: When the game validates a player action around teaching or assigning racing abilities. Why you would care: Use this if you want the actual learnability rule instead of inferring it from UI button state.
+----------------------------------------
+NAME: RaceChocoboManager_CanForgetRacingChocoboAbility
+SIG:  33 C0 BA 01 00 00 00 83 FA 03 73 07 80 7C 01 13 00 75 11 FF C2 48 FF C0 48 83 F8 01 7C E9 B8 FF FF FF FF C3 8B C2 C3
+DESC: What it is: The race manager check for whether the chocobo can forget a racing ability in the requested slot. When it runs: When the game validates a player action around removing an assigned racing ability. Why you would care: Use this if you want the exact forgetability rule without reproducing the ability-slot checks yourself.
+----------------------------------------
+NAME: RaceChocoboManager_CanRetireRacingChocobo
+SIG:  40 53 48 83 EC 20 80 79 1A 00 48 8B D9 76 1A B9 62 00 00 00 E8 27 9D A2 FF 0F B6 4B 1A 3B C8 7C 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The race manager check for whether the current racing chocobo is allowed to retire. When it runs: When the game decides if the retire option should be accepted for the player's chocobo. Why you would care: Use this if you want a direct hook for retirement availability instead of trusting the menu state.
+----------------------------------------
+NAME: RaceChocoboManager_GetRating
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 30 48 8B 05 A7 B8 9E 01 48 33 C4 48 89 44 24 28 45 33 D2 48 8D 51 0E 41 B9 02 00 00 00 4C 8D 44 24 08 45 8B DA 48 8B DA
+DESC: What it is: The race manager function that calculates the chocobo's overall racing rating. When it runs: When the game needs the combined score for display, progression checks, or breeding-related decisions. Why you would care: Use this if you want the one-number summary of racing strength without recomputing it from all of the separate stat values.
+----------------------------------------
+NAME: UseChocoboRaceItemAction
+SIG:  40 53 48 83 EC 20 48 8D 0D CB 03 13 02 8B DA E8 5C 34 53 00 48 85 C0 75 06 48 83 C4 20 5B C3 8B D3 48 8B C8 E8 77 B7 53 00 B0 01 48 83 C4 20 5B C3
+DESC: What it is: The gameplay action that uses a Chocobo Racing item. When it runs: When the player triggers an item during a race. Why you would care: Use this as the cleanest direct hook for race-item usage instead of trying to infer it from UI or status changes.
+----------------------------------------
+NAME: UseChocoboRaceAbilityAction
+SIG:  40 53 48 83 EC 20 48 8D 0D 8B 03 13 02 8B DA E8 1C 34 53 00 48 85 C0 75 06 48 83 C4 20 5B C3 8B D3 48 8B C8 E8 57 B7 53 00 B0 01 48 83 C4 20 5B C3
+DESC: What it is: The gameplay action that uses a Chocobo Racing ability. When it runs: When the player activates one of their race abilities during a live race. Why you would care: Use this as the most direct hook for race-ability usage and timing.
+----------------------------------------
+
+CATEGORY: Gold Saucer - GATE and FGS Gameplay
+----------------------------------------
+NAME: GFateDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 E2 38 E5 FF 84 C0 74 11 80 BB 00 07 00 00 00 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The base Gold Saucer GATE check for whether a GATE is actively running. When it runs: When the game needs the live running-state for a Gold Saucer event. Why you would care: Use this as the broad gameplay hook for live GATE activity.
+----------------------------------------
+NAME: GFateDirector_PopulateMapMarkers
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 83 B9 88 06 00 00 00 49 8B F0 0F B7 EA 48 8B D9 74 60 48 8B 01 48 8D 91 20 06 00 00 48 89 7C 24 30 FF 90 60 06 00 00 48 8B 03 48 8B CB FF 90 68 09
+DESC: What it is: The base Gold Saucer GATE function that fills the map with event markers. When it runs: When the client refreshes where the current GATE should appear on the map. Why you would care: Use this if you want direct map-location updates for active GATE content.
+----------------------------------------
+NAME: GFateDirector_GetNameplateIconForObject
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 20 48 8B 01 48 8B EA 48 8B D9 FF 90 78 09 00 00 84 C0 0F 84 EE 00 00 00 44 8B 45 7C 45 85 C0 0F 84 E1 00 00 00 33 F6
+DESC: What it is: The base Gold Saucer GATE function that chooses the nameplate icon for a related world object. When it runs: When the client is deciding how a GATE object should appear above the object in the world. Why you would care: Use this if you want object-level GATE presentation hooks, not just high-level event state.
+----------------------------------------
+NAME: GFateDirector_Update2
+SIG:  40 53 48 83 EC 20 B8 FF FF 00 00 48 8B D9 66 39 41 78 74 4F 48 83 3D 6C E2 BD 01 00 74 51 48 8B 91 10 06 00 00 48 8D 0D 84 51 9A 01 E8 BF 65 CA FF 48 85 C0 75 39 E8 C5 60 E7 FF 48 8D 88 B0 01
+DESC: What it is: A deeper base GATE update step that runs after the simpler state checks. When it runs: While the client is refreshing live Gold Saucer event state during an active GATE. Why you would care: Use this if you need a deeper gameplay-state hook than the simple running or accepting checks.
+----------------------------------------
+NAME: GFateClimbingDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 E2 29 E5 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 C4 09 00 00 01 74 11 F6 83 CC 09 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The Cliffhanger-specific running-state check. When it runs: When the game needs to decide whether the climbing GATE is currently live. Why you would care: Use this if you want a direct hook for Cliffhanger activity instead of treating all GATEs the same.
+----------------------------------------
+NAME: GFateClimbingDirector_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 48 8B 05 84 0D 9F 01 48 8B DA 48 8B F9 BA 69 01 00 00 49 8B F1 4D 8B F0 48 8B 88 40 2B 00 00 E8 87 BC 7C FF 48 3B D8 75 4B 33 DB
+DESC: What it is: The Cliffhanger-specific join-window check. When it runs: When the game decides whether the player can still enter the climbing GATE. Why you would care: Use this if you want the exact acceptance state for Cliffhanger registration.
+----------------------------------------
+NAME: GFateClimbingDirector_PopulateMapMarkers
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 49 8B F8 0F B7 F2 48 8B D9 E8 43 F1 FF FF 48 8B 03 48 8B CB FF 90 90 09 00 00 84 C0 74 15 4C 8D 8B B0 07 00 00 4C 8B C7 0F B7 D6 48 8B CB E8 EE FB
+DESC: What it is: The Cliffhanger map-marker updater. When it runs: When the game refreshes the special map positions for the climbing GATE. Why you would care: Use this if you want event-specific location data for Cliffhanger.
+----------------------------------------
+NAME: GFateClimbing2Director_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 D2 86 E4 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 4C 09 00 00 01 74 11 F6 83 50 09 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The Leap of Faith-specific running-state check. When it runs: When the game needs the live state for the second climbing-style GATE. Why you would care: Use this if you want to separate Leap of Faith activity from the other GATE variants.
+----------------------------------------
+NAME: GFateClimbing2Director_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 48 8B 05 64 6D 9E 01 48 8B DA 48 8B F9 BA E2 02 00 00 49 8B F1 4D 8B F0 48 8B 88 40 2B 00 00 E8 67 1C 7C FF 48 3B D8 75 38 33 DB
+DESC: What it is: The Leap of Faith-specific join-window check. When it runs: When the client decides if the player can still register for this GATE. Why you would care: Use this if you need the exact acceptance state for Leap of Faith.
+----------------------------------------
+NAME: GFateHiddenObjectDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 B2 1A E5 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 B4 09 00 00 01 74 11 F6 83 98 0C 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The hidden-object GATE running-state check. When it runs: When the game decides whether the scavenger-style GATE is currently active. Why you would care: Use this if you want a direct live-state hook for that event instead of relying on HUD text.
+----------------------------------------
+NAME: GFateHiddenObjectDirector_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 48 8B 05 F4 FC 9E 01 48 8B DA 48 8B F9 BA 6C 01 00 00 49 8B F1 4D 8B F0 48 8B 88 40 2B 00 00 E8 F7 AB 7C FF 48 3B D8 75 37 33 C0
+DESC: What it is: The hidden-object GATE join-window check. When it runs: When the client needs to know whether the player can still enter that event. Why you would care: Use this if you want exact registration timing for the hidden-object GATE.
+----------------------------------------
+NAME: GFateHiddenObjectDirector_PopulateMapMarkers
+SIG:  48 89 6C 24 18 48 89 74 24 20 41 56 48 83 EC 20 49 8B E8 44 0F B7 F2 48 8B F1 E8 11 E2 FF FF F6 86 A4 07 00 00 01 74 4E 8B 86 A4 07 00 00 D1 E8 A8 01 75 42 48 89 5C 24 30 48 8D 9E 18 0A 00 00
+DESC: What it is: The hidden-object GATE map-marker updater. When it runs: When the game refreshes where that event should point the player on the map. Why you would care: Use this if you want location updates for the hidden-object GATE instead of only its state flags.
+----------------------------------------
+NAME: GFateStelthDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 42 22 E5 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 B4 09 00 00 01 74 11 F6 83 7C 0C 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The stealth-style GATE running-state check. When it runs: When the game decides whether this GATE is actively in progress. Why you would care: Use this if you want a dedicated live-state hook for the stealth GATE instead of treating all GATEs generically.
+----------------------------------------
+NAME: GFateStelthDirector_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 48 8B 05 14 07 9F 01 48 8B DA 48 8B F9 BA 74 01 00 00 49 8B F1 4D 8B F0 48 8B 88 40 2B 00 00 E8 17 B6 7C FF 48 3B D8 75 57 48 85
+DESC: What it is: The stealth-style GATE join-window check. When it runs: When the client decides whether the player can still enter that GATE. Why you would care: Use this if you want exact registration timing for the stealth event.
+----------------------------------------
+NAME: GFateStelthDirector_PopulateMapMarkers
+SIG:  48 89 6C 24 18 48 89 74 24 20 41 56 48 83 EC 20 49 8B E8 44 0F B7 F2 48 8B F1 E8 A1 E9 FF FF 48 8B 06 48 8B CE FF 90 90 09 00 00 84 C0 74 47 48 89 5C 24 30 48 8D 9E B8 09 00 00 48 89 7C 24 38
+DESC: What it is: The stealth-style GATE map-marker updater. When it runs: When the game refreshes where this event should guide the player on the map. Why you would care: Use this if you want event-specific location tracking for the stealth GATE.
+----------------------------------------
+NAME: GFateStelthDirector_Update2
+SIG:  40 53 48 83 EC 20 B8 FF FF 00 00 48 8B D9 66 39 41 78 74 4F 48 83 3D 1C D5 BD 01 00 74 51 48 8B 91 10 06 00 00 48 8D 0D 34 44 9A 01 E8 6F 58 CA FF 48 85 C0 75 39 E8 75 53 E7 FF 48 8D 88 B0 01
+DESC: What it is: A deeper stealth-style GATE update step beyond the simple state checks. When it runs: While the stealth GATE is refreshing its live event state. Why you would care: Use this if you need a deeper gameplay-state hook for that event than the plain running or accepting checks.
+----------------------------------------
+NAME: GFateDanceDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 B2 11 E5 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 24 0C 00 00 01 74 11 F6 83 50 0C 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The dance GATE running-state check. When it runs: When the client needs to know whether the dance event is actively underway. Why you would care: Use this if you want a dedicated live-state hook for the dance GATE.
+----------------------------------------
+NAME: GFateDanceDirector_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B 05 6A F7 9E 01 48 8B D9 BA 79 01 00 00 49 8B F9 49 8B F0 48 8B 88 40 2B 00 00 E8 70 A6 7C FF 48 85 C0 74 2A 48 85 FF 74 1E 48 8B 06 48 8B 08
+DESC: What it is: The dance GATE join-window check. When it runs: When the game decides whether the player can still enter the dance event. Why you would care: Use this if you want exact registration timing for the dance GATE.
+----------------------------------------
+NAME: GFateRouletteDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 F2 08 E5 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 84 0A 00 00 01 74 11 F6 83 8C 0A 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The Any Way the Wind Blows running-state check. When it runs: When the client needs the live state for the roulette-style GATE. Why you would care: Use this if you want to track that specific GATE directly.
+----------------------------------------
+NAME: GFateRouletteDirector_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 48 8B 05 34 F0 9E 01 48 8B DA 48 8B F9 BA 7A 01 00 00 49 8B F1 4D 8B F0 48 8B 88 40 2B 00 00 E8 37 9F 7C FF 48 3B D8 75 1B 48 85
+DESC: What it is: The Any Way the Wind Blows join-window check. When it runs: When the game decides whether the player can still register for the roulette-style GATE. Why you would care: Use this if you want precise entry timing for that event.
+----------------------------------------
+NAME: GFateRideShootingDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 82 83 E4 FF 84 C0 74 23 80 BB 00 07 00 00 00 74 1A F6 83 4C 09 00 00 01 74 11 F6 83 50 09 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The Air Force One running-state check. When it runs: When the client needs the live state for the shooting-style GATE. Why you would care: Use this if you want direct tracking for that specific event.
+----------------------------------------
+NAME: GFateRideShootingDirector_IsAcceptingGate
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 41 56 48 83 EC 20 48 8B 05 14 6A 9E 01 48 8B DA 48 8B F9 BA F8 02 00 00 49 8B F1 4D 8B F0 48 8B 88 40 2B 00 00 E8 17 19 7C FF 48 3B D8 75 38 33 DB
+DESC: What it is: The Air Force One join-window check. When it runs: When the client decides whether the player can still enter the shooting-style GATE. Why you would care: Use this if you want exact registration timing for Air Force One.
+----------------------------------------
+NAME: GFateYojimboDirector_IsRunningGate
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 32 7F E4 FF 84 C0 74 1A 80 BB 00 07 00 00 00 74 11 F6 83 EC 0A 00 00 01 74 08 B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20 5B C3
+DESC: What it is: The Slice Is Right running-state check. When it runs: When the client needs the live state for the Yojimbo GATE. Why you would care: Use this if you want a direct gameplay-state hook for that event.
+----------------------------------------
+
+CATEGORY: Gold Saucer - FGS HUD and Result Flow
+----------------------------------------
+NAME: AgentFGSHud_Show
+SIG:  40 56 48 83 EC 20 48 8B 01 48 8B F1 FF 50 30 84 C0 0F 85 4D 01 00 00 48 89 5C 24 30 48 89 7C 24 40 E8 6A 91 02 FF 33 D2 4C 8B C0 45 33 C9 8D 4A 40 E8 EA 79 02 FF 33 DB 48 8B F8 48 85 C0 74 2B
+DESC: What it is: The agent-side show path for the FGS HUD. When it runs: When the game first brings the live GATE HUD onto the screen. Why you would care: Use this as the cleanest start-of-HUD hook for FGS tracking.
+----------------------------------------
+NAME: AgentFGSHud_Update
+SIG:  40 53 57 48 83 EC 58 48 8B 01 48 8B F9 FF 50 30 84 C0 75 3A 38 47 31 0F 84 FB 03 00 00 BB C1 12 00 00 E8 49 06 B4 FF 48 8B C8 0F B7 D3 E8 AE A5 D2 FF 84 C0 0F 84 DE 03 00 00 48 8B 07 48 8B CF
+DESC: What it is: The recurring update path for the FGS HUD agent. When it runs: While a live GATE HUD is active and the game is refreshing its visible state. Why you would care: Use this if you want a broad live-update hook for Gold Saucer event HUD changes.
+----------------------------------------
+NAME: AgentFGSResult_Show
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 30 84 C0 75 7A E8 08 73 02 FF 33 D2 4C 8B C0 45 33 C9 8D 4A 50 E8 88 5B 02 FF 33 D2 48 85 C0 74 5A 48 8B 4B 10 41 B8 03 00 00 00 48 89 48 08 48 8D 48
+DESC: What it is: The agent-side show path for the FGS results window. When it runs: When the game starts presenting post-GATE results. Why you would care: Use this as the cleanest entry point for result-screen appearance.
+----------------------------------------
+NAME: AgentFGSResult_ReceiveEvent
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B D9 48 8B FA 49 8B C8 40 32 F6 E8 00 EB 5A FF 44 8D 40 02 41 83 F8 01 76 1C 83 F8 0B 75 23 48 8B 03 48 8B CB FF 50 30 84 C0 74 16 48 8B 43 28
+DESC: What it is: The input handler for the FGS results agent. When it runs: When the player interacts with the results screen after a Gold Saucer event. Why you would care: Use this if you want direct hooks for result confirmation or dismissal.
+----------------------------------------
+NAME: AgentFGSResult_Update
+SIG:  40 57 48 83 EC 20 48 8B 01 48 8B F9 FF 50 30 84 C0 0F 84 D1 00 00 00 48 89 5C 24 30 48 8B 5F 28 80 7B 10 00 0F 85 A4 00 00 00 B9 0A 00 00 00 E8 BC 39 65 00 48 85 C0 0F 84 85 00 00 00 8B 88 E4
+DESC: What it is: The recurring update path for the FGS results agent. When it runs: While the result screen is open and the game is refreshing its contents. Why you would care: Use this if you want a broad hook for live result-screen state changes.
+----------------------------------------
+NAME: AgentFGSWinner_Show
+SIG:  40 57 48 83 EC 20 48 8B 01 48 8B F9 FF 50 30 84 C0 0F 85 80 00 00 00 48 89 5C 24 30 E8 FF 6C 02 FF 4C 8B C0 45 33 C9 33 D2 B9 B8 01 00 00 E8 7D 55 02 FF 48 8B D8 48 85 C0 74 4F 48 8B 4F 10 48
+DESC: What it is: The agent-side show path for the FGS winner screen. When it runs: When the game opens the winner presentation for a Gold Saucer event. Why you would care: Use this as the cleanest hook for winner-screen appearance.
+----------------------------------------
+NAME: AgentFGSWinner_Update
+SIG:  40 56 48 81 EC A0 00 00 00 48 8B 05 88 D5 76 01 48 33 C4 48 89 84 24 80 00 00 00 48 8B 01 48 8B F1 FF 50 30 84 C0 0F 84 A6 02 00 00 48 89 9C 24 B8 00 00 00 48 89 AC 24 C0 00 00 00 48 8B 6E 28
+DESC: What it is: The recurring update path for the FGS winner agent. When it runs: While the winner screen is visible and the game is refreshing its state. Why you would care: Use this if you want a broad hook for winner-screen updates rather than only the initial open event.
+----------------------------------------
+NAME: AddonFGSHudGoal_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 50 48 8B F9 49 8B F0 49 8D 48 10 E8 D2 71 FD FE 45 33 C9 41 B0 01 48 8B CF 85 C0 74 0B 41 8D 51 66 E8 AC 27 01 FF EB 5E BA 65 00 00 00 E8 A0 27 01 FF
+DESC: What it is: The setup path for the FGS goal HUD panel. When it runs: When the goal part of the GATE HUD is first created. Why you would care: Use this if you want the earliest reliable hook for goal-HUD setup.
+----------------------------------------
+NAME: AddonFGSHudGoal_OnRefresh
+SIG:  48 89 5C 24 08 57 48 83 EC 20 F6 81 A1 01 00 00 01 49 8B D8 48 8B F9 74 2C 85 D2 74 28 48 85 DB 74 23 48 8B CB E8 B6 6F FD FE 83 F8 01 75 16 48 8D 4B 10 E8 A8 6F FD FE 85 C0 48 8B CF 0F 95 C2
+DESC: What it is: The refresh path for the FGS goal HUD panel. When it runs: When the game redraws or updates the current goal shown in the GATE HUD. Why you would care: Use this if you want direct hooks for goal-text or goal-state updates.
+----------------------------------------
+NAME: AddonFGSHudStatus_OnRequestedUpdate
+SIG:  48 89 5C 24 10 57 48 83 EC 20 48 8B 9A C8 04 00 00 48 8B F9 48 85 DB 0F 84 EE 00 00 00 80 B9 95 02 00 00 00 48 89 74 24 30 74 0D 48 8B 43 28 83 38 00 74 04 B2 01 EB 02 33 D2 48 8B 89 68 02 00
+DESC: What it is: The requested-update path for the FGS status HUD panel. When it runs: When the game pushes fresh status values into the HUD during a live event. Why you would care: Use this if you want direct status updates for the FGS HUD instead of scraping the on-screen widgets.
+----------------------------------------
+NAME: AddonFGSResult_OnRefresh
+SIG:  48 83 EC 28 48 8B 89 38 02 00 00 48 85 C9 74 05 E8 EB 39 00 00 B0 01 48 83 C4 28 C3
+DESC: What it is: The refresh path for the visible FGS results window. When it runs: When the game redraws the results screen after new result data arrives. Why you would care: Use this if you want a direct hook for result data refresh instead of just the first open event.
+----------------------------------------
+NAME: AddonFGSResult_ReceiveEvent
+SIG:  48 89 5C 24 18 55 48 83 EC 20 48 8B 99 38 02 00 00 49 8B E9 48 85 DB 0F 84 CA 02 00 00 48 89 7C 24 38 66 83 FA 19 0F 84 60 01 00 00 66 83 FA 4A 0F 85 AC 02 00 00 41 83 F8 01 0F 85 A2 02 00 00
+DESC: What it is: The input handler for the visible FGS results window. When it runs: When the player interacts with the results popup after a Gold Saucer event. Why you would care: Use this if you want addon-side result confirmation hooks after the window is already built.
+----------------------------------------
+NAME: AddonFGSWinner_OnRefresh
+SIG:  48 83 EC 28 48 8B 89 38 02 00 00 48 85 C9 74 05 E8 0B 44 00 00 B0 01 48 83 C4 28 C3
+DESC: What it is: The refresh path for the visible FGS winner window. When it runs: When the game redraws the winner screen after fresh winner data is available. Why you would care: Use this if you want direct winner-data refresh hooks instead of only the initial open event.
+----------------------------------------
+NAME: AddonFGSWinner_ReceiveEvent
+SIG:  66 83 FA 4A 75 2F 53 48 83 EC 20 48 8B 44 24 50 48 8B D9 80 78 02 01 75 17 33 D2 49 8B C9 E8 5D C2 FD FE BA 0B 00 00 00 48 8B CB E8 60 BD 00 FF 48 83 C4 20 5B C3
+DESC: What it is: The input handler for the visible FGS winner window. When it runs: When the player interacts with the winner screen after a Gold Saucer event. Why you would care: Use this if you want addon-side winner-screen acknowledgement hooks after the window is already built.
+----------------------------------------
+
+CATEGORY: Gold Saucer - Triple Triad and Card Management
+----------------------------------------
+NAME: EventFramework_GetTripleTriadDirector
+SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09 80 B8 CE 0D 00 00 12 74 02 33 C0 C3
+DESC: What it is: The event-framework accessor for the live Triple Triad director. When it runs: When the client needs the active Triple Triad controller for the current match or table. Why you would care: Use this as the cleanest entry point into live Triple Triad gameplay state.
+----------------------------------------
+NAME: UIState_IsTripleTriadCardUnlocked
+SIG:  40 53 48 83 EC 20 48 8B D9 66 85 D2 74 3B 0F B7 CA E8 AA D9 CA FF 48 85 C0 74 2E 80 78 16 00 74 28 0F B7 48 0C 8B C1 C1 E8 03 83 F8 3B 73 1A 83 E1 07 BA 01 00 00 00 D3 E2 84 94 18 03 A1 01 00
+DESC: What it is: The UI-state check for whether a Triple Triad card is unlocked. When it runs: When the game decides if a card should be usable, shown as owned, or filtered in card-related windows. Why you would care: Use this if you want a direct owned-card check instead of rebuilding the unlock table yourself.
+----------------------------------------
+NAME: TripleTriad_ReceiveEvent
+SIG:  40 53 56 41 55 41 56 48 83 EC 48 83 79 10 00 41 8B D9 4D 8B E8 4C 8B F2 48 8B F1 0F 84 47 03 00 00 83 79 14 00 0F 84 3D 03 00 00 48 8B 0D 4E EA C9 01 E8 59 6D 57 FF 48 85 C0 0F 84 28 03 00 00
+DESC: What it is: The main game-side event handler for Triple Triad interaction. When it runs: When the player or game sends an event into the active Triple Triad flow. Why you would care: Use this if you want a broad gameplay hook around live Triple Triad interaction instead of only UI clicks.
+----------------------------------------
+NAME: AddonTripleTriad_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 D9 48 81 EC 90 00 00 00 48 8B 05 A5 0F 1E 01 48 33 C4 48 89 45 17 4C 8B F9 4D 8B E8 49 8B C8 E8 88 1E 02 FF 83 F8 01 49 8D 4D 20 44
+DESC: What it is: The setup path for the main Triple Triad match window. When it runs: When the duel window is first built and populated. Why you would care: Use this as the earliest reliable hook for a live Triple Triad match UI.
+----------------------------------------
+NAME: AddonTripleTriad_OnRequestedUpdate
+SIG:  41 55 41 57 48 83 EC 58 4C 8B BA 78 02 00 00 4C 8B E9 49 8B 80 50 02 00 00 48 89 84 24 88 00 00 00 4D 85 FF 0F 84 E7 06 00 00 48 85 C0 0F 84 DE 06 00 00 8B 81 98 01 00 00 25 00 00 F0 00 2D 00
+DESC: What it is: The requested-update path for the main Triple Triad match window. When it runs: When the game pushes fresh board or duel state into the active match window. Why you would care: Use this if you want direct state refreshes for the live Triple Triad board.
+----------------------------------------
+NAME: AddonTripleTriad_OnRefresh
+SIG:  40 55 53 41 55 41 56 48 8D 6C 24 C1 48 81 EC C8 00 00 00 48 8B 05 6E F9 1D 01 48 33 C4 48 89 45 1F 4D 8B F0 48 8B D9 83 FA 17 0F 8E 11 0B 00 00 49 8D 88 70 01 00 00 E8 44 08 02 FF FF C8 83 F8
+DESC: What it is: The refresh path for the main Triple Triad match window. When it runs: When the client redraws the duel board, hand, or visible state after data changes. Why you would care: Use this if you want a broad redraw hook for live match presentation.
+----------------------------------------
+NAME: AddonTripleTriad_ReceiveEvent
+SIG:  48 89 5C 24 18 48 89 74 24 20 55 57 41 55 48 8B EC 48 83 EC 50 48 8B F1 41 8B F8 0F B7 CA 4D 8B E9 83 E9 0C 0F 84 ED 03 00 00 83 E9 0D 0F 84 09 03 00 00 83 E9 19 0F 84 76 02 00 00 83 E9 01 0F
+DESC: What it is: The input handler for the main Triple Triad match window. When it runs: When the player clicks cards, confirms actions, or otherwise interacts with the duel UI. Why you would care: Use this as the direct hook for player interaction during a live Triple Triad match.
+----------------------------------------
+NAME: AddonTripleTriad_Update
+SIG:  40 53 48 83 EC 30 80 B9 48 0F 00 00 00 48 8B D9 0F 29 74 24 20 0F 28 F1 0F 84 E4 00 00 00 48 89 74 24 40 BE 05 00 00 00 48 89 7C 24 48 48 8D B9 88 05 00 00 C6 81 48 0F 00 00 00 0F 1F 44 00 00
+DESC: What it is: The recurring update path for the main Triple Triad match window. When it runs: While the match UI is open and the client is refreshing its live state. Why you would care: Use this if you want a broad per-update hook for the active duel window.
+----------------------------------------
+NAME: AddonTripleTriadRequest_OnSetup
+SIG:  89 54 24 10 53 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 68 BD 04 00 00 00 4D 8B F0 8B D5 48 8B D9 E8 FA B3 05 FF 8D 55 24 48 89 83 38 02 00 00 48 8B CB E8 E8 B3 05 FF 41 BD 02 00 00 00 48 89
+DESC: What it is: The setup path for the Triple Triad challenge request window. When it runs: When the game first opens the challenge request popup. Why you would care: Use this as the earliest hook for inbound duel requests.
+----------------------------------------
+NAME: AddonTripleTriadRequest_OnRequestedUpdate
+SIG:  48 89 5C 24 18 48 89 6C 24 20 57 48 83 EC 20 49 8B B8 50 02 00 00 48 8B D9 48 8B AA 78 02 00 00 48 85 FF 0F 84 0D 01 00 00 48 85 ED 0F 84 04 01 00 00 8B 81 98 01 00 00 25 00 00 F0 00 2D 00 00
+DESC: What it is: The requested-update path for the Triple Triad challenge request window. When it runs: When the game pushes fresh request details into the popup. Why you would care: Use this if you want direct refresh hooks for incoming duel request state.
+----------------------------------------
+NAME: AddonTripleTriadRequest_ReceiveEvent
+SIG:  4C 8B DC 57 41 55 41 57 48 81 EC 80 00 00 00 48 8B 05 92 C5 1D 01 48 33 C4 48 89 44 24 58 4C 89 4C 24 20 4D 8B E9 41 8B F8 4C 8B F9 66 83 FA 19 0F 84 F6 00 00 00 66 83 FA 23 0F 85 35 01 00 00
+DESC: What it is: The input handler for the Triple Triad challenge request window. When it runs: When the player accepts, declines, or otherwise interacts with the duel request popup. Why you would care: Use this as the direct hook for request confirmation or cancellation.
+----------------------------------------
+NAME: AddonTripleTriadResult_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 70 48 8B 05 FD BC 1D 01 48 33 C4 48 89 44 24 68 89 54 24 30 41 BE 11 00 00 00 41 8B D6 49 8B E8 48 8B F1 E8 D5 A0 05 FF 41 8D 56 FF 48
+DESC: What it is: The setup path for the Triple Triad results window. When it runs: When the game first builds the post-match results popup. Why you would care: Use this as the earliest reliable hook for duel results.
+----------------------------------------
+NAME: AddonTripleTriadResult_ReceiveEvent
+SIG:  66 83 FA 19 0F 85 FE 00 00 00 48 89 6C 24 18 56 48 83 EC 40 49 8B E9 48 8B F1 41 83 E8 01 0F 84 B5 00 00 00 41 83 E8 01 0F 84 A0 00 00 00 41 83 F8 01 0F 85 C6 00 00 00 48 89 5C 24 50 48 8D 44
+DESC: What it is: The input handler for the Triple Triad results window. When it runs: When the player interacts with the post-match results popup. Why you would care: Use this if you want direct hooks for result acknowledgement or follow-up actions.
+----------------------------------------
+NAME: AddonGoldSaucerInfo_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 60 48 8B 05 BD 25 1D 01 48 33 C4 48 89 44 24 58 48 8B D9 C7 44 24 40 03 00 00 00 49 8D 48 30 C7 44 24 44 04 00 00 00 4D 8B E8 C7 44 24
+DESC: What it is: The setup path for the main Gold Saucer info window that contains card and deck subpages. When it runs: When the player opens the broader Gold Saucer information UI. Why you would care: Use this as the cleanest root hook for the card-management side of Gold Saucer UI.
+----------------------------------------
+NAME: AddonGoldSaucerInfo_ReceiveEvent
+SIG:  48 89 5C 24 08 57 48 83 EC 20 49 8B F9 48 8B D9 66 83 FA 19 74 15 66 83 FA 45 75 62 48 8B 5C 24 30 48 83 C4 20 5F E9 35 0F 00 00 41 8D 40 FF 83 F8 05 77 0D 41 8D 50 FF 44 8B 81 3C 02 00 00 EB
+DESC: What it is: The input handler for the main Gold Saucer info window. When it runs: When the player changes pages or interacts with Gold Saucer information subwindows. Why you would care: Use this if you want a root interaction hook for card and deck management UI.
+----------------------------------------
+NAME: AddonGSInfoEditDeck_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 D9 48 81 EC E0 00 00 00 48 8B 05 B5 C0 1C 01 48 33 C4 48 89 45 1F 45 33 E4 89 55 87 0F 57 C0 4C 89 45 8F 0F 57 C9 4C 89 65 F7 44 8B
+DESC: What it is: The setup path for the Triple Triad deck editor page. When it runs: When the game opens the detailed deck-editing interface. Why you would care: Use this as the earliest reliable hook for live deck-editing sessions.
+----------------------------------------
+NAME: AddonGSInfoEditDeck_ReceiveEvent
+SIG:  4C 8B DC 55 56 41 56 41 57 49 8D 6B A9 48 81 EC 98 00 00 00 48 8B 05 BD B7 1C 01 48 33 C4 48 89 45 0F 0F B7 C2 4D 8B F9 83 C0 EE 45 8B F0 48 8B F1 83 F8 28 0F 87 BA 05 00 00 49 89 5B 10 48 8D
+DESC: What it is: The input handler for the Triple Triad deck editor page. When it runs: When the player changes cards, pages, or options inside the editor. Why you would care: Use this as the main hook for direct deck-editing interaction.
+----------------------------------------
+NAME: AddonGSInfoEditDeck_HandleDPadInput
+SIG:  48 89 5C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 30 41 0F B6 F0 44 8B F2 48 8B D9 E8 9C 81 04 FF 48 8B CB 80 B8 34 01 00 00 00 0F 84 A7 01 00 00 48 89 6C 24 40 40 32 ED E8 7F 81 04
+DESC: What it is: The deck-editor handler for controller or D-pad navigation. When it runs: When the player moves through the editor with pad-style directional input. Why you would care: Use this if you want input-level hooks for deck navigation, not just generic clicks.
+----------------------------------------
+NAME: AddonGSInfoCardFilter_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 70 48 8B 05 ED 94 1C 01 48 33 C4 48 89 44 24 68 45 33 E4 4C 89 44 24 58 41 8B F4 4C 8D 35 4B AB BA 00 4D 8B E8 48 8D B9 38 02 00 00 48
+DESC: What it is: The setup path for the Triple Triad card filter window. When it runs: When the game opens the filter dialog used to narrow down card lists. Why you would care: Use this as the earliest hook for card-filter configuration UI.
+----------------------------------------
+NAME: AddonGSInfoCardFilter_ReceiveEvent
+SIG:  40 56 57 41 57 48 83 EC 20 49 63 F0 4D 8B F9 48 8B F9 66 83 FA 0C 0F 84 7C 03 00 00 48 89 5C 24 40 48 89 6C 24 48 66 83 FA 19 74 6D 66 83 FA 25 0F 85 4F 03 00 00 8D 46 F4 83 F8 03 0F 87 39 03
+DESC: What it is: The input handler for the Triple Triad card filter window. When it runs: When the player changes filter options or confirms the filter dialog. Why you would care: Use this if you want direct hooks for filter changes that affect visible card lists.
+----------------------------------------
+NAME: AddonGSInfoCardList_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 18 48 89 74 24 20 89 54 24 10 57 41 54 41 55 41 56 41 57 48 83 EC 40 4D 8B E8 0F 29 74 24 30 F3 0F 10 35 B8 26 A4 00 45 33 C9 45 33 C0 F3 0F 11 74 24 20 0F 57 C9 48
+DESC: What it is: The setup path for the Triple Triad card list window. When it runs: When the game opens the list of owned or viewable cards. Why you would care: Use this as the earliest hook for card-list presentation.
+----------------------------------------
+NAME: AddonGSInfoCardList_ReceiveEvent
+SIG:  4C 8B DC 55 56 48 81 EC 98 00 00 00 48 8B 05 E5 EE 1C 01 48 33 C4 48 89 44 24 70 49 8B E9 48 8B F1 66 83 FA 12 0F 84 D2 00 00 00 66 83 FA 19 0F 84 C8 00 00 00 66 83 FA 25 0F 85 DA 00 00 00 41
+DESC: What it is: The input handler for the Triple Triad card list window. When it runs: When the player scrolls, selects, or confirms something in the card list. Why you would care: Use this as the direct interaction hook for card browsing.
+----------------------------------------
+NAME: AddonGSInfoCardList_HandleCustomInput
+SIG:  40 53 48 83 EC 30 83 3A 02 48 8B D9 75 5B 80 7A 04 00 75 55 E8 37 BE 04 FF 0F B7 93 E8 01 00 00 48 8B 48 20 E8 37 69 05 FF 48 85 C0 74 33 48 8B 10 48 8B C8 FF 92 28 01 00 00 48 8B CB E8 0E BE
+DESC: What it is: The custom input handler for the Triple Triad card list window. When it runs: When the card list processes non-basic navigation input. Why you would care: Use this if you want a lower-level card-list interaction hook than the generic receive-event path.
+----------------------------------------
+NAME: AddonGSInfoCardDeck_OnSetup
+SIG:  48 89 5C 24 10 48 89 6C 24 20 56 57 41 56 48 81 EC E0 00 00 00 0F 29 B4 24 D0 00 00 00 48 8B 05 B4 D8 1C 01 48 33 C4 48 89 84 24 C0 00 00 00 F3 0F 10 35 71 0C A4 00 49 8B F0 45 33 C0 F3 0F 11
+DESC: What it is: The setup path for the saved Triple Triad deck list window. When it runs: When the game opens the window that shows available saved decks. Why you would care: Use this as the earliest hook for deck-list presentation and selection.
+----------------------------------------
+NAME: AddonGSInfoCardDeck_ReceiveEvent
+SIG:  66 83 FA 23 0F 85 4D 01 00 00 4C 8B DC 56 48 81 EC 80 00 00 00 48 8B 05 DC D6 1C 01 48 33 C4 48 89 44 24 70 48 8B F1 41 83 F8 01 0F 85 11 01 00 00 49 89 5B 10 49 8D 4B 98 49 89 7B 18 33 C0 48
+DESC: What it is: The input handler for the saved Triple Triad deck list window. When it runs: When the player selects or confirms a deck from the saved deck list. Why you would care: Use this if you want direct hooks for deck selection.
+----------------------------------------
+NAME: AddonGSInfoCardDeck_HandleCustomInput
+SIG:  40 53 48 83 EC 30 83 3A 02 48 8B D9 75 5B 80 7A 04 00 75 55 E8 F7 A5 04 FF 0F B7 93 E8 01 00 00 48 8B 48 20 E8 F7 50 05 FF 48 85 C0 74 33 48 8B 10 48 8B C8 FF 92 28 01 00 00 48 8B CB E8 CE A5
+DESC: What it is: The custom input handler for the saved Triple Triad deck list window. When it runs: When the deck-list window processes non-basic navigation input. Why you would care: Use this if you want a lower-level hook for deck-list interaction than the generic receive-event path.
+----------------------------------------
+CATEGORY: Gold Saucer - Gathering Mini-Games
+----------------------------------------
+NAME: AddonGoldSaucerGatheringMiniGameBase_OnSetup
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 48 8B F9 49 8B F0 49 8D 88 D0 00 00 00 8B EA E8 FD 49 02 FF 48 8B 8F F8 02 00 00 44 6B C8 64 44 89 8F 2C 03 00 00
+DESC: What it is: The shared setup path used by the Gold Saucer gathering mini-game windows. When it runs: When either The Finer Miner or Out on a Limb is first opened and the common game state is being initialized. Why you would care: Use this as the earliest shared hook if you want one entry point that covers both gathering mini-games.
+----------------------------------------
+NAME: AddonGoldSaucerGatheringMiniGameBase_OnRefresh
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 49 8B F8 48 8B D9 E8 D6 D2 FF FF 8B B3 28 03 00 00 48 8D 8F C0 00 00 00 E8 E4 48 02 FF 6B D0 64 48 8D 8F B0 00 00 00
+DESC: What it is: The shared refresh path for the Gold Saucer gathering mini-game windows. When it runs: When the visible state of either mini-game is being redrawn after a new round state, timing change, or result update. Why you would care: Use this when you want one hook that catches visual state refreshes for both gathering mini-games.
+----------------------------------------
+NAME: AddonGoldSaucerGatheringMiniGameBase_OnRequestedUpdate
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 E8 2B D5 FF FF 48 8B 83 40 03 00 00 48 85 C0 74 1A 48 8B 40 28 48 8B CF 4C 8B 0F 4C 8B 87 E8 02 00 00 8B 10 41 FF 91
+DESC: What it is: The shared requested-update path for the Gold Saucer gathering mini-game windows. When it runs: When the game pushes fresh round data into either mini-game window without rebuilding it from scratch. Why you would care: Use this if you want the best shared hook for incoming state changes while the mini-game is already open.
+----------------------------------------
+NAME: AddonGoldSaucerGatheringMiniGameBase_Update
+SIG:  40 57 48 83 EC 20 80 B9 D2 02 00 00 00 48 8B F9 74 55 F3 0F 10 91 C8 02 00 00 0F 28 C1 F3 0F 58 81 CC 02 00 00 0F 2F C2 F3 0F 11 81 CC 02 00 00 72 35
+DESC: What it is: The shared live update path for the Gold Saucer gathering mini-games. When it runs: Repeatedly while either mini-game is active and the timer or round state is ticking forward. Why you would care: Use this if you need a per-update hook for timing, progress, or active-round behavior across both mini-games.
+----------------------------------------
+NAME: AddonMiniGameMiner_LoadUldResourceHandle
+SIG:  40 53 48 83 EC 20 B2 01 48 8B D9 E8 B0 05 06 FF 41 B9 06 00 00 00 48 8D 15 3B 4B BC 00 45 33 C0 48 8B CB 48 83 C4 20 5B E9 73 04 06 FF
+DESC: What it is: The resource-loading path for the The Finer Miner window. When it runs: When the game is loading the UI assets needed for the mining mini-game. Why you would care: Use this if you want a very early hook tied specifically to The Finer Miner, before its window finishes building.
+----------------------------------------
+NAME: AddonMiniGameMiner_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 20 8B EA C7 81 C0 02 00 00 65 00 00 00 BA 15 00 00 00 C7 81 C4 02 00 00 66 00 00 00
+DESC: What it is: The setup path for The Finer Miner window. When it runs: When the mining mini-game window is first created and its starting values are written into the UI. Why you would care: Use this as the cleanest specific hook for entering The Finer Miner.
+----------------------------------------
+NAME: AddonMiniGameBotanist_LoadUldResourceHandle
+SIG:  40 53 48 83 EC 20 B2 01 48 8B D9 E8 70 03 06 FF 41 B9 06 00 00 00 48 8D 15 23 49 BC 00 45 33 C0 48 8B CB 48 83 C4 20 5B E9 33 02 06 FF
+DESC: What it is: The resource-loading path for the Out on a Limb window. When it runs: When the game is loading the UI assets needed for the botanist mini-game. Why you would care: Use this if you want a very early hook tied specifically to Out on a Limb, before its window finishes building.
+----------------------------------------
+NAME: AddonMiniGameBotanist_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 20 8B EA C7 81 C0 02 00 00 65 00 00 00 BA 18 00 00 00 C7 81 C4 02 00 00 66 00 00 00
+DESC: What it is: The setup path for the Out on a Limb window. When it runs: When the botanist mini-game window is first created and its starting values are written into the UI. Why you would care: Use this as the cleanest specific hook for entering Out on a Limb.
+----------------------------------------
+CATEGORY: Gold Saucer - Verminion and Mahjong
+----------------------------------------
+NAME: VerminionDirector_Terminate
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B D9 E8 F9 C1 E5 FF 48 81 C3 C0 06 00 00 BF 1E 00 00 00 33 F6 48 8B 0B 48 85 C9 74 17 BA 01 00 00 00
+DESC: What it is: The shutdown path for the Lord of Verminion gameplay director. When it runs: When a Verminion match or controlled Verminion state is ending and the client is cleaning up the live match data. Why you would care: Use this if you want a reliable hook for when a Verminion session is being torn down.
+----------------------------------------
+NAME: VerminionDirector_Update
+SIG:  40 53 48 83 EC 20 80 B9 2F 06 00 00 00 48 8B D9 75 19 80 B9 2D 06 00 00 00 74 10 E8 20 55 92 FF 84 C0 74 07 C6 83 2F 06 00 00 01 48 83 C4 20 5B C3
+DESC: What it is: The main update path for the Lord of Verminion gameplay director. When it runs: Repeatedly while a Verminion match or Verminion-controlled gameplay state is active. Why you would care: Use this as the broadest live-state hook for Verminion gameplay.
+----------------------------------------
+NAME: VerminionDirector_Update2
+SIG:  40 53 48 83 EC 20 48 8B D9 E8 62 1D 00 00 48 8B CB 48 83 C4 20 5B E9 05 09 00 00
+DESC: What it is: A second live update path used by the Lord of Verminion gameplay director. When it runs: As part of the ongoing Verminion gameplay refresh after the primary update path has advanced state. Why you would care: Use this if you need a second timing point inside the live Verminion update flow.
+----------------------------------------
+NAME: VerminionEventHandler_GetTitle
+SIG:  40 53 48 83 EC 20 B9 4D 8F 01 00 48 8B DA E8 8D 67 9F FF 48 8B C8 E8 F5 C5 19 01 48 8B D0 48 8B CB 48 83 C4 20 5B E9 25 E6 26 FF
+DESC: What it is: The title lookup path for the Verminion event handler. When it runs: When the game needs the player-facing title text for a Verminion event or interaction. Why you would care: Use this if you want a clean text-side hook tied to Verminion event presentation.
+----------------------------------------
+NAME: AddonGSInfoMinionBattle_HandleCustomInput
+SIG:  40 53 48 83 EC 30 83 3A 02 48 8B D9 75 5B 80 7A 04 00 75 55 E8 37 A3 04 FF 0F B7 93 E8 01 00 00 48 8B 48 20 E8 37 4E 05 FF 48 85 C0 74 33
+DESC: What it is: The custom input handler for the Lord of Verminion information and setup window. When it runs: When the window processes more specific controller or custom navigation input beyond its basic event handler. Why you would care: Use this if you want lower-level Verminion window input hooks rather than only generic button events.
+----------------------------------------
+NAME: AddonGSInfoMinionBattle_OnSetup
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 49 8B F8 0F 29 74 24 30 F3 0F 10 35 89 05 A4 00 45 33 C9 45 33 C0 F3 0F 11 74 24 20 0F 57 C9 8B F2 48 8B D9
+DESC: What it is: The setup path for the Lord of Verminion information and setup window. When it runs: When the game first opens the Verminion setup window and writes its initial state into the UI. Why you would care: Use this as the earliest hook for entering the Verminion setup flow.
+----------------------------------------
+NAME: AddonGSInfoMinionBattle_ReceiveEvent
+SIG:  66 83 FA 19 75 24 53 48 83 EC 20 48 8B D9 33 D2 49 8B C9 E8 48 6A 01 FF BA 16 00 00 00 48 8B CB E8 4B 65 04 FF 48 83 C4 20 5B C3
+DESC: What it is: The main input handler for the Lord of Verminion information and setup window. When it runs: When the player clicks, confirms, or otherwise interacts with the Verminion setup UI. Why you would care: Use this as the direct input hook for Verminion window interaction.
+----------------------------------------
+NAME: AddonHudMinionBattle_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 D9 48 81 EC D0 00 00 00 48 8B 05 45 C2 1B 01 48 33 C4 48 89 45 17 4C 8B F1 4D 8B E8 49 8D 48 60
+DESC: What it is: The setup path for the Lord of Verminion in-match HUD. When it runs: When the game first creates the Verminion match HUD on screen. Why you would care: Use this as the earliest hook for the live Verminion battle HUD.
+----------------------------------------
+NAME: AddonHudMinionBattle_OnRequestedUpdate
+SIG:  4C 8B DC 56 48 81 EC D0 00 00 00 48 8B 05 26 BD 1B 01 48 33 C4 48 89 44 24 60 4C 8B 8A 10 03 00 00 48 8B F1 48 89 4C 24 40 4C 89 4C 24 28 4D 85 C9 0F 84 1F 02 00 00
+DESC: What it is: The requested-update path for the Lord of Verminion in-match HUD. When it runs: When the game pushes fresh match data into the Verminion HUD without rebuilding the whole window. Why you would care: Use this as the best hook for live HUD-side Verminion state updates.
+----------------------------------------
+NAME: GetInstanceContentMahjongDirector
+SIG:  48 83 EC 28 E8 27 F9 31 FF 48 8B C8 E8 DF CA 32 FF 48 85 C0 74 09 80 B8 CE 0D 00 00 0E 74 02 33 C0 48 83 C4 28 C3
+DESC: What it is: The main getter for the live Mahjong content director. When it runs: When the client needs to access the current Mahjong match state. Why you would care: Use this as the entry point for any plugin work that needs live Mahjong director data.
+----------------------------------------
+CATEGORY: Gold Saucer - Cactpot and Air Force One
+----------------------------------------
+NAME: AgentLotteryDaily_Show
+SIG:  48 83 EC 48 33 C0 C7 44 24 30 01 00 00 00 4C 8D 44 24 20 89 44 24 20 33 D2 48 89 44 24 28 88 44 24 34 89 44 24 38 E8 15 00 00 00 48 83 C4 48 C3
+DESC: What it is: The open path for the Mini Cactpot agent. When it runs: When the game first shows the daily Cactpot interface. Why you would care: Use this as the cleanest hook for entering the Mini Cactpot flow.
+----------------------------------------
+NAME: AgentLotteryDaily_UpdateAddon
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 56 41 57 48 81 EC 70 03 00 00 48 8B 05 C6 74 7A 01 48 33 C4 48 89 84 24 60 03 00 00 41 BE 2D 00 00 00
+DESC: What it is: The main data-to-window update path for Mini Cactpot. When it runs: When the game redraws the daily Cactpot board, payout information, or other visible state. Why you would care: Use this as the best live refresh hook for Mini Cactpot state.
+----------------------------------------
+NAME: AgentLotteryDaily_UpdateNumber
+SIG:  40 53 48 83 EC 20 48 63 C2 48 8B D9 44 88 44 08 38 E8 AA 01 00 00 8B 43
+DESC: What it is: The number-update path for Mini Cactpot. When it runs: When the daily board is updating one of its revealed or selected numbers. Why you would care: Use this if you want hooks tied specifically to number changes on the Mini Cactpot board.
+----------------------------------------
+NAME: AgentLotteryDaily_UpdatePayout
+SIG:  48 89 5C 24 10 48 89 74 24 20 57 48 81 EC 10 03 00 00 48 8B 05 DF 75 7A 01 48 33 C4 48 89 84
+DESC: What it is: The payout-update path for Mini Cactpot. When it runs: When the game recalculates or redraws the reward values shown in the daily Cactpot window. Why you would care: Use this if you care about payout changes rather than the whole board refresh.
+----------------------------------------
+NAME: AddonLotteryDaily_OnSetup
+SIG:  48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 40 FF FF FF 48 81 EC C0 01 00 00 48 8B 05 62 E6 1A 01 48 33 C4 48 89 85 B0 00 00 00
+DESC: What it is: The setup path for the Mini Cactpot window. When it runs: When the daily Cactpot UI is first created and its starting values are written into the window. Why you would care: Use this as the earliest reliable UI hook for Mini Cactpot.
+----------------------------------------
+NAME: AddonLotteryDaily_OnRefresh
+SIG:  40 55 57 41 55 48 8D 6C 24 B9 48 81 EC A0 00 00 00 48 8B 05 00 E0 1A 01 48 33 C4 48 89 45 17 41 F6 00 0F 4D 8B E8 48 8B F9 75 07 32 C0 E9 55 04 00 00
+DESC: What it is: The refresh path for the Mini Cactpot window. When it runs: When the client redraws the daily Cactpot board after a state change without rebuilding the window from scratch. Why you would care: Use this as a focused redraw hook for Mini Cactpot.
+----------------------------------------
+NAME: AddonLotteryDaily_ReceiveEvent
+SIG:  40 55 53 56 41 55 48 8D 6C 24 C9 48 81 EC 98 00 00 00 48 8B 05 4F DB 1A 01 48 33 C4 48 89 45 0F 80 B9 19 04 00 00 00 49 8B D9 45 8B E8 48 8B F1
+DESC: What it is: The main input handler for the Mini Cactpot window. When it runs: When the player clicks, confirms, or otherwise interacts with the daily Cactpot board. Why you would care: Use this as the direct input hook for Mini Cactpot interaction.
+----------------------------------------
+NAME: AddonLotteryDaily_HandleCustomInput
+SIG:  40 56 48 83 EC 30 83 3A 02 48 8B F1 0F 85 25 01 00 00 80 7A 04 00 0F 85 1B 01 00 00 83 B9 E8 03 00 00 02 0F 85 0E 01 00 00 48 89 5C 24 40 48 89 7C 24 50
+DESC: What it is: The custom input handler for the Mini Cactpot window. When it runs: When the daily Cactpot UI processes lower-level input beyond its basic event flow. Why you would care: Use this if you want a deeper input hook for board interaction or controller navigation.
+----------------------------------------
+NAME: AgentLotteryWeekly_Show
+SIG:  48 83 EC 48 48 8B 05 9D 66 7A 01 48 33 C4 48 89 44 24 38 33 C0 C7 44 24 24 64 00 00 00 89 44 24 20 4C 8D 44 24 20 88 44 24 28 33 D2 89 44 24 2C B8 FF FF FF FF
+DESC: What it is: The open path for the Jumbo Cactpot agent. When it runs: When the game first shows the weekly Cactpot interface. Why you would care: Use this as the cleanest hook for entering the Jumbo Cactpot flow.
+----------------------------------------
+NAME: AgentLotteryWeekly_Update
+SIG:  41 57 48 81 EC 80 0A 00 00 48 8B 05 38 56 7A 01 48 33 C4 48 89 84 24 50 0A 00 00 48 8B 01 4C 8B F9 FF 50 30 84 C0 0F 84 0B 03 00 00 49 8B 4F 10 48 8B 01
+DESC: What it is: The main data and window update path for Jumbo Cactpot. When it runs: When the weekly Cactpot window is refreshing its visible state, ticket data, or result information. Why you would care: Use this as the broadest live-state hook for Jumbo Cactpot.
+----------------------------------------
+NAME: AddonLotteryWeeklyInput_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 81 EC A0 00 00 00 48 8B 05 1A 7E 1C 01 48 33 C4 48 89 84 24 90 00 00 00 F3 0F 10 05 D7 B1 A3 00
+DESC: What it is: The setup path for the Jumbo Cactpot ticket input window. When it runs: When the game first opens the weekly ticket-entry interface. Why you would care: Use this as the earliest reliable UI hook for Jumbo Cactpot ticket interaction.
+----------------------------------------
+NAME: AddonLotteryWeeklyInput_ReceiveEvent
+SIG:  48 89 5C 24 18 57 48 83 EC 60 80 B9 86 02 00 00 00 41 8B D8 48 8B F9 0F 85 20 01 00 00 66 83 FA 0C 0F 84 4E 02 00 00 48 89 74 24 78 66 83 FA 19 0F 84 15 01 00 00
+DESC: What it is: The main input handler for the Jumbo Cactpot ticket input window. When it runs: When the player enters numbers, confirms tickets, or otherwise interacts with the weekly ticket window. Why you would care: Use this as the direct interaction hook for Jumbo Cactpot entry flow.
+----------------------------------------
+NAME: AddonLotteryWeeklyRewardList_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 8B FA 48 8B D9 48 8B 89 C8 00 00 00 BA 65 00 00 00 49 8B F0 E8 F3 F1 02 FF BA 31 00 00 00
+DESC: What it is: The setup path for the Jumbo Cactpot reward list window. When it runs: When the game opens the weekly reward list or prize display window. Why you would care: Use this as the earliest hook for the visible Jumbo Cactpot reward list.
+----------------------------------------
+NAME: AddonLotteryWeeklyRewardList_ReceiveEvent
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 49 8B F1 41 8B E8 48 8B F9 66 83 FA 09 74 50 66 83 FA 0C 74 36 66 83 FA 19 0F 85 E9 00 00 00 41 83 F8 01 0F 85 DF 00 00 00
+DESC: What it is: The input handler for the Jumbo Cactpot reward list window. When it runs: When the player interacts with the weekly reward display or acknowledgement controls. Why you would care: Use this as the direct hook for Jumbo Cactpot reward-window interaction.
+----------------------------------------
+NAME: InstanceContentAirForceOne_Update
+SIG:  40 53 48 83 EC 20 48 8B D9 48 8B 89 B0 1F 00 00 E8 FB 77 F3 FF 84 C0 74 29 48 8B 8B B0 1F 00 00 E8 BB 79 F3 FF 48 8B 8B B0 1F 00 00 E8 CF 78 F3 FF 84 C0 74 0D
+DESC: What it is: The main live update path for the Air Force One instance-content director. When it runs: Repeatedly while an Air Force One run is active and the game is advancing its internal state. Why you would care: Use this as the broadest Air Force One gameplay-state hook.
+----------------------------------------
+NAME: InstanceContentAirForceOne_vf384
+SIG:  40 53 48 83 EC 20 48 8B D9 48 8B 89 B0 1F 00 00 E8 8B 77 F3 FF 84 C0 74 28 48 8B 8B B0 1F 00 00 E8 4B 79 F3 FF 48 8B 8B B0 1F 00 00 E8 1F 79 F3 FF 84 C0 74 0C
+DESC: What it is: A second internal state path used by the Air Force One director. When it runs: During live Air Force One processing after the main update path has already checked or advanced run state. Why you would care: Use this if you need a deeper Air Force One state hook than the main update alone.
+----------------------------------------
+NAME: InstanceContentAirForceOne_vf392
+SIG:  40 57 48 83 EC 20 48 8B F9 85 D2 74 7E 83 FA 01 0F 85 81 00 00 00 48 8B 0D C3 AA E9 00 E8 EE 2D 77 FE 48 85 C0 74 70 48 8B 10 48 8B C8 48 89 5C 24 30 FF 92 28 01 00 00
+DESC: What it is: A later internal control path used by the Air Force One director. When it runs: When the Air Force One content is applying a specific run-state change or resolving a deeper gameplay transition. Why you would care: Use this if you need a second deep hook for Air Force One state changes beyond the visible GATE layer.
+----------------------------------------
+CATEGORY: Gold Saucer - Weekly History and Arcade Machines
+----------------------------------------
+NAME: AddonLotteryWeeklyHistory_OnSetup
+SIG:  40 53 55 56 57 41 56 48 81 EC D0 00 00 00 48 8B 05 A3 71 1C 01 48 33 C4 48 89 84 24 C0 00 00 00 8B F2 49 8B E8 BA 04 00 00 00 48 8B F9 E8 BE 4F 04 FF
+DESC: What it is: The setup path for the Jumbo Cactpot history window. When it runs: When the game first opens the weekly history window and builds its starting list state. Why you would care: Use this as the earliest reliable hook for Jumbo Cactpot history display.
+----------------------------------------
+NAME: AddonLotteryWeeklyHistory_OnRefresh
+SIG:  40 53 48 81 EC 30 08 00 00 48 8B 05 68 6F 1C 01 48 33 C4 48 89 84 24 F0 07 00 00 48 83 B9 38 02 00 00 00 49 8B C0 48 89 44 24 60 48 8B D9 0F 84 3B 04 00 00
+DESC: What it is: The refresh path for the Jumbo Cactpot history window. When it runs: When the game redraws the stored weekly history entries after data changes or page movement. Why you would care: Use this if you want a focused hook for history-list refreshes instead of the entire weekly flow.
+----------------------------------------
+NAME: AddonLotteryWeeklyHistory_ReceiveEvent
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 49 8B F1 41 8B E8 48 8B F9 66 83 FA 09 74 46 66 83 FA 0C 74 2C 66 83 FA 19 0F 85 D9 00 00 00 48 8B 01 FF 90 80 00 00 00
+DESC: What it is: The input handler for the Jumbo Cactpot history window. When it runs: When the player changes pages, confirms, or otherwise interacts with the weekly history UI. Why you would care: Use this as the direct hook for user interaction inside Jumbo Cactpot history.
+----------------------------------------
+NAME: GoldSaucerArcadeMachineEventHandler_vf40
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 54 41 57 48 83 EC 40 48 8B F1 49 8B E9 41 0F B6 C8 80 BE 70 05 00 00 01 0F 84 95 01 00 00 83 E9 15 0F 84 32 01 00 00
+DESC: What it is: A deep state-processing path in the Gold Saucer arcade-machine event handler. When it runs: When the arcade-machine gameplay flow is consuming a new event step, timer value, or stage transition. Why you would care: Use this as a high-value hook for deeper arcade-machine state changes when simple UI hooks are not enough.
+----------------------------------------
+NAME: GoldSaucerArcadeMachineEventHandler_vf52
+SIG:  40 53 57 48 83 EC 28 48 8B D9 8B FA 8B 89 E8 02 00 00 80 BB 70 05 00 00 01 0F 84 D5 00 00 00 3B D1 75 40 8B 8B 80 05 00 00 83 C9 04 8B C1 89 8B 80 05 00 00
+DESC: What it is: A timer and follow-up state path in the Gold Saucer arcade-machine event handler. When it runs: When an arcade-machine sequence is finishing a timed step, opening a result path, or pushing the next state into the UI. Why you would care: Use this if you want a deeper hook for score/result timing in arcade-machine style Gold Saucer content.
+----------------------------------------
+NAME: GoldSaucerArcadeMachineEventHandler_vf89
+SIG:  40 53 48 83 EC 20 48 8B D9 8D 42 02 B9 FF FF FF FF 44 8B D1 83 F8 01 0F 86 80 00 00 00 45 8B C8 41 83 E9 01 74 0F 41 83 F9 01 75 0E 41 8D 4A 03 45 8B D1
+DESC: What it is: A decision path in the Gold Saucer arcade-machine event handler that checks cost and action direction. When it runs: When the arcade-machine content is deciding whether to proceed, cancel, or take another branch based on player input and available MGP. Why you would care: Use this if you want a deeper hook tied to arcade-machine acceptance, rejection, or cost-gated actions.
+----------------------------------------
