@@ -61,7 +61,6 @@ CATEGORY: Gold Saucer - Core State and Director
 CATEGORY: Gold Saucer - Module State and Collectibles
 CATEGORY: Gold Saucer - Reward Flow
 CATEGORY: Gold Saucer - Chocobo Racing and Gameplay
-CATEGORY: Gold Saucer - Chocobo Racing State and Results
 CATEGORY: Gold Saucer - GATE and FGS Gameplay
 CATEGORY: Gold Saucer - FGS HUD and Result Flow
 CATEGORY: Gold Saucer - Triple Triad and Card Management
@@ -69,13 +68,12 @@ CATEGORY: Gold Saucer - Gathering Mini-Games
 CATEGORY: Gold Saucer - Verminion and Mahjong
 CATEGORY: Gold Saucer - Cactpot and Air Force One
 CATEGORY: Gold Saucer - Weekly History and Arcade Machines
-CATEGORY: Gold Saucer - Mini and Jumbo Cactpot
-CATEGORY: Gold Saucer - GATE and FGS Deep State
 CATEGORY: Gold Saucer - Mini and Jumbo Cactpot Deep State
-CATEGORY: Gold Saucer - Weekly History and Result Flow
+CATEGORY: Camera Signatures - Experimental
+CATEGORY: Camera Signatures - Confirmed
+CATEGORY: Camera Signatures - Experimental
 CATEGORY: Fashion Report - Manager Anchors
 CATEGORY: Fashion Report - Core UI and Scoring
 CATEGORY: Fashion Report - Deep Event and Widget Flow
 CATEGORY: Fashion Report - Packet and Server-Fed State
-CATEGORY: Camera Signatures - Confirmed
-CATEGORY: Camera Signatures - Experimental
+
