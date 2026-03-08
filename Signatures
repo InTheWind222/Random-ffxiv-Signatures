@@ -2183,6 +2183,89 @@ SIG:  40 53 48 83 EC 20 48 8B D9 8D 42 02 B9 FF FF FF FF 44 8B D1 83 F8 01 0F 86
 DESC: What it is: A decision path in the Gold Saucer arcade-machine event handler that checks cost and action direction. When it runs: When the arcade-machine content is deciding whether to proceed, cancel, or take another branch based on player input and available MGP. Why you would care: Use this if you want a deeper hook tied to arcade-machine acceptance, rejection, or cost-gated actions.
 ----------------------------------------
 
+CATEGORY: Gold Saucer - Mini and Jumbo Cactpot
+----------------------------------------
+NAME: AgentLotteryDaily_Show
+SIG:  48 83 EC 48 33 C0 C7 44 24 30 01 00 00 00 4C 8D 44 24 20 89 44 24 20 33 D2 48 89 44 24 28 88 44 24 34 89 44 24 38 E8 15 00 00 00 48 83 C4 48 C3
+DESC: What it is: The open path for the Mini Cactpot agent. When it runs: When the game first shows the daily Cactpot interface. Why you would care: Use this as the cleanest hook for entering the Mini Cactpot flow.
+----------------------------------------
+NAME: AgentLotteryDaily_UpdateAddon
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 56 41 57 48 81 EC 70 03 00 00 48 8B 05 C6 74 7A 01 48 33 C4 48 89 84 24 60 03 00 00 41 BE 2D 00 00 00
+DESC: What it is: The main data-to-window update path for Mini Cactpot. When it runs: When the game redraws the daily Cactpot board, payout information, or other visible state. Why you would care: Use this as the best live refresh hook for Mini Cactpot state.
+----------------------------------------
+NAME: AgentLotteryDaily_UpdateNumber
+SIG:  40 53 48 83 EC 20 48 63 C2 48 8B D9 44 88 44 08 38 E8 AA 01 00 00 8B 43
+DESC: What it is: The number-update path for Mini Cactpot. When it runs: When the daily board is updating one of its revealed or selected numbers. Why you would care: Use this if you want hooks tied specifically to number changes on the Mini Cactpot board.
+----------------------------------------
+NAME: AgentLotteryDaily_UpdatePayout
+SIG:  48 89 5C 24 10 48 89 74 24 20 57 48 81 EC 10 03 00 00 48 8B 05 DF 75 7A 01 48 33 C4 48 89 84
+DESC: What it is: The payout-update path for Mini Cactpot. When it runs: When the game recalculates or redraws the reward values shown in the daily Cactpot window. Why you would care: Use this if you care about payout changes rather than the whole board refresh.
+----------------------------------------
+NAME: AddonLotteryDaily_OnSetup
+SIG:  48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 40 FF FF FF 48 81 EC C0 01 00 00 48 8B 05 62 E6 1A 01 48 33 C4 48 89 85 B0 00 00 00
+DESC: What it is: The setup path for the Mini Cactpot window. When it runs: When the daily Cactpot UI is first created and its starting values are written into the window. Why you would care: Use this as the earliest reliable UI hook for Mini Cactpot.
+----------------------------------------
+NAME: AddonLotteryDaily_OnRefresh
+SIG:  40 55 57 41 55 48 8D 6C 24 B9 48 81 EC A0 00 00 00 48 8B 05 00 E0 1A 01 48 33 C4 48 89 45 17 41 F6 00 0F 4D 8B E8 48 8B F9 75 07 32 C0 E9 55 04 00 00
+DESC: What it is: The refresh path for the Mini Cactpot window. When it runs: When the client redraws the daily Cactpot board after a state change without rebuilding the window from scratch. Why you would care: Use this as a focused redraw hook for Mini Cactpot.
+----------------------------------------
+NAME: AddonLotteryDaily_ReceiveEvent
+SIG:  40 55 53 56 41 55 48 8D 6C 24 C9 48 81 EC 98 00 00 00 48 8B 05 4F DB 1A 01 48 33 C4 48 89 45 0F 80 B9 19 04 00 00 00 49 8B D9 45 8B E8 48 8B F1
+DESC: What it is: The main input handler for the Mini Cactpot window. When it runs: When the player clicks, confirms, or otherwise interacts with the daily Cactpot board. Why you would care: Use this as the direct input hook for Mini Cactpot interaction.
+----------------------------------------
+NAME: AddonLotteryDaily_HandleCustomInput
+SIG:  40 56 48 83 EC 30 83 3A 02 48 8B F1 0F 85 25 01 00 00 80 7A 04 00 0F 85 1B 01 00 00 83 B9 E8 03 00 00 02 0F 85 0E 01 00 00 48 89 5C 24 40 48 89 7C 24 50
+DESC: What it is: The custom input handler for the Mini Cactpot window. When it runs: When the daily Cactpot UI processes lower-level input beyond its basic event flow. Why you would care: Use this if you want a deeper input hook for board interaction or controller navigation.
+----------------------------------------
+NAME: AgentLotteryWeekly_Show
+SIG:  48 83 EC 48 48 8B 05 9D 66 7A 01 48 33 C4 48 89 44 24 38 33 C0 C7 44 24 24 64 00 00 00 89 44 24 20 4C 8D 44 24 20 88 44 24 28 33 D2 89 44 24 2C B8 FF FF FF FF
+DESC: What it is: The open path for the Jumbo Cactpot agent. When it runs: When the game first shows the weekly Cactpot interface. Why you would care: Use this as the cleanest hook for entering the Jumbo Cactpot flow.
+----------------------------------------
+NAME: AgentLotteryWeekly_Update
+SIG:  41 57 48 81 EC 80 0A 00 00 48 8B 05 38 56 7A 01 48 33 C4 48 89 84 24 50 0A 00 00 48 8B 01 4C 8B F9 FF 50 30 84 C0 0F 84 0B 03 00 00 49 8B 4F 10 48 8B 01
+DESC: What it is: The main data and window update path for Jumbo Cactpot. When it runs: When the weekly Cactpot window is refreshing its visible state, ticket data, or result information. Why you would care: Use this as the broadest live-state hook for Jumbo Cactpot.
+----------------------------------------
+NAME: AddonLotteryWeeklyInput_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 81 EC A0 00 00 00 48 8B 05 1A 7E 1C 01 48 33 C4 48 89 84 24 90 00 00 00 F3 0F 10 05 D7 B1 A3 00
+DESC: What it is: The setup path for the Jumbo Cactpot ticket input window. When it runs: When the game first opens the weekly ticket-entry interface. Why you would care: Use this as the earliest reliable UI hook for Jumbo Cactpot ticket interaction.
+----------------------------------------
+NAME: AddonLotteryWeeklyInput_ReceiveEvent
+SIG:  48 89 5C 24 18 57 48 83 EC 60 80 B9 86 02 00 00 00 41 8B D8 48 8B F9 0F 85 20 01 00 00 66 83 FA 0C 0F 84 4E 02 00 00 48 89 74 24 78 66 83 FA 19 0F 84 15 01 00 00
+DESC: What it is: The main input handler for the Jumbo Cactpot ticket input window. When it runs: When the player enters numbers, confirms tickets, or otherwise interacts with the weekly ticket window. Why you would care: Use this as the direct interaction hook for Jumbo Cactpot entry flow.
+----------------------------------------
+NAME: AddonLotteryWeeklyRewardList_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 8B FA 48 8B D9 48 8B 89 C8 00 00 00 BA 65 00 00 00 49 8B F0 E8 F3 F1 02 FF BA 31 00 00 00
+DESC: What it is: The setup path for the Jumbo Cactpot reward list window. When it runs: When the game opens the weekly reward list or prize display window. Why you would care: Use this as the earliest hook for the visible Jumbo Cactpot reward list.
+----------------------------------------
+NAME: AddonLotteryWeeklyRewardList_ReceiveEvent
+SIG:  48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 49 8B F1 41 8B E8 48 8B F9 66 83 FA 09 74 50 66 83 FA 0C 74 36 66 83 FA 19 0F 85 E9 00 00 00 41 83 F8 01 0F 85 DF 00 00 00
+DESC: What it is: The input handler for the Jumbo Cactpot reward list window. When it runs: When the player interacts with the weekly reward display or acknowledgement controls. Why you would care: Use this as the direct hook for Jumbo Cactpot reward-window interaction.
+----------------------------------------
+NAME: LotteryDailyEventHandler_IsUnlocked
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 E8 ?? ?? ?? ?? BA E8 01 00 00 48 8B C8 E8 ?? ?? ?? ?? 84 C0 75 0B 48 8B 5C 24 30 48 83 C4 20 5F
+DESC: What it is: The event-side availability check for Mini Cactpot. When it runs: When the game decides whether the daily Cactpot interaction should be available. Why you would care: Use this as the cleanest non-UI hook for whether Mini Cactpot is unlocked and currently usable.
+----------------------------------------
+NAME: LotteryDailyEventHandler_vf40
+SIG:  40 53 57 48 81 EC 88 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 70 49 8B D9 48 8B F9 41 80 F8 13 74 16 0F B6 84 24 C0 00 00 00 88 44 24 20 E8 ?? ?? ?? ?? E9 12 01 00 00
+DESC: What it is: The deeper Mini Cactpot event-state handler. When it runs: When the daily Cactpot event processes board-state updates from the game. Why you would care: Use this to catch the real board and reveal-state changes that feed the visible Mini Cactpot UI.
+----------------------------------------
+NAME: LotteryWeeklyEventHandler_IsUnlocked
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8B F9 E8 ?? ?? ?? ?? BA E9 01 00 00 48 8B C8 E8 ?? ?? ?? ?? 84 C0 75 0B 48 8B 5C 24 30 48 83 C4 20 5F
+DESC: What it is: The event-side availability check for Jumbo Cactpot. When it runs: When the game decides whether the weekly Cactpot interaction should be available. Why you would care: Use this as the cleanest non-UI hook for whether Jumbo Cactpot is unlocked and open.
+----------------------------------------
+NAME: LotteryWeeklyEventHandler_vf40
+SIG:  48 89 5C 24 18 48 89 74 24 20 57 48 83 EC 30 49 8B F9 48 8B D9 41 80 F8 14 0F 84 8D 02 00 00 41 80 F8 29 74 1D 0F B6 44 24 60 88 44 24 60 48 8B 5C 24 50 48 8B 74 24 58 48 83 C4 30 5F E9 5E EE
+DESC: What it is: The deeper Jumbo Cactpot event-state handler. When it runs: When the weekly Cactpot event processes result, reward, and ticket-state changes. Why you would care: Use this as the most useful event-side hook for live Jumbo Cactpot state beyond the visible window refresh path.
+----------------------------------------
+NAME: LotteryExchangeShopEventHandler_IsUnlocked
+SIG:  40 53 56 48 83 EC 58 80 B9 F0 03 00 00 00 48 8B DA 48 8B 81 E0 03 00 00 48 8B F1 75 11 48 39 81 D8 03 00 00 0F 95 C0 48 83 C4 58 5E 5B C3
+DESC: What it is: The availability check for the Lottery Exchange Shop interaction. When it runs: When the game decides whether the exchange or reward-claim NPC flow should be available. Why you would care: Use this if you care about the claim and exchange side of Cactpot rewards rather than only the ticket windows.
+----------------------------------------
+NAME: LotteryExchangeShopEventHandler_vf47
+SIG:  48 89 5C 24 20 56 48 81 EC A0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 90 00 00 00 48 8B D9 48 8B 89 58 03 00 00 48 85 C9 74 15 48 8B 01 BA 01 00 00 00 FF 10 48 C7 83 58 03 00 00 00
+DESC: What it is: The deeper exchange-shop state builder for Lottery rewards. When it runs: When the exchange or reward-claim flow rebuilds its available item and reward entries. Why you would care: Use this as the most useful deeper hook for Cactpot exchange-state changes and reward availability.
+----------------------------------------
+
 CATEGORY: Camera Signatures - Confirmed
 ----------------------------------------
 NAME: WorldToViewportPoint
@@ -2312,5 +2395,6 @@ DESC: What it is: The getter for the Fashion Report manager singleton. When it r
 NAME: FashionCheckServerFlag_WriteRead
 SIG:  C6 81 A0 00 00 00 00 C3 CC CC CC CC CC CC CC CC 0F B6 81 A0 00 00 00 C3
 DESC: What it is: The paired tiny helpers that write and then read the Fashion Report manager byte at offset +0xA0. When it runs: The write side runs when the server-fed actor-control branch updates Fashion Report state, and the read side runs when deeper Fashion Report task logic checks that same state. Why you would care: This is the cleanest low-level anchor for direct polling of the internal Fashion Report state flag once you already have the manager pointer.
+
 
 
