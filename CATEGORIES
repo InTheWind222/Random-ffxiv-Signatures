@@ -7,10 +7,18 @@ CATEGORY: PvP
 CATEGORY: Quest
 CATEGORY: Crystalline Conflict
 CATEGORY: Variant and Criterion
+CATEGORY: Cosmic Exploration
+CATEGORY: Gold Saucer
+CATEGORY: Fashion Report
+CATEGORY: Camera
+
 Search one exact section with:
 CATEGORY: PvP Map Objects and Pickups
 CATEGORY: Quest - Core State and Access
 CATEGORY: Variant and Criterion Dungeons - Agents and UI
+CATEGORY: Gold Saucer - Triple Triad and Card Management
+CATEGORY: Fashion Report - Core UI and Scoring
+
 Full Category List
 
 CATEGORY: General and Core Signatures
@@ -69,11 +77,9 @@ CATEGORY: Gold Saucer - Verminion and Mahjong
 CATEGORY: Gold Saucer - Cactpot and Air Force One
 CATEGORY: Gold Saucer - Weekly History and Arcade Machines
 CATEGORY: Gold Saucer - Mini and Jumbo Cactpot Deep State
-CATEGORY: Camera Signatures - Experimental
 CATEGORY: Camera Signatures - Confirmed
 CATEGORY: Camera Signatures - Experimental
 CATEGORY: Fashion Report - Manager Anchors
 CATEGORY: Fashion Report - Core UI and Scoring
 CATEGORY: Fashion Report - Deep Event and Widget Flow
 CATEGORY: Fashion Report - Packet and Server-Fed State
-
