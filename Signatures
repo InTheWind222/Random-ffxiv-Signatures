@@ -2183,52 +2183,56 @@ SIG:  40 53 48 83 EC 20 48 8B D9 8D 42 02 B9 FF FF FF FF 44 8B D1 83 F8 01 0F 86
 DESC: What it is: A decision path in the Gold Saucer arcade-machine event handler that checks cost and action direction. When it runs: When the arcade-machine content is deciding whether to proceed, cancel, or take another branch based on player input and available MGP. Why you would care: Use this if you want a deeper hook tied to arcade-machine acceptance, rejection, or cost-gated actions.
 ----------------------------------------
 
-CATEGORY: Camera Utility & Coordinate Math
+CATEGORY: Camera Signatures - Confirmed
 ----------------------------------------
 NAME: WorldToViewportPoint
 SIG:  48 89 5C 24 18 57 48 81 EC A0 00 00 00 0F 29 B4 24 90 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24
-DESC: What it is: Projects 3D world coordinates onto the 2D screen viewport. When it runs: For drawing 2D elements (like nameplates) over 3D objects. Why you would care: Essential for creating ESP overlays and radar.
+DESC: What it is: Client::Game::Camera.WorldToViewportPoint. When it runs: When the client projects a 3D world position into 2D screen space. Why you would care: This is a confirmed world-to-screen function for ESP, labels, and overlay positioning.
+----------------------------------------
+NAME: ViewportPointToRay
+SIG:  48 8B C4 48 89 58 18 48 89 78 20 55 48 8D 68 A8 48 81 EC 50 01 00 00 0F 29 70 E8 0F 29 78 D8 44 0F 29 40 C8 44 0F 29 48 B8 44 0F 29 50 A8 44 0F 29 58 98 44 0F 29
+DESC: What it is: Client::Graphics::Scene::Camera.ViewportPointToRay. When it runs: When the client converts normalized viewport coordinates into a 3D ray. Why you would care: This is a confirmed ray helper if your tool starts from viewport coordinates instead of raw screen pixels.
 ----------------------------------------
 NAME: ScreenPointToRay
 SIG:  48 8B C4 48 89 58 18 55 48 8D 68 98 48 81 EC 60 01 00 00 0F 29 70 E8 0F 29 78 D8 44 0F 29 40 C8
-DESC: What it is: Converts a 2D screen coordinate into a 3D ray. When it runs: When the user clicks the mouse in the 3D world. Why you would care: Used for "Click-to-Teleport" and identifying world-click targets.
-
-CATEGORY: Camera Control & Bypass Modifications
+DESC: What it is: Client::Graphics::Scene::Camera.ScreenPointToRay. When it runs: When the client turns a 2D screen position into a 3D ray through the scene. Why you would care: This is a confirmed screen-to-world ray helper for click picking, targeting helpers, and teleport-style tools.
 ----------------------------------------
-NAME: ForceCameraFreeMode
+NAME: CameraDetermineControlMode
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 48 8B F9 BE 01 00 00 00 8B 89 80 01
-DESC: What it is: Decouples the camera from the player center. When it runs: Every frame during control mode determination. Why you would care: Enables a "Fly-Cam" that looks around without orbiting or zooming relative to the character.
+DESC: What it is: Client::Game::Camera.DetermineControlMode. When it runs: When the camera decides which control mode should be active. Why you would care: This is the right hook if you want to study or modify how the client chooses free-look, follow, or other camera control states.
 ----------------------------------------
-NAME: CutsceneCameraUnlock
+NAME: CameraManagerGetActiveCamera
+SIG:  40 53 48 83 EC 20 48 83 3D ?? ?? ?? ?? 00 48 8B D9 74 32 E8 ?? ?? ?? ?? 48 B9 00 00 00 00 08 00 00 00 48 85 88 80 02 00 00 74 1A F3 0F 10 8B 80
+DESC: What it is: Client::Game::Control::CameraManager.GetActiveCamera. When it runs: When game code asks the camera manager for the currently active camera object. Why you would care: This is the cleanest confirmed read-side hook for finding the live active camera.
+----------------------------------------
+NAME: CameraManagerSetActiveCamera
 SIG:  40 56 41 54 41 55 41 57 48 83 EC 38 4C 63 FA 45 8B E1 45 0F B6 E8 48 8B F1 44 39 79 48 0F 84 C0 02 00 00
-DESC: What it is: The function that sets camera lock states. When it runs: During cutscene transitions. Why you would care: Use this to maintain manual camera control even when the game tries to lock it.
-----------------------------------------
-NAME: InfiniteZoomOut
-SIG:  F3 41 0F 10 66 2C 0F 57 C9 0F 2F E1 F3 0F 10 35 ?? ?? ?? ?? 76 0E 0F 2F C1 76 09 0F 28 CC
-DESC: What it is: The hard-coded zoom distance clamp check. When it runs: During camera update rendering. Why you would care: Bypass this specific COMISS sequence to allow zooming out beyond the game's limits.
-----------------------------------------
-NAME: CameraCollisionBypass
-SIG:  0F 2F 80 1C 01 00 00 72 1C 40 88 A8 10 01 00 00 4C 89 B0 14 01 00 00 44 89 B0 1C 01 00 00 40 88 A8 20 01 00 00
-DESC: What it is: Handles environmental collision. When it runs: When the camera hits a solid object. Why you would care: Patch the JBE/JL (72) to prevent the camera from zooming in when touching walls.
-----------------------------------------
-NAME: NoCameraShake
-SIG:  80 B9 99 00 00 00 00 8B 41 6C 89 81 B0 00 00 00 C6 81 B5 00 00 00 01 75 08 FF C8 89 81 B0 00 00 00 B0 01 C3
-DESC: What it is: Routine applying screen shake offsets. When it runs: During event-triggered shakes. Why you would care: Globally zero out the shake multipliers for a perfectly stable view.
-
-CATEGORY: Camera Engine & Graphics Constants
+DESC: What it is: Client::Game::Control::CameraManager.SetActiveCamera. When it runs: When the client switches or updates the active camera slot. Why you would care: This is a confirmed camera-manager hook for tracking camera switches and finding where active-camera state is written.
 ----------------------------------------
 NAME: CameraManagerUpdate
 SIG:  4C 8B DC 49 89 5B 10 49 89 73 18 49 89 7B 20 55 49 8D AB 28 FF FF FF 48 81 EC D0 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4
-DESC: What it is: The main update routine for the CameraManager. When it runs: Every frame. Why you would care: Stable anchor for locating camera structures in any game version.
+DESC: What it is: Client::Graphics::Scene::CameraManager.Update. When it runs: Every frame while the scene camera manager updates live camera state. Why you would care: This is a strong anchor for finding active camera structures and frame-by-frame camera behavior.
 ----------------------------------------
-NAME: FarClipPlane
+NAME: CameraMakeProjectionMatrix
 SIG:  48 83 EC 68 F3 41 0F 10 49 08 0F 57 D2 F3 41 0F 10 40 08 33 C0 F3 0F 10 25 ?? ?? ?? ?? 0F 29 74 24 50 0F 28 EC F3 41 0F 10 31 0F 29 7C 24 40 F3 0F 10 3D ?? ?? ?? ?? 44 0F 29 44 24 30 F3 45 0F 10 00 44 0F 29 4C 24 20 F3 45 0F 10 49 04 44 0F 29 54 24 10 44 0F 28 D1 44 0F 57 15 50 F4 DE 01
-DESC: What it is: Loads the far-clip plane distance for the projection matrix. When it runs: During creation of the projection matrix. Why you would care: Modify this to increase view distance and remove fog. Targets the main camera's projection logic specifically.
+DESC: What it is: Client::Graphics::Render::Camera.MakeProjectionMatrix. When it runs: When the client builds the camera projection matrix. Why you would care: This is the confirmed projection hook for far clip, field of view, and related camera math.
+----------------------------------------
+NAME: StaticSceneCameraManagerInstance
+SIG:  48 8B C8 48 89 05 ?? ?? ?? ?? E8 ?? ?? ?? ?? 33 D2 45 33 C0 8D 4A 20 E8 ?? ?? ?? ?? 48 85 C0 74 11 48 8D 15 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? EB 03 48 8B C6 33 D2 48 89 87 48 2B 00 00 45 33 C0 8D 4A 20 E8 ?? ?? ?? ?? 48 85 C0 74 11 48 8D
+DESC: What it is: A unique initialization write in Client::System::Framework::Framework.Setup that stores the scene camera manager singleton pointer. When it runs: During framework startup when the global scene camera manager instance is created and registered. Why you would care: This is the AoB version of the scene camera manager singleton anchor for this build.
+----------------------------------------
+NAME: EventScenePlayScreenShake
+SIG:  48 89 5C 24 08 57 48 81 EC 80 00 00 00 0F 29 74 24 70 48 8D 4C 24 30 0F 29 7C 24 60 E8 ?? ?? ?? ?? 48 8D 4C 24 30 E8 ?? ?? ?? ?? BA 02 00 00 00
+DESC: What it is: Client::Game::Event::EventSceneModuleUsualImpl.PlayScreenShake. When it runs: When an event scene or scripted sequence requests a screen shake effect. Why you would care: This is the best confirmed named hook here if you want to detect or suppress scripted camera shake.
+----------------------------------------
+NAME: EventSceneCameraCollisionMode
+SIG:  40 53 48 83 EC 50 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 BA 02 00 00 00 E8 ?? ?? ?? ?? 83 3D ?? ?? ?? ?? 01 48 8B D8 74 16
+DESC: What it is: Client::Game::Event::EventSceneModuleUsualImpl.CameraCollisionMode. When it runs: When an event scene configures how camera collision should behave. Why you would care: This is the best confirmed named hook here if you want to study or alter cutscene camera-collision behavior.
 
-CATEGORY: Camera Memory Access & Pointers
+CATEGORY: Camera Signatures - Experimental
 ----------------------------------------
-NAME: StaticCameraManager
-SIG:  C7 86 80 01 00 00 00 00 80 3F 33 D2 48 8B 05 ?? ?? ?? ?? 48 89 78 58 48 8B 0D ?? ?? ?? ??
-DESC: What it is: Static global pointer to the CameraManager singleton with state initialization. When it runs: Accessed whenever finding the active camera. Why you would care: Robust pointer search including state context. Use to find base camera address.
-----------------------------------------
+NAME: CameraZoomClampCandidate
+SIG:  F3 41 0F 10 66 2C 0F 57 C9 0F 2F E1 F3 0F 10 35 ?? ?? ?? ?? 76 0E 0F 2F C1 76 09 0F 28 CC
+DESC: What it is: A unique compare-and-clamp sequence inside unnamed function FUN_1403BBF90. When it runs: During a camera-related float comparison path that appears tied to zoom or projection limits. Why you would care: This is worth investigating for zoom-limit work, but Ghidra does not currently give it a strong named camera symbol.
+
 
