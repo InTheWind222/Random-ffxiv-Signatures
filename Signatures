@@ -2235,4 +2235,82 @@ NAME: CameraZoomClampCandidate
 SIG:  F3 41 0F 10 66 2C 0F 57 C9 0F 2F E1 F3 0F 10 35 ?? ?? ?? ?? 76 0E 0F 2F C1 76 09 0F 28 CC
 DESC: What it is: A unique compare-and-clamp sequence inside unnamed function FUN_1403BBF90. When it runs: During a camera-related float comparison path that appears tied to zoom or projection limits. Why you would care: This is worth investigating for zoom-limit work, but Ghidra does not currently give it a strong named camera symbol.
 
+CATEGORY: Fashion Report - Core UI and Scoring
+----------------------------------------
+NAME: AgentFashion_ReceiveEvent
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 8B 44 24 70 41 8B E9 49 8B D8 48 8B F2 48 8B F9 83 E8 01 0F 84 AE 01 00 00 83 F8 01 0F 84 7F 01 00 00
+DESC: What it is: The main input handler for the Fashion Report agent window. When it runs: When the player clicks or changes options in the Fashion Report UI. Why you would care: Use this for direct input tracking on the judging window instead of hooking broader generic UI handlers.
+----------------------------------------
+NAME: AgentFashion_FashionCharaView_Update
+SIG:  48 89 74 24 10 57 48 83 EC 20 F6 81 20 03 00 00 20 49 8B F0 48 8B F9 0F 84 E3 00 00 00 BA 02 00 00 00 48 89 5C 24 30 45 33 C0 48 8D 8E 30 0A 00 00 E8 ?? ?? ?? ?? 84 C0 0F 85 BD 00 00 00
+DESC: What it is: The Fashion Report character preview update routine. When it runs: While the preview model is being refreshed after gear or display-state changes. Why you would care: Useful for tools that want to watch or modify the live judged outfit preview.
+----------------------------------------
+NAME: AddonFashionCheck_OnSetup
+SIG:  48 89 5C 24 10 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 D9 48 81 EC C0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 17 BA 1F 00 00 00 49 8B F0 48 8B F9 E8 ?? ?? ?? ??
+DESC: What it is: The setup routine for the main Fashion Report window. When it runs: When the judging UI is first opened and all item rows, labels, and starting values are created. Why you would care: This is the best entry point for hooking the full Fashion Report screen as it appears.
+----------------------------------------
+NAME: AddonFashionCheck_ReceiveEvent
+SIG:  66 83 FA 19 0F 85 C1 00 00 00 48 89 5C 24 08 57 48 83 EC 20 48 8B D9 41 8B F8 49 8B C9 33 D2 E8 ?? ?? ?? ?? 83 FF 05 0F 87 94 00 00 00 48 8D 0D ?? ?? ?? ?? 8B 94 B9 1C A9 62 01
+DESC: What it is: The main event handler for the Fashion Report window. When it runs: When the player presses buttons or triggers actions inside the judging screen. Why you would care: Use this to catch player interaction with the Fashion Report UI at the addon level.
+----------------------------------------
+NAME: AddonFashionCheckScoreGauge_OnSetup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 BA 10 00 00 00 49 8B D8 48 8B E9 E8 ?? ?? ?? ?? BA 13 00 00 00 48 89 85 38 02 00 00
+DESC: What it is: The setup routine for the Fashion Report score gauge window. When it runs: When the score gauge is created before the judging animation starts. Why you would care: Good hook for score presentation, gauge state initialization, and pre-animation setup.
+----------------------------------------
+NAME: AddonFashionCheckScoreGauge_Update
+SIG:  40 53 48 81 EC 80 00 00 00 0F 29 74 24 70 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 60 48 8B D9 0F 28 F1 8B 89 6C 02 00 00 83 E9 01 0F 84 93 01 00 00
+DESC: What it is: The score gauge animation and progression update for Fashion Report. When it runs: While the score is being revealed and the gauge is animating. Why you would care: This is the most useful score-side hook for live judging progress and result display.
+
+CATEGORY: Fashion Report - Deep Event and Widget Flow
+----------------------------------------
+NAME: FashionCheckTask_vf1_StateGate
+SIG:  48 83 EC 28 E8 ?? ?? ?? ?? 84 C0 74 18 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 84 C0 74 07 33 C0 48 83 C4 28 C3 B8 01 00 00 00 48 83 C4 28 C3
+DESC: What it is: A deeper Fashion Report task gate that checks whether the current task is allowed to continue. When it runs: During internal Fashion Report task flow after the manager state has been updated. Why you would care: Useful for tracking deeper state transitions beyond the visible UI.
+----------------------------------------
+NAME: FashionCheckLua_SetPlayerInfo
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 CF 71 BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 20 46 BF FE 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 8E 06 E6 FF 48 83 38 00 74 4D
+DESC: What it is: The internal callback that pushes player judging data into the Fashion Report flow. When it runs: When the game fills player-specific Fashion Report information for the active judging session. Why you would care: Useful if you want the deeper player-info handoff rather than only watching the visible UI.
+----------------------------------------
+NAME: FashionCheckLua_AddEntryReward
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 2D 71 BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 7E 45 BF FE 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 EC 05 E6 FF 48 83 38 00 74 2D E8 B1 2F 0F FF
+DESC: What it is: The internal callback that adds the base Fashion Report reward entry. When it runs: When the judging flow builds the normal reward result data. Why you would care: Useful for reward tracking if you want more than the final popup.
+----------------------------------------
+NAME: FashionCheckLua_AddBonusReward
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 9D 70 BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 EE 44 BF FE 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 5C 05 E6 FF 48 83 38 00 74 2D E8 21 2F 0F FF
+DESC: What it is: The internal callback that adds the bonus Fashion Report reward entry. When it runs: When the game builds bonus reward data on top of the base judging payout. Why you would care: Useful if you want to distinguish bonus reward handling from the standard payout flow.
+----------------------------------------
+NAME: FashionCheckLua_AddEntryAndBonusReward
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 0D 70 BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 5E 44 BF FE 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 CC 04 E6 FF 48 83 38 00 74 2D E8 91 2E 0F FF
+DESC: What it is: The internal callback that creates both the normal and bonus reward entries together. When it runs: When the game prepares the combined payout view for a judging result. Why you would care: This is the best single reward-building hook if you want the full Fashion Report payout flow.
+----------------------------------------
+NAME: FashionCheckLua_OpenThemeWidget
+SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 70 48 8B 05 32 D8 DF 00 48 33 C4 48 89 44 24 68 48 8B D1 48 8D 4C 24 20 E8 95 6D BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 E6 41 BF FE
+DESC: What it is: The internal callback that opens the Fashion Report theme widget. When it runs: When the game decides to show the weekly theme information panel. Why you would care: Useful if you want to hook the theme reveal rather than only the main addon shell.
+----------------------------------------
+NAME: FashionCheckLua_OpenScoreWidget
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 FD 69 BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 4E 3E BF FE 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 BC FE E5 FF 48 8B 08 48 85 C9 74 29 E8 3F 00 00 00 84 C0 74 20
+DESC: What it is: The internal callback that opens the Fashion Report score widget. When it runs: When the score display is about to be shown after judging. Why you would care: Useful for a deeper score-open hook than the gauge addon alone.
+----------------------------------------
+NAME: FashionCheckLua_OpenHighScoreEquipWidget
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 3D 67 BF FE BA 01 00 00 00 48 8D 4C 24 20 E8 8E 3B BF FE 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 FC FB E5 FF 48 8B 08 48 85 C9 74 29 E8 3F 00 00 00 84 C0 74 20
+DESC: What it is: The internal callback that opens the high-score equipment widget for Fashion Report. When it runs: When the game shows the higher-scoring equipment comparison or related outfit details. Why you would care: Useful if you want the deeper gear-comparison side of the judging flow.
+----------------------------------------
+NAME: FashionCheckLua_GetEquipEvaluations
+SIG:  48 89 5C 24 10 57 48 81 EC 80 00 00 00 48 8B 05 04 DA DF 00 48 33 C4 48 89 44 24 78 48 8B D1 48 8D 4C 24 20 E8 67 6F BF FE 33 C0 C7 44 24 48 05 00 00 00 0F 57 C0 48 89 44 24 6C
+DESC: What it is: The internal callback that reads per-slot Fashion Report equipment evaluations. When it runs: When the game gathers the item-grade results used to judge the outfit. Why you would care: This is the deepest useful scoring hook if you want to inspect how each equipment slot was evaluated.
+
+CATEGORY: Fashion Report - Packet and Server-Fed State
+----------------------------------------
+NAME: PacketDispatcher_HandleActorControlPacket_FashionCheck
+SIG:  40 55 53 57 41 54 41 56 48 8D AC 24 40 EE FF FF B8 C0 12 00 00 E8 ?? ?? ?? ?? 48 2B E0 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 60 11 00 00
+DESC: What it is: The broad actor-control packet handler that contains the Fashion Report server-fed branch. When it runs: When actor-control messages arrive from the server; the Fashion Report path is the branch for control type 0x76C. Why you would care: This is the deepest useful packet-side hook for Fashion Report state changes without dropping into generic network ingress.
+----------------------------------------
+NAME: FashionCheckManager_GetInstance
+SIG:  48 8B 05 ?? ?? ?? ?? C3 CC CC CC CC CC CC CC CC 40 53 48 83 EC 20 BB 09 0C 00 00
+DESC: What it is: The getter for the Fashion Report manager singleton. When it runs: When the client needs the live Fashion Report manager object from gameplay, UI, or server-fed handlers. Why you would care: This is the best direct manager anchor if you want to read Fashion Report state without relying only on UI timing.
+----------------------------------------
+NAME: FashionCheckServerFlag_WriteRead
+SIG:  C6 81 A0 00 00 00 00 C3 CC CC CC CC CC CC CC CC 0F B6 81 A0 00 00 00 C3
+DESC: What it is: The paired tiny helpers that write and then read the Fashion Report manager byte at offset +0xA0. When it runs: The write side runs when the server-fed actor-control branch updates Fashion Report state, and the read side runs when deeper Fashion Report task logic checks that same state. Why you would care: This is the cleanest low-level anchor for direct polling of the internal Fashion Report state flag once you already have the manager pointer.
+
 
