@@ -222,6 +222,63 @@ SIG:  48 89 5C 24 08 57 48 83 EC 20 8D 82 17 FC FF FF 49 63 D8 48 8B F9 83 F8 07
 DESC: What it is: The conditions helper that checks a specific permission-mapped condition index against the local player's current condition state. When it runs: When client logic translates a permission or gate id into an underlying condition slot and tests whether the local player currently satisfies it. Why you would care: Use this as a non-core local-player support hook when you need direct access to permission-condition checks that sit above the raw condition bitfield.
 ----------------------------------------
 
+CATEGORY: Local Character - Territory, Targeting, and Instance Context
+----------------------------------------
+NAME: TargetSystem_GetMouseOverObject
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 57 41 54 41 55 41 57 48 81 EC 90 00 00 00 49 63 19 49 8B F9 4C 8B AC 24 E0 00 00 00 45 8B C8 48 8B E9 0F 29 7C 24 70
+DESC: What it is: The local targeting helper that resolves the object currently under the mouse cursor. When it runs: When the client performs a mouseover target query using the current cursor position, active camera, and filtered target arrays. Why you would care: Use this for local-player mouseover tools, hover-aware overlays, or interaction helpers that need real mouseover object context.
+----------------------------------------
+NAME: InfoModule_IsInCrossWorldDuty
+SIG:  40 53 48 83 EC 20 48 8B D9 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 0D 48 8B C8 48 83 C4 20 5B
+DESC: What it is: The local info-module reader that checks whether the current player is inside a cross-world duty. When it runs: When the client queries local instance context related to cross-world duty participation. Why you would care: Use this for local-player logic that needs to distinguish normal play from cross-world duty state.
+----------------------------------------
+
+CATEGORY: Local Character - Cooldown, Combo, Duty Action, and Limit Break
+----------------------------------------
+NAME: DutyActionManager_GetInstanceIfReady
+SIG:  40 53 48 83 EC 20 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 8B D8 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 85 DB 74 13 48 8D 83 28 05 00 00 80 78 01 00 74 17 48 83 C4 20 5B C3
+DESC: What it is: The local duty-action accessor that returns the duty action manager only when it is ready to be used. When it runs: When client code wants to read local duty-action state after the manager has finished initializing. Why you would care: Use this as the safest local-player access point before reading duty-action slots or availability.
+----------------------------------------
+NAME: DutyActionManager_GetDutyActionId
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B6 F9 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 8B D8 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 85 DB 74 09 48 8D 8B 28 05 00 00 EB 0C
+DESC: What it is: The local duty-action reader that returns the action id assigned to a duty action slot. When it runs: When the client resolves the current duty-action mapping for the local player. Why you would care: Use this to identify which duty action is present in each slot without scraping UI state.
+----------------------------------------
+NAME: ActionManager_GetRecastTime
+SIG:  40 53 48 83 EC 20 0F B6 D2 48 8B D9 E8 ?? ?? ?? ?? 8B D0 48 8B CB E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 75 09 0F 57 C0 48 83 C4 20 5B C3 8B 48 04 85 C9 74 3F
+DESC: What it is: The local action-manager reader that returns the recast time for a specific action. When it runs: When the client queries cooldown timing for one of the local players actions. Why you would care: Use this for local cooldown tracking and action timing without relying on UI refreshes.
+----------------------------------------
+NAME: ActionManager_GetRecastTimeForGroup
+SIG:  40 53 48 83 EC 20 E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 75 09 0F 57 C0 48 83 C4 20 5B C3 8B 48 04 85 C9 74 3F 33 D2 E8 ?? ?? ?? ?? 83 F8 01 75 33
+DESC: What it is: The local action-manager reader that returns the recast time for a cooldown group. When it runs: When the client queries grouped cooldown timing instead of a single action entry. Why you would care: Use this for local cooldown-group tools and shared-recast tracking.
+----------------------------------------
+NAME: ActionManager_GetRecastTimeElapsed
+SIG:  40 53 48 83 EC 20 0F B6 D2 48 8B D9 E8 ?? ?? ?? ?? 8B D0 48 8B CB E8 ?? ?? ?? ?? 48 85 C0 75 09 0F 57 C0 48 83 C4 20 5B C3 F3 0F 10 40 08 48 83 C4 20 5B C3
+DESC: What it is: The local action-manager reader that returns how much of an actions recast has already elapsed. When it runs: When the client needs cooldown progress information for a local-player action. Why you would care: Use this for cooldown bars, timers, and local action-state prediction.
+----------------------------------------
+NAME: ActionManager_GetRecastGroup
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 FF CA 41 8B F0 83 FA 0D 0F 87 57 02 00 00 8B C2 48 8D 15 ?? ?? ?? ?? 8B 8C 82 EC 49 8B 00 48 03 CA FF E1
+DESC: What it is: The local action-manager reader that resolves the primary recast group for an action. When it runs: When the client maps a local-player action into its cooldown-group slot. Why you would care: Use this to correlate actions that share a cooldown group.
+----------------------------------------
+NAME: ActionManager_GetAdditionalRecastGroup
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 20 8B C2 41 8B F8 8B EA 4C 8B F1 83 E8 01 74 25 83 F8 04 0F 85 AF 00 00 00 41 8B C8 E8 ?? ?? ?? ?? 85 C0 0F 88
+DESC: What it is: The local action-manager reader that resolves an additional recast group for an action. When it runs: When the client checks extra cooldown-group relationships on the local player. Why you would care: Use this for more complete cooldown correlation beyond the primary recast group.
+----------------------------------------
+NAME: ActionManager_GetRecastGroupDetail
+SIG:  40 53 48 83 EC 20 48 63 DA 85 D2 78 6B 83 FB 50 7D 15 48 8D 04 9D 61 00 00 00 48 03 C3 48 8D 04 81 48 83 C4 20 5B C3
+DESC: What it is: The local action-manager reader that returns the detail record for a recast group. When it runs: When the client needs direct access to the underlying cooldown-group entry for the local player. Why you would care: Use this for deeper cooldown-state inspection such as timers, flags, and charge behavior.
+----------------------------------------
+NAME: ActionManager_GetCurrentCharges
+SIG:  48 89 6C 24 18 48 89 74 24 20 41 56 48 83 EC 50 8B EA 48 89 5C 24 60 4C 8B F1 48 89 7C 24 68 8B CD 33 D2 E8 ?? ?? ?? ?? BA 64 00 00 00 8B CD 8B F8 E8 ?? ?? ?? ?? BE 01 00 00 00 44 8B C5 8B D6
+DESC: What it is: The local action-manager reader that returns the current charge count for an action. When it runs: When the client queries local-player charge state for multi-charge actions. Why you would care: Use this for charge-aware cooldown tools and local rotation helpers.
+----------------------------------------
+
+CATEGORY: Local Character - Glamour, Title, and Presentation
+----------------------------------------
+NAME: TitleList_IsTitleUnlocked
+SIG:  B8 42 03 00 00 4C 8B C9 66 3B D0 73 20 0F B7 C2 41 B8 01 00 00 00 0F B7 CA 83 E1 07 48 C1 E8 03 41 D2 E0 46 84 44 08 08 74 03 B0 01 C3 32 C0 C3
+DESC: What it is: The local title-list reader that checks whether a specific title is unlocked for the current player. When it runs: When the client queries local title ownership before presentation or selection logic. Why you would care: Use this for local-player presentation tools or profile overlays that need to test title availability.
+----------------------------------------
+
 CATEGORY: Network - Core Packet Dispatcher Hooks
 ----------------------------------------
 NAME: PacketDispatcher_HandleEventPlayPacket
@@ -290,6 +347,10 @@ CATEGORY: Network - Send and Request Hooks
 NAME: PacketDispatcher_SendEventCompletePacket
 SIG:  4C 8B DC 49 89 73 20 55 41 56 41 57 49 8D AB 68 F1 FF FF 48 81 EC 80 0F 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4
 DESC: What it is: The dispatcher-side send helper for the generic event-complete packet path. When it runs: When the client notifies the server that a scripted event or event-driven interaction has completed and needs an explicit completion packet. Why you would care: Use this as a targeted send hook for event-complete traffic without widening the pack into every subsystem-specific request helper.
+----------------------------------------
+NAME: ChatClient_SendPacket
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 60 48 8B D9 48 8B FA 8B 89 10 01 00 00 83 E9 01 0F 84 8B 00 00 00 83 E9 01 0F 84 82 00 00 00 83 F9 01 0F 85 0E 02 00 00 8B 93 08 01 00 00 85 D2 0F 84 00 02 00 00
+DESC: What it is: The deeper chat-client send path that validates connection state and forwards an outgoing chat packet. When it runs: When the client is about to transmit a chat packet after passing the active chat-connection checks. Why you would care: Use this for broad chat send tracing at the real send layer instead of only a tiny wrapper.
 ----------------------------------------
 NAME: ServerRequestCallbackManager_Request
 SIG:  48 89 5C 24 08 57 48 83 EC 30 41 8B D9 41 8B F8 E8 ?? ?? ?? ?? 44 8B CB 44 8B C7 B9 2B 23 00 00 8B D0 48 8B 5C 24 40 48 83 C4 30 5F E9 ?? ?? ?? ??
@@ -364,6 +425,22 @@ NAME: PacketDispatcher_HandleUpdatePartyPacket
 SIG:  48 89 5C 24 08 55 56 57 41 54 41 55 41 56 41 57 48 81 EC F0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 E0 00 00 00 48 8B 0D ?? ?? ?? ?? 41 0F B6 D8
 DESC: What it is: The packet-dispatch handler for the main party update packet. When it runs: When the client receives a full party-state packet and starts rebuilding live party member data from the network payload. Why you would care: Use this as the primary packet-level hook for party roster and party state changes that are broader than one position or invite event.
 ----------------------------------------
+NAME: PacketDispatcher_HandleUpdateAllianceNormalPacket
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 4C 8B 35 ?? ?? ?? ?? 48 8D 99 78 28 00 00 45 0F B6 E0 48 8B EA 48 8B F1 BF 10 00 00 00 0F 1F 80 00 00 00 00 F6 83 8C 00 00 00 01 74 12
+DESC: What it is: The alliance update packet handler implementation for the normal-size alliance roster. When it runs: When the client applies a generic alliance member-state update for a full alliance grouping. Why you would care: Use this for alliance-aware tools that need server-fed roster or per-member state refreshes beyond standard party updates.
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdateAllianceSmallPacket
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F B6 E0 48 8B EA 48 8B F1 45 84 C0 75 45 4C 8B 35 ?? ?? ?? ?? 48 8D 99 78 28 00 00 BF 14 00 00 00 66 90 F6 83 8C 00 00 00 01 74 12
+DESC: What it is: The alliance update packet handler implementation for the small alliance roster variant. When it runs: When the client applies the compact alliance update form used for smaller alliance-state payloads. Why you would care: Use this when you need complete alliance-state coverage instead of assuming only one alliance packet shape exists.
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdateAllianceNormalPositionsPacket
+SIG:  F3 0F 10 1D ?? ?? ?? ?? 4C 8D 42 0C F3 0F 10 25 ?? ?? ?? ?? 48 8D 91 F8 2C 00 00 F3 0F 10 2D ?? ?? ?? ?? 41 B9 02 00 00 00 0F 1F 80 00 00 00 00 41 0F B7 40 F6 66 0F 6E D0 41 0F B7 40 F8 0F 5B D2 66 0F 6E C8
+DESC: What it is: The alliance position packet handler implementation for the normal alliance layout. When it runs: When the client applies server-fed position data for alliance members in the normal alliance payload shape. Why you would care: Use this for alliance overlays, position tracking, or distance logic that needs more than party-only positions.
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdateAllianceSmallPositionsPacket
+SIG:  F3 0F 10 1D ?? ?? ?? ?? 4C 8D 42 0C F3 0F 10 25 ?? ?? ?? ?? 48 8D 91 F8 2C 00 00 F3 0F 10 2D ?? ?? ?? ?? 41 B9 04 00 00 00 0F 1F 80 00 00 00 00 41 0F B7 40 F6 66 0F 6E D0 41 0F B7 40 F8 0F 5B D2 66 0F 6E C8
+DESC: What it is: The alliance position packet handler implementation for the compact alliance payload. When it runs: When the client applies the smaller server-fed alliance position update shape. Why you would care: Use this for complete alliance position coverage across both normal and compact packet variants.
+----------------------------------------
 
 CATEGORY: Network - Content Packet Hooks - Markers, Map, and World State
 ----------------------------------------
@@ -374,6 +451,26 @@ DESC: What it is: The packet-dispatch handler for countdown-start packets. When 
 NAME: PacketDispatcher_HandleInitZonePacket
 SIG:  4C 8B DC 55 56 41 56 48 81 EC D0 0F 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 B0 0F 00 00 41 0F B6 F0 48 8B EA 44 8B F1 45 84 C0 0F 85 E0 00 00 00
 DESC: What it is: The packet-dispatch handler for initial zone setup packets. When it runs: When the client receives the zone-initialization payload that seeds large portions of live world, content, and actor state for a newly entered zone. Why you would care: Use this as a high-value world-state packet hook when you want the earliest network layer for zone initialization and reset flow.
+----------------------------------------
+NAME: PacketDispatcher_HandleFieldMarkerPacket
+SIG:  44 0F B6 02 F3 0F 10 15 ?? ?? ?? ?? 49 83 C0 0F 49 C1 E0 05 4C 03 C1 80 7A 01 00 0F 97 C0 41 88 40 1C 8B 42 04 41 89 40 10 8B 4A 08 41 89 48 14 8B 52 0C 41 89 50 18 66 0F 6E C0 0F 5B C0
+DESC: What it is: The field-marker packet handler implementation that applies a live field-marker update into the clients marker state. When it runs: When the client receives a server-fed field marker change for the current world state. Why you would care: Use this for arena-marker tracking, raid-marker tooling, or marker-aware overlays.
+----------------------------------------
+NAME: PacketDispatcher_HandleFieldMarkerPresetPacket
+SIG:  0F B6 02 4C 8B D9 F3 0F 10 15 ?? ?? ?? ?? 24 01 88 81 FC 01 00 00 4C 8B D2 8B 42 04 89 81 F0 01 00 00 44 8B 42 24 44 89 81 F4 01 00 00 44 8B 4A 44 44 89 89 F8 01 00 00 66 0F 6E C0
+DESC: What it is: The field-marker preset packet handler implementation that applies a full preset block of field-marker state. When it runs: When the client receives a preset-style marker payload instead of a single marker update. Why you would care: Use this for tools that need to react to imported or bulk-applied arena-marker layouts.
+----------------------------------------
+NAME: PacketDispatcher_HandlePlaceMarkerPacket
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 49 8B F8 48 8B F1 33 DB 66 0F 1F 84 00 00 00 00 00 4C 8B 07 41 B9 00 00 00 E0 8B D3 48 8B CE E8 ?? ?? ?? ?? FF C3 48 8D 7F 08 83 FB 11 72 E2
+DESC: What it is: The place-marker packet handler implementation that applies world marker slots from an incoming marker list. When it runs: When the client processes a server-fed place-marker payload affecting multiple marker slots. Why you would care: Use this for marker replication, map-state tools, or marker-history tracking.
+----------------------------------------
+NAME: PacketDispatcher_HandleMapEffectPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B F9 48 8B DA 48 8B 89 58 01 00 00 48 85 C9 74 3B 48 8B 01 FF 50 18 84 C0 74 31 48 8B 8F 58 01 00 00 8B 03 48 8B 91 D8 02 00 00 39 02 75 1D 48 83 B9 90 0C 00 00 00 74 13
+DESC: What it is: The map-effect packet handling path that checks and applies a map-effect update against the current world or encounter state. When it runs: When the client receives a server-fed map-effect change for the active zone or instance. Why you would care: Use this for world-state and mechanic tracking that depends on map-effect updates.
+----------------------------------------
+NAME: PacketDispatcher_HandleWeatherChangePacket
+SIG:  44 0F B6 4A 01 48 8D 0D ?? ?? ?? ?? F3 0F 10 52 04 41 80 E1 01 48 8B 05 ?? ?? ?? ?? 0F B6 12 48 FF 60 18
+DESC: What it is: The weather-change packet implementation that applies a server-fed weather update into the live weather controller. When it runs: When the client receives a world-state weather change from the server. Why you would care: Use this for weather-aware tools that need the live apply path rather than only UI state.
 ----------------------------------------
 
 CATEGORY: Network - Content Packet Hooks - Player, Inventory, and UI Readers
@@ -401,6 +498,10 @@ DESC: What it is: The packet-dispatch handler for player gearset-data packets. W
 NAME: PacketDispatcher_HandlePlayerStatsPacket
 SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 FF 48 8B F2 8B DF E8 ?? ?? ?? ?? 85 C0 74 2F 90 8B CB E8 ?? ?? ?? ?? 48 0F BE 48 44 83 F9 FF 74 12
 DESC: What it is: The packet-dispatch handler for player stat packets. When it runs: When the server sends a player-stat payload and the client begins copying those values into live player state. Why you would care: Use this as the packet-level hook for stat refreshes instead of waiting for later UI or derived-state readers.
+----------------------------------------
+NAME: PacketDispatcher_HandleInventoryActionAckPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 30 48 8B 05 ?? ?? ?? ?? 48 8B D9 41 0F B6 50 04 48 8B 88 88 2B 00 00 83 EA 01 0F 84 D0 00 00 00 83 EA 01 74 49 83 EA 01 74 35 83 EA 03 74 1E 83 FA 01 0F 85 FF 00 00 00
+DESC: What it is: The inventory action acknowledgement handler implementation that routes a confirmed inventory action based on the ack subtype. When it runs: When the client receives a server acknowledgement for an inventory operation such as move, split, or related item actions. Why you would care: Use this for server-confirmed inventory state tracking instead of guessing from UI flow alone.
 ----------------------------------------
 
 CATEGORY: Network - Non-Core and UI Packet Support
