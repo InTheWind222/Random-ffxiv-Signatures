@@ -3,141 +3,160 @@ Use CATEGORY: to jump straight to the part you want.
 How To Search
 
 Search broad topics with:
-CATEGORY: PvP
+CATEGORY: Network
+CATEGORY: Shared Boss Mechanics
 CATEGORY: Quest
-CATEGORY: Crystalline Conflict
+CATEGORY: Treasure Maps
 CATEGORY: Variant and Criterion
-CATEGORY: Cosmic Exploration
+CATEGORY: Weather
+CATEGORY: The Firmament
+CATEGORY: Armoury Chest
+CATEGORY: Gil
+CATEGORY: Camera
+CATEGORY: Navigation
+CATEGORY: Party Finder
+CATEGORY: PvP
+CATEGORY: Crystalline Conflict
 CATEGORY: Gold Saucer
 CATEGORY: Fashion Report
-CATEGORY: Camera
+CATEGORY: Cosmic Exploration
 
 Search one exact section with:
-CATEGORY: PvP Map Objects and Pickups
+CATEGORY: Network - Core Packet Dispatcher Hooks
+CATEGORY: Shared Boss Mechanics - Packet and Server-Fed Delivery
 CATEGORY: Quest - Core State and Access
+CATEGORY: Treasure Maps - Door Choice and Instance State
 CATEGORY: Variant and Criterion Dungeons - Agents and UI
-CATEGORY: Gold Saucer - Triple Triad and Card Management
-CATEGORY: Fashion Report - Core UI and Scoring
+CATEGORY: Weather - Core Control Hooks
+CATEGORY: The Firmament - Core UI and State Hooks
+CATEGORY: Armoury Chest - UI and State Hooks
+CATEGORY: Gil - Core State Hooks
+CATEGORY: Party Finder - Network and Listing Hooks
 
 Full Category List
 
 CATEGORY: General and Core Signatures
-CATEGORY: Limit Break
-CATEGORY: Status Effects
-CATEGORY: PvP Status and Buff UI
-CATEGORY: PvP State Checks
-CATEGORY: PvP Profile and Rank Data
-CATEGORY: PvP Map
-CATEGORY: PvP Screen Hotbar
-CATEGORY: Frontline Match UI
-CATEGORY: PvP Character Window
-CATEGORY: Duel Request
-CATEGORY: Spectator UI
-CATEGORY: PvP Team UI
-CATEGORY: Crystalline Conflict / MKS UI
-CATEGORY: PvP Agents and Modules
-CATEGORY: PvP Core Systems
-CATEGORY: PvP Profile UI
-CATEGORY: PvP Utility UI
-CATEGORY: PvP Agent UI
-CATEGORY: PvP Records
-CATEGORY: PvP Directors and Map Internals
-CATEGORY: Crystalline Conflict State
-CATEGORY: Crystalline Conflict Director Methods
-CATEGORY: Crystalline Conflict UI
-CATEGORY: Crystalline Conflict Agents and Records
-CATEGORY: PvP Map Objects and Pickups
-CATEGORY: Variant and Criterion Dungeons - Core Systems
-CATEGORY: Variant and Criterion Dungeons - Modules and Persistence
-CATEGORY: Variant and Criterion Dungeons - Agents and UI
+CATEGORY: Network - Core Packet Dispatcher Hooks
+CATEGORY: Network - Actor and Status Packet Hooks
+CATEGORY: Network - Deep Packet Ingress and Dispatch
+CATEGORY: Network - UI Packet Bridge Hooks
+CATEGORY: Network - Chat and Protocol Receive Hooks
+CATEGORY: Network - Send and Request Hooks
+CATEGORY: Network - Network State and Update Hooks
+CATEGORY: Network - Content Packet Hooks - Combat and Actor Control
+CATEGORY: Network - Content Packet Hooks - Party, Alliance, and Social State
+CATEGORY: Network - Content Packet Hooks - Markers, Map, and World State
+CATEGORY: Network - Content Packet Hooks - Player, Inventory, and UI Readers
+CATEGORY: Network - Non-Core and UI Packet Support
+CATEGORY: Network - Non-Core Content Packet Support
+CATEGORY: Shared Boss Mechanics - Core Combat Delivery
+CATEGORY: Shared Boss Mechanics - Packet and Server-Fed Delivery
+CATEGORY: Shared Boss Mechanics - Visual Indicators
+CATEGORY: Shared Boss Mechanics - Director and Phase Flow
+CATEGORY: Shared Boss Mechanics - Head Markers and Target Designation
+CATEGORY: Shared Boss Mechanics - Markers, Lockon, and Target Indicators
+CATEGORY: Shared Boss Mechanics - Actor-Control Subtypes and Specialized Packets
+CATEGORY: Shared Boss Mechanics - Spawn, Despawn, and Object Lifecycle
+CATEGORY: Shared Boss Mechanics - Interactables and Event Object State
+CATEGORY: Shared Boss Mechanics - Objective, Todo, and Countdown State
+CATEGORY: Shared Boss Mechanics - Field Operations and Foray State
+CATEGORY: Shared Boss Mechanics - Support and State Hooks
+CATEGORY: Content Directors - Shared Access and Routing
+CATEGORY: Content Directors - Quest and Solo Duty Mechanics
+CATEGORY: Content Directors - FATE and Open-World Mechanics
+CATEGORY: Content Directors - Deep Dungeon Mechanics
+CATEGORY: Content Directors - Criterion and Variant Mechanics
+CATEGORY: Content Directors - Treasure Hunt and Special Encounter Mechanics
 CATEGORY: Quest - Core State and Access
-CATEGORY: Quest - Interaction and Marker Flow
 CATEGORY: Quest - Todo and Objective Flow
+CATEGORY: Quest - Interaction and Marker Flow
 CATEGORY: Quest - Journal and Input Hooks
-CATEGORY: Quest - Deep Event and Presentation Logic
 CATEGORY: Quest - Quest Battle Internals
 CATEGORY: Quest - Redo and Recomplete Progression
-CATEGORY: Cosmic Exploration - State and Director
-CATEGORY: Cosmic Exploration - Todo and HUD Flow
-CATEGORY: Cosmic Exploration - Packet and Server-Fed Modules
-CATEGORY: Cosmic Exploration - Research and Unlock Progression
-CATEGORY: Cosmic Exploration - Mission and Progression
-CATEGORY: Cosmic Exploration - Mecha Event and Stage Flow
-CATEGORY: Cosmic Exploration - Secondary Director Layer
-CATEGORY: Cosmic Exploration - UI Windows and Interaction
+CATEGORY: Quest - Deep Event and Presentation Logic
+CATEGORY: Treasure Maps - Door Choice and Instance State
+CATEGORY: Treasure Maps - Shared Door and Interaction Hooks
+CATEGORY: Treasure Maps - Mob Radius and Range Hooks
+CATEGORY: Treasure Maps - Non-Core Object and UI Support
+CATEGORY: Variant and Criterion Dungeons - Core Systems
+CATEGORY: Variant and Criterion Dungeons - Agents and UI
+CATEGORY: Variant and Criterion Dungeons - Modules and Persistence
+CATEGORY: Weather - Core Control Hooks
+CATEGORY: Weather - Packet and Server-Fed Hooks
+CATEGORY: Weather - UI and State Hooks
+CATEGORY: Weather - Support and Environment Hooks
+CATEGORY: The Firmament - Core UI and State Hooks
+CATEGORY: The Firmament - Buyback and Server-Fed Support
+CATEGORY: The Firmament - Non-Core and Interaction Hooks
+CATEGORY: Armoury Chest - UI and State Hooks
+CATEGORY: Armoury Chest - Packet and Server-Fed Hooks
+CATEGORY: Armoury Chest - Support and Context Hooks
+CATEGORY: Gil - Core State Hooks
+CATEGORY: Gil - Packet and Server-Fed Hooks
+CATEGORY: Gil - Shop and Server-Fed Support
+CATEGORY: Gil - UI and State Hooks
+CATEGORY: Gil - Non-Core State Hooks
+CATEGORY: Gil - Non-Core and Interaction Hooks
+CATEGORY: Camera Signatures - Confirmed
+CATEGORY: Camera Signatures - Experimental
+CATEGORY: Navigation - Path Layout Hooks
+CATEGORY: Navigation - Client Path State Hooks
+CATEGORY: Navigation - Non-Core Support Hooks
+CATEGORY: Status Effects
+CATEGORY: Limit Break
+CATEGORY: Speed and Mobility - Cast Speed
+CATEGORY: Speed and Mobility - Attack Speed
+CATEGORY: Speed and Mobility - Movement Speed
+CATEGORY: Speed and Mobility - Teleport
+CATEGORY: Speed and Mobility - Emote and Emote Speed
+CATEGORY: Party Finder - Network and Listing Hooks
+CATEGORY: Party Finder - Non-Core and Request Hooks
+CATEGORY: PvP Core Systems
+CATEGORY: PvP State Checks
+CATEGORY: PvP Directors and Map Internals
+CATEGORY: PvP Map
+CATEGORY: PvP Map Objects and Pickups
+CATEGORY: PvP Agents and Modules
+CATEGORY: PvP Agent UI
+CATEGORY: PvP Status and Buff UI
+CATEGORY: PvP Character Window
+CATEGORY: PvP Profile and Rank Data
+CATEGORY: PvP Profile UI
+CATEGORY: PvP Records
+CATEGORY: PvP Screen Hotbar
+CATEGORY: PvP Team UI
+CATEGORY: PvP Utility UI
+CATEGORY: Frontline Match UI
+CATEGORY: Duel Request
+CATEGORY: Spectator UI
+CATEGORY: Crystalline Conflict State
+CATEGORY: Crystalline Conflict Director Methods
+CATEGORY: Crystalline Conflict Agents and Records
+CATEGORY: Crystalline Conflict UI
+CATEGORY: Crystalline Conflict / MKS UI
 CATEGORY: Gold Saucer - Core State and Director
-CATEGORY: Gold Saucer - Module State and Collectibles
-CATEGORY: Gold Saucer - Reward Flow
-CATEGORY: Gold Saucer - Chocobo Racing and Gameplay
 CATEGORY: Gold Saucer - GATE and FGS Gameplay
 CATEGORY: Gold Saucer - FGS HUD and Result Flow
 CATEGORY: Gold Saucer - Triple Triad and Card Management
-CATEGORY: Gold Saucer - Gathering Mini-Games
+CATEGORY: Gold Saucer - Chocobo Racing and Gameplay
 CATEGORY: Gold Saucer - Verminion and Mahjong
 CATEGORY: Gold Saucer - Cactpot and Air Force One
+CATEGORY: Gold Saucer - Gathering Mini-Games
+CATEGORY: Gold Saucer - Reward Flow
+CATEGORY: Gold Saucer - Module State and Collectibles
 CATEGORY: Gold Saucer - Weekly History and Arcade Machines
 CATEGORY: Gold Saucer - Mini and Jumbo Cactpot Deep State
-CATEGORY: Camera Signatures - Confirmed
-CATEGORY: Camera Signatures - Experimental
 CATEGORY: Fashion Report - Manager Anchors
 CATEGORY: Fashion Report - Core UI and Scoring
-CATEGORY: Fashion Report - Deep Event and Widget Flow
 CATEGORY: Fashion Report - Packet and Server-Fed State
-CATEGORY: Speed and Mobility - Cast Speed
-CATEGORY: Speed and Mobility - Cast State Readers and Support
-CATEGORY: Speed and Mobility - Attack Speed
-CATEGORY: Speed and Mobility - Attack State Readers and Support
-CATEGORY: Speed and Mobility - Movement Speed
-CATEGORY: Speed and Mobility - Teleport
-CATEGORY: Speed and Mobility - Teleport UI and History
-CATEGORY: Speed and Mobility - Emote and Emote Speed
-CATEGORY: Speed and Mobility - Emote UI and State Readers
-Shared Boss Mechanics - Core Combat Delivery
-Shared Boss Mechanics - Packet and Server-Fed Delivery
-Shared Boss Mechanics - Visual Indicators
-Shared Boss Mechanics - Director and Phase Flow
-Shared Boss Mechanics - Markers, Lockon, and Target Indicators
-Shared Boss Mechanics - Support and State Hooks
-Shared Boss Mechanics - Head Markers and Target Designation
-Shared Boss Mechanics - Spawn, Despawn, and Object Lifecycle
-Shared Boss Mechanics - Interactables and Event Object State
-Shared Boss Mechanics - Objective, Todo, and Countdown State
-Shared Boss Mechanics - Field Operations and Foray State
-Shared Boss Mechanics - Actor-Control Subtypes and Specialized Packets
-Content Directors - Shared Access and Routing
-Content Directors - Quest and Solo Duty Mechanics
-Content Directors - FATE and Open-World Mechanics
-Content Directors - Deep Dungeon Mechanics
-Content Directors - Criterion and Variant Mechanics
-Content Directors - Treasure Hunt and Special Encounter Mechanics
-Armoury Chest - UI and State Hooks
-Armoury Chest - Packet and Server-Fed Hooks
-Armoury Chest - Support and Context Hooks
-Weather - Core Control Hooks
-Weather - UI and State Hooks
-Weather - Packet and Server-Fed Hooks
-Weather - Support and Environment Hooks
-The Firmament - Core UI and State Hooks
-The Firmament - Buyback and Server-Fed Support
-The Firmament - Non-Core and Interaction Hooks
-Gil - Core State Hooks
-Gil - UI and State Hooks
-Gil - Packet and Server-Fed Hooks
-Gil - Shop and Server-Fed Support
-Gil - Non-Core State Hooks
-Gil - Non-Core and Interaction Hooks
-Navigation - Path Layout Hooks
-Navigation - Client Path State Hooks
-Navigation - Non-Core Support Hooks
-Network - Core Packet Dispatcher Hooks
-Network - Actor and Status Packet Hooks
-Network - Non-Core and UI Packet Support
-Network - Deep Packet Ingress and Dispatch
-Network - UI Packet Bridge Hooks
-Network - Chat and Protocol Receive Hooks
-Network - Send and Request Hooks
-Network - Content Packet Hooks - Combat and Actor Control
-Network - Content Packet Hooks - Party, Alliance, and Social State
-Network - Content Packet Hooks - Markers, Map, and World State
-Network - Content Packet Hooks - Player, Inventory, and UI Readers
-Network - Non-Core Content Packet Support
+CATEGORY: Fashion Report - Deep Event and Widget Flow
+CATEGORY: Cosmic Exploration - State and Director
+CATEGORY: Cosmic Exploration - Secondary Director Layer
+CATEGORY: Cosmic Exploration - Packet and Server-Fed Modules
+CATEGORY: Cosmic Exploration - Mission and Progression
+CATEGORY: Cosmic Exploration - Research and Unlock Progression
+CATEGORY: Cosmic Exploration - Todo and HUD Flow
+CATEGORY: Cosmic Exploration - UI Windows and Interaction
+CATEGORY: Cosmic Exploration - Mecha Event and Stage Flow
+
+Total Categories: 123
