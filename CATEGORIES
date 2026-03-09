@@ -98,6 +98,12 @@ Shared Boss Mechanics - Visual Indicators
 Shared Boss Mechanics - Director and Phase Flow
 Shared Boss Mechanics - Markers, Lockon, and Target Indicators
 Shared Boss Mechanics - Support and State Hooks
+Shared Boss Mechanics - Head Markers and Target Designation
+Shared Boss Mechanics - Spawn, Despawn, and Object Lifecycle
+Shared Boss Mechanics - Interactables and Event Object State
+Shared Boss Mechanics - Objective, Todo, and Countdown State
+Shared Boss Mechanics - Field Operations and Foray State
+Shared Boss Mechanics - Actor-Control Subtypes and Specialized Packets
 Content Directors - Shared Access and Routing
 Content Directors - Quest and Solo Duty Mechanics
 Content Directors - FATE and Open-World Mechanics
