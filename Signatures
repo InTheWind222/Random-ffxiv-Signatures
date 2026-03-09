@@ -1838,7 +1838,7 @@ SIG:  64 03 F8 49 8B CE E8 E5 34 FC FF 83 F8 21 75 3A 81 FB 16 0E 00 00 75 32 45
 DESC: What it is: The cast-time adjustment routine used by the action system. When it runs: When the client needs the final cast time after action and state adjustments have been applied. Why you would care: This is the cleanest direct hook for tools that want the real cast time the client is using instead of the raw action sheet value.
 ----------------------------------------
 NAME: ActionManager_GetAdjustedRecastTime
-SIG:  E9 01 74 18 81 E9 45 0D 00 00 74 10 81 E9 0B 0F 00 00 74 08 81 F9 8B 73 00 00 75 11 BA 68 07 00 00 48 8B CE E8 E7 D7 FC FF 3C 01 74 A6 66 83 7D
+SIG:  48 89 5C 24 08 48 89 74 24 10 55 57 41 54 41 56 41 57 48 8B EC 48 83 EC 30 4C 8B 25 ?? ?? ?? ?? 45 0F B6 F0 8B DA BF 88 13 00 00 4D 85 E4 0F 84 ?? ?? ?? ?? 83 E9 01 74 54 83 E9 01 0F 85 ?? ?? ?? ?? 8B CA E8 ?? ?? ?? ??
 DESC: What it is: The main recast-time adjustment routine used by the action system. When it runs: When the client calculates the final cooldown for an action after statuses, traits, and action data are considered. Why you would care: Use this for cooldown and GCD tracking when you want the adjusted client value instead of a guessed formula.
 ----------------------------------------
 NAME: ActionManager_IsCastingSpell
@@ -3728,3 +3728,4 @@ NAME: WKSMissionModule_UpdateTodoText
 SIG:  48 85 D2 0F 84 C6 02 00 00 55 56 57 41 54 41 56 41 57 48 8D 6C 24 E1 48 81 EC F8 00 00 00 48 8B 05 33 4F E2 00 48 33 C4 48 89 45 07 4C 8B 65 77 45 8B F1 41 8B F0 48 89 9C 24 F0 00 00 00 48 8B
 DESC: What it is: A deeper mission-module function that builds the text shown in the Cosmic todo panel. When it runs: When the client formats mission text and writes it into the visible Cosmic objective area. Why you would care: Use this if you want a deeper hook for mission text changes after the client has already picked the active mission.
 ---------------------------------------
+
