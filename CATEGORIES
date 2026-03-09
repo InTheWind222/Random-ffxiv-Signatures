@@ -120,3 +120,9 @@ Weather - Support and Environment Hooks
 The Firmament - Core UI and State Hooks
 The Firmament - Buyback and Server-Fed Support
 The Firmament - Non-Core and Interaction Hooks
+Gil - Core State Hooks
+Gil - UI and State Hooks
+Gil - Packet and Server-Fed Hooks
+Gil - Shop and Server-Fed Support
+Gil - Non-Core State Hooks
+Gil - Non-Core and Interaction Hooks
