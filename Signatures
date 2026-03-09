@@ -1746,16 +1746,8 @@ NAME: PathLayoutInstance_SetProperties
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 50 48 8B EA 48 8B F9 48 83 C2 0C 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 07 48 8D 54 24 20 48 8B CF FF 90 38 02 00 00 48 8B 07 48 8B CF FF 90 B8 00 00 00 48 85 C0 74 14 44 0F B7 4F 1A 48 8D 4F 18 4C 8B C5 48 8B D0 E8 ?? ?? ?? ?? 48 8B 4F 60 33 DB 48 85 C9 74 0C 48 8B 01 8D 53 01 FF 10 48 89 5F 60
 DESC: What it is: The main path-layout property loader that rebuilds the live path object from layout data. When it runs: When a path layout instance receives new path properties and recreates or replaces its internal path representation. Why you would care: Use this as the primary named hook for path object rebuilds and path-state updates.
 ----------------------------------------
-NAME: PathLayoutInstance_SetProperties
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 50 48 8B EA 48 8B F9 48 83 C2 0C 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 07 48 8D 54 24 20 48 8B CF FF 90 38 02 00 00 48 8B 07 48 8B CF FF 90 B8 00 00 00 48 85 C0 74 14 44 0F B7 4F 1A 48 8D 4F 18 4C 8B C5 48 8B D0 E8 ?? ?? ?? ?? 48 8B 4F 60 33 DB 48 85 C9 74 0C 48 8B 01 8D 53 01 FF 10 48 89 5F 60
-DESC: What it is: The main path-layout property loader that rebuilds the live path object from layout data. When it runs: When a path layout instance receives new path properties and recreates or replaces its internal path representation. Why you would care: Use this as the primary named hook for path object rebuilds and path-state updates.
-----------------------------------------
 
 CATEGORY: Navigation - Client Path State Hooks
-----------------------------------------
-NAME: ClientPathLayoutInstance_SetActive
-SIG:  48 89 5C 24 08 57 48 83 EC 20 80 61 2B EF 0F B6 C2 C0 E0 04 0F B6 FA 08 41 2B 48 8B D9 48 8B 01 FF 90 B8 00 00 00 48 85 C0 74 0E 80 A0 88 00 00 00 FE 40 08 B8 88 00 00 00 33 D2 39 93 B0 09 00 00 76 31
-DESC: What it is: The client-path activation toggle for the layout instance and its linked child path objects. When it runs: When client path state is enabled or disabled and that active bit is pushed into the live path object set. Why you would care: Use this as the clearest named hook for whether a client path instance is actively participating in movement or layout flow.
 ----------------------------------------
 NAME: ClientPathLayoutInstance_SetActive
 SIG:  48 89 5C 24 08 57 48 83 EC 20 80 61 2B EF 0F B6 C2 C0 E0 04 0F B6 FA 08 41 2B 48 8B D9 48 8B 01 FF 90 B8 00 00 00 48 85 C0 74 0E 80 A0 88 00 00 00 FE 40 08 B8 88 00 00 00 33 D2 39 93 B0 09 00 00 76 31
@@ -1767,14 +1759,6 @@ CATEGORY: Navigation - Non-Core Support Hooks
 NAME: PathLayoutInstance_GetBoundingSphereImpl
 SIG:  48 89 5C 24 10 56 48 81 EC D0 00 00 00 48 8B 01 48 8B DA 48 8B F1 FF 90 00 02 00 00 44 8B 00 44 89 03 44 8B 40 04 44 89 43 04 8B 40 08 89 43 08 C7 43 0C 00 00 80 3F 48 8B 4E 60 48 85 C9 0F 84 0C 02 00 00 48 8B 01 48 89 BC 24 E0 00 00 00 33 FF FF 50 20 85 C0 0F 8E EF 01 00 00
 DESC: What it is: The non-core helper that derives the bounding sphere around the current path layout nodes. When it runs: When code asks a path layout instance for its spatial bounds based on the active path representation. Why you would care: Use this as a support hook when you need path-space bounds or area estimation around an active layout path.
-----------------------------------------
-NAME: PathLayoutInstance_GetBoundingSphereImpl
-SIG:  48 89 5C 24 10 56 48 81 EC D0 00 00 00 48 8B 01 48 8B DA 48 8B F1 FF 90 00 02 00 00 44 8B 00 44 89 03 44 8B 40 04 44 89 43 04 8B 40 08 89 43 08 C7 43 0C 00 00 80 3F 48 8B 4E 60 48 85 C9 0F 84 0C 02 00 00 48 8B 01 48 89 BC 24 E0 00 00 00 33 FF FF 50 20 85 C0 0F 8E EF 01 00 00
-DESC: What it is: The non-core helper that derives the bounding sphere around the current path layout nodes. When it runs: When code asks a path layout instance for its spatial bounds based on the active path representation. Why you would care: Use this as a support hook when you need path-space bounds or area estimation around an active layout path.
-----------------------------------------
-NAME: PathLayoutInstance_vf73
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 48 8B 01 48 8B FA 4C 8B F1 FF 90 00 02 00 00 4D 8B 06 49 8B CE 48 8B D8 41 FF 90 00 02 00 00 48 8D 77 10 4C 8D 7F 04 48 8D 6F 08 44 8B 00 44 89 07 44 8B 40 04 45 89 07 8B 48 08 89 4D 00 8B 03 89 06 8B 43 04 89 46 04 8B 43 08 89 46 08 49 8B 4E 60 48 85 C9 0F 84 E1 00 00 00 48 8B 01 33 DB FF 50 20 85 C0 0F 8E D1 00 00 00
-DESC: What it is: The non-core path helper that derives min and max spatial extents over the active path nodes. When it runs: When code asks a path layout instance for a broader spatial footprint than a simple bounding sphere. Why you would care: Use this as a support hook when you need path extents or box-style bounds around an active layout path.
 ----------------------------------------
 NAME: PathLayoutInstance_vf73
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 48 8B 01 48 8B FA 4C 8B F1 FF 90 00 02 00 00 4D 8B 06 49 8B CE 48 8B D8 41 FF 90 00 02 00 00 48 8D 77 10 4C 8D 7F 04 48 8D 6F 08 44 8B 00 44 89 07 44 8B 40 04 45 89 07 8B 48 08 89 4D 00 8B 03 89 06 8B 43 04 89 46 04 8B 43 08 89 46 08 49 8B 4E 60 48 85 C9 0F 84 E1 00 00 00 48 8B 01 33 DB FF 50 20 85 C0 0F 8E D1 00 00 00
@@ -1807,17 +1791,9 @@ NAME: StatusManager_EntryParamOffset
 SIG:  48 89 5C 24 08 48 89 7C 24 10 33 FF 4C 8D 49 10 44 8B DF 44 8B D7 BB 00 00 00 E0 0F 1F 44 00 00
 DESC: What it is: An accessor path for the parameter field stored inside a status entry. When it runs: When the client looks up the extra value tied to a status, such as a stack-like or effect-specific number. Why you would care: Use this if you need more than just the status id and remaining time.
 ----------------------------------------
-NAME: StatusManager_EntryRemainingTimeOffset
-SIG:  83 FA 3C 72 04 0F 57 C0 C3 8B C2 48 03 C0 F3 0F 10 44 C1 0C
-DESC: What it is: An accessor path for the remaining-time field inside a status entry. When it runs: When the client reads how much time is left on a status slot. Why you would care: Use this if you want remaining duration directly from the same data layout the client uses.
-----------------------------------------
 NAME: StatusManager_EntrySourceIdOffset
 SIG:  83 FA 3C 72 03 33 C0 C3 8B C2 48 FF C0 48 03 C0 48 8B 0C C1 48 B8 ?? ?? ?? ?? ?? ?? ?? ?? 48 85
 DESC: What it is: An accessor path for the source object id stored with a status entry. When it runs: When the client checks who applied a status. Why you would care: Use this if you need to know which actor caused a status effect.
-----------------------------------------
-NAME: StatusManager_EntryStatusIdOffset
-SIG:  83 FA 3C 72 03 33 C0 C3 8B C2 48 03 C0 0F B7 44 C1 08 C3
-DESC: What it is: An accessor path for the status id field inside a status entry. When it runs: When the client reads which status occupies a slot. Why you would care: Use this if you want the raw status id directly from the stored entry.
 ----------------------------------------
 NAME: StatusManager_GetRemainingTime
 SIG:  83 FA 3C 72 04 0F 57 C0 C3 8B C2 48 03 C0 F3 0F 10 44 C1 0C
@@ -2351,14 +2327,6 @@ NAME: StatusManager_HasStatus
 SIG:  45 33 D2 48 8D 41 10 45 8B CA 41 BB 00 00 00 E0 0F B7 48 F8 3B CA 75 0A 4D 3B C3 74 1B 4C 39 00
 DESC: What it is: A search function that checks whether an actor currently has a particular status. When it runs: When the client wants a yes-or-no answer for status presence, with an optional source filter. Why you would care: Use this if you want the same status lookup behavior the client already relies on.
 ----------------------------------------
-NAME: StatusManager_SetFirstHalf
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 40 32 F6 C6 81 D8 03 00 00 1E
-DESC: What it is: The function that writes the first half of an incoming status list into the local status manager. When it runs: When the client receives a normal status list packet and updates the first group of entries. Why you would care: Use this if you want a direct hook when the client writes incoming status data.
-----------------------------------------
-NAME: StatusManager_SetSecondHalf
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 40 40 32 FF C6 81 D8 03 00 00 3C
-DESC: What it is: The function that writes the full larger status list into the local status manager. When it runs: When the client receives a double-length status packet and applies all entries. Why you would care: Use this if you want one hook for the complete large-list write path.
-----------------------------------------
 
 CATEGORY: PvP Character Window
 ----------------------------------------
@@ -2765,10 +2733,6 @@ DESC: What it is: The repeating update path for the Crystalline Conflict rank an
 NAME: ColosseumRecord_HandleBackButtonInput_Deep
 SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 50 80 B9 F8 02 00 00 00 41 0F B6 F8 48 8B F1 0F 84 36 01 00 00
 DESC: What it is: The back-button handler for the Colosseum record screen. When it runs: It runs when the player uses the back action to leave that history UI. Why you would care: Use it if you want a narrow hook for back or close input on that screen.
-----------------------------------------
-NAME: ColosseumRecord_HandleCustomInput_Deep
-SIG:  40 53 48 83 EC 30 80 7A 04 00 48 8B D9 75 46 83 3A 02 75 41 48 8B 91 50 02 00 00 45 33 C9 41 B0 01
-DESC: What it is: A helper that handles controller-style or custom input for the Colosseum record screen. When it runs: It runs when that screen receives alternate input paths that need special handling. Why you would care: Use it if you want to separate controller or custom input from ordinary click input.
 ----------------------------------------
 NAME: ColosseumRecord_OnOpenTransitionStarted_Deep
 SIG:  40 53 48 83 EC 20 48 8B D9 E8 12 18 4F FF 48 8B 50 20 48 8B 82 50 91 00 00 48 85 C0 74 09
@@ -3903,4 +3867,4 @@ DESC: What it is: A deeper mission-module function that writes progress values i
 NAME: WKSMissionModule_UpdateTodoText
 SIG:  48 85 D2 0F 84 C6 02 00 00 55 56 57 41 54 41 56 41 57 48 8D 6C 24 E1 48 81 EC F8 00 00 00 48 8B 05 33 4F E2 00 48 33 C4 48 89 45 07 4C 8B 65 77 45 8B F1 41 8B F0 48 89 9C 24 F0 00 00 00 48 8B
 DESC: What it is: A deeper mission-module function that builds the text shown in the Cosmic todo panel. When it runs: When the client formats mission text and writes it into the visible Cosmic objective area. Why you would care: Use this if you want a deeper hook for mission text changes after the client has already picked the active mission.
-----------------------------------------
+---------------------------------------
