@@ -3305,3 +3305,281 @@ NAME: PathLayoutInstance_vf73
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 48 8B 01 48 8B FA 4C 8B F1 FF 90 00 02 00 00 4D 8B 06 49 8B CE 48 8B D8 41 FF 90 00 02 00 00 48 8D 77 10 4C 8D 7F 04 48 8D 6F 08 44 8B 00 44 89 07 44 8B 40 04 45 89 07 8B 48 08 89 4D 00 8B 03 89 06 8B 43 04 89 46 04 8B 43 08 89 46 08 49 8B 4E 60 48 85 C9 0F 84 E1 00 00 00 48 8B 01 33 DB FF 50 20 85 C0 0F 8E D1 00 00 00
 DESC: What it is: The non-core path helper that derives min and max spatial extents over the active path nodes. When it runs: When code asks a path layout instance for a broader spatial footprint than a simple bounding sphere. Why you would care: Use this as a support hook when you need path extents or box-style bounds around an active layout path.
 ----------------------------------------
+
+CATEGORY: Navigation - Path Layout Hooks
+----------------------------------------
+NAME: PathLayoutInstance_SetProperties
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 50 48 8B EA 48 8B F9 48 83 C2 0C 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 07 48 8D 54 24 20 48 8B CF FF 90 38 02 00 00 48 8B 07 48 8B CF FF 90 B8 00 00 00 48 85 C0 74 14 44 0F B7 4F 1A 48 8D 4F 18 4C 8B C5 48 8B D0 E8 ?? ?? ?? ?? 48 8B 4F 60 33 DB 48 85 C9 74 0C 48 8B 01 8D 53 01 FF 10 48 89 5F 60
+DESC: What it is: The main path-layout property loader that rebuilds the live path object from layout data. When it runs: When a path layout instance receives new path properties and recreates or replaces its internal path representation. Why you would care: Use this as the primary named hook for path object rebuilds and path-state updates.
+----------------------------------------
+CATEGORY: Navigation - Client Path State Hooks
+----------------------------------------
+NAME: ClientPathLayoutInstance_SetActive
+SIG:  48 89 5C 24 08 57 48 83 EC 20 80 61 2B EF 0F B6 C2 C0 E0 04 0F B6 FA 08 41 2B 48 8B D9 48 8B 01 FF 90 B8 00 00 00 48 85 C0 74 0E 80 A0 88 00 00 00 FE 40 08 B8 88 00 00 00 33 D2 39 93 B0 09 00 00 76 31
+DESC: What it is: The client-path activation toggle for the layout instance and its linked child path objects. When it runs: When client path state is enabled or disabled and that active bit is pushed into the live path object set. Why you would care: Use this as the clearest named hook for whether a client path instance is actively participating in movement or layout flow.
+----------------------------------------
+CATEGORY: Navigation - Non-Core Support Hooks
+----------------------------------------
+NAME: PathLayoutInstance_GetBoundingSphereImpl
+SIG:  48 89 5C 24 10 56 48 81 EC D0 00 00 00 48 8B 01 48 8B DA 48 8B F1 FF 90 00 02 00 00 44 8B 00 44 89 03 44 8B 40 04 44 89 43 04 8B 40 08 89 43 08 C7 43 0C 00 00 80 3F 48 8B 4E 60 48 85 C9 0F 84 0C 02 00 00 48 8B 01 48 89 BC 24 E0 00 00 00 33 FF FF 50 20 85 C0 0F 8E EF 01 00 00
+DESC: What it is: The non-core helper that derives the bounding sphere around the current path layout nodes. When it runs: When code asks a path layout instance for its spatial bounds based on the active path representation. Why you would care: Use this as a support hook when you need path-space bounds or area estimation around an active layout path.
+----------------------------------------
+NAME: PathLayoutInstance_vf73
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 40 48 8B 01 48 8B FA 4C 8B F1 FF 90 00 02 00 00 4D 8B 06 49 8B CE 48 8B D8 41 FF 90 00 02 00 00 48 8D 77 10 4C 8D 7F 04 48 8D 6F 08 44 8B 00 44 89 07 44 8B 40 04 45 89 07 8B 48 08 89 4D 00 8B 03 89 06 8B 43 04 89 46 04 8B 43 08 89 46 08 49 8B 4E 60 48 85 C9 0F 84 E1 00 00 00 48 8B 01 33 DB FF 50 20 85 C0 0F 8E D1 00 00 00
+DESC: What it is: The non-core path helper that derives min and max spatial extents over the active path nodes. When it runs: When code asks a path layout instance for a broader spatial footprint than a simple bounding sphere. Why you would care: Use this as a support hook when you need path extents or box-style bounds around an active layout path.
+----------------------------------------
+CATEGORY: Network - Core Packet Dispatcher Hooks
+----------------------------------------
+NAME: PacketDispatcher_HandleSystemLogMessagePacket
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 41 0F B6 D9 49 8B F8 8B F2 8B E9 E8 ?? ?? ?? ?? 4C 8B CF 88 5C 24 20 44 8B C6 8B D5 48 8B C8 E8 ?? ?? ?? ?? 48 8B 5C 24 40 48 8B 6C 24 48 48 8B 74 24 50 48 83 C4 30 5F C3
+DESC: What it is: The packet-dispatch handler that ingests a generic system-log message packet and routes it into the event framework. When it runs: When the client receives a system log message packet from the server and forwards it into the live message-processing path. Why you would care: Use this as a generic network hook for server-fed system text, notifications, and message-driven state changes that are not tied to a single content subsystem.
+----------------------------------------
+NAME: PacketDispatcher_HandleEventPlayPacket
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 40 B8 00 00 00 E0 49 8B F9 41 0F B7 F0 8B EA 48 3B C8 75 04 33 DB EB 12 48 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B D8 E8 ?? ?? ?? ?? 0F B6 4C 24 78 44 0F B7 CE 88 4C 24 30 44 8B C5 48 8B 4C 24 70 48 8B D3
+DESC: What it is: The packet-dispatch handler that ingests a generic event-play packet and resolves the referenced game object before passing the event into the event framework. When it runs: When the server drives an event-play action tied to an object, event actor, or scripted event flow. Why you would care: Use this as a broad packet-level hook for event-driven content behavior that is not limited to one duty, quest, or UI surface.
+----------------------------------------
+CATEGORY: Network - Actor and Status Packet Hooks
+----------------------------------------
+NAME: PacketDispatcher_HandleSpawnPlayerPacket
+SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 0F B6 92 8E 00 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 93 8E 00 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 54 24 28 C7 44 24 20 01 00 00 00 B8 05 00 00 00 66 0F 1F 44 00 00
+DESC: What it is: The packet-dispatch spawn handler for player actor packets. When it runs: When the client receives a full player spawn packet and builds or replaces the live player character entry from network data. Why you would care: Use this as a generic actor-ingest hook when you need the earliest reliable packet layer for player appearance, setup, and spawn lifecycle.
+----------------------------------------
+NAME: PacketDispatcher_HandleSpawnNPCPacket
+SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 E8 ?? ?? ?? ?? 3C 01 75 21 E8 ?? ?? ?? ?? 3C 01 75 18 80 BB 82 00 00 00 02 75 0F 8B 05 ?? ?? ?? ?? 39 43 54 0F 85 A0 00 00 00 0F B6 53 7E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 53 7E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 44 24 28 C7 44 24 20 02 00 00 00 BA 05 00 00 00
+DESC: What it is: The packet-dispatch spawn handler for generic NPC actor packets. When it runs: When the client receives a server-fed NPC spawn packet and creates or refreshes the corresponding live NPC actor entry. Why you would care: Use this as a generic network hook for NPC lifecycle and packet-ingest state before higher-level systems abstract the spawn event away.
+----------------------------------------
+NAME: PacketDispatcher_HandleSpawnBossPacket
+SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 E8 ?? ?? ?? ?? 3C 01 75 21 E8 ?? ?? ?? ?? 3C 01 75 18 80 BB 82 00 00 00 02 75 0F 8B 05 ?? ?? ?? ?? 39 43 54 0F 85 9A 00 00 00 0F B6 53 7E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 53 7E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 44 24 28 C7 44 24 20 03 00 00 00 BA 08 00 00 00
+DESC: What it is: The packet-dispatch spawn handler for boss-class actor packets. When it runs: When the client receives a boss spawn packet and constructs the live boss actor entry from network data. Why you would care: Use this as a generic high-value network hook for boss spawn lifecycle, especially if you want packet-level visibility before later encounter systems consume the actor.
+----------------------------------------
+NAME: PacketDispatcher_HandleDespawnCharacterPacket
+SIG:  48 89 5C 24 10 57 48 83 EC 40 0F B6 1A 48 8B FA 4C 8B 0D ?? ?? ?? ?? 8B 15 ?? ?? ?? ?? 41 3B D1 0F 84 07 01 00 00 4C 8B 15 ?? ?? ?? ?? 4C 8B 1D ?? ?? ?? ?? 48 63 C2 48 69 C8 18 04 00 00 42 80 BC 11 10 04 00 00 00 75 12
+DESC: What it is: The packet-dispatch despawn handler for live character actors. When it runs: When the server tells the client to remove a player, NPC, or boss character entry from the active character tables. Why you would care: Use this as the generic packet-level counterpart to spawn handlers when you need full actor lifecycle coverage from the network side.
+----------------------------------------
+NAME: PacketDispatcher_HandleStatusEffectListPlayerPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 28 48 8B 03 48 8B CB FF 90 70 02 00 00 48 85 C0 74 17 48 8B 03 48 8B CB FF 90 70 02 00 00 48 8B C8 48 8B D7 E8 ?? ?? ?? ?? 48 8B 5C 24 30 48 83 C4 20 5F C3
+DESC: What it is: The packet-dispatch handler for the first half of the local player status-effect list. When it runs: When the client receives the player-targeted status packet that fills the first block of live status entries. Why you would care: Use this as a direct server-fed hook for local-player buff and debuff state before higher-level status readers flatten the data.
+----------------------------------------
+NAME: PacketDispatcher_HandleStatusEffectListPlayerDoublePacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 2F 48 8B 03 48 8B CB FF 90 70 02 00 00 48 85 C0 74 1E 48 8B 03 48 8B CB FF 90 70 02 00 00 4C 8D 87 68 01 00 00 48 8B D7 48 8B C8 E8 ?? ?? ?? ?? 48 8B 5C 24 30 48 83 C4 20 5F C3
+DESC: What it is: The packet-dispatch handler for the second half of the local player status-effect list. When it runs: When the client receives the extended player status packet that fills the second block of live status entries. Why you would care: Use this alongside the first-half player status packet if you want complete local-player status coverage at the packet-ingest layer.
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdateHpMpTpPacket
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 83 3D ?? ?? ?? ?? 03 41 0F B6 E8 48 8B DA 8B F1 0F 84 19 01 00 00 48 89 7C 24 30 45 84 C0 75 0D F6 05 ?? ?? ?? ?? 04 0F 85 A0 00 00 00 8B D6 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 1F 8B 0B 89 88 AC 01 00 00
+DESC: What it is: The packet-dispatch handler that applies live HP, MP, and related combat-resource updates to character, party, and alliance state. When it runs: When the server sends a resource update packet for an entity and the client pushes those values into the active actor and group structures. Why you would care: Use this as a broad actor-status packet hook for health and resource changes that matter across almost every combat-facing plugin.
+----------------------------------------
+CATEGORY: Network - Non-Core and UI Packet Support
+----------------------------------------
+NAME: UIModule_HandlePacket
+SIG:  83 FA 28 0F 87 54 0C 00 00 55 56 57 41 56 48 8D 6C 24 C1 48 81 EC A8 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 27 48 63 C2 48 8B F9 48 8D 15 ?? ?? ?? ?? 48 89 9C 24 D8 00 00 00 49 8B F1 45 8B F0 8B 8C 82 C0 59 76 00 48 03 CA FF E1
+DESC: What it is: The UI-module packet bridge that dispatches a table of UI-facing packet ids into specific UI update handlers. When it runs: When a packet has already reached the UI layer and is about to be routed into one of the built-in UI packet cases. Why you would care: Use this as a non-core packet-routing hook when you want a generic bridge between server-fed packets and live UI state without dropping into lower-level network internals.
+----------------------------------------
+CATEGORY: Network - Deep Packet Ingress and Dispatch
+----------------------------------------
+NAME: PacketDispatcher_OnReceivePacket
+SIG:  48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 90 C4 FF FF B8 70 3C 00 00 E8 ?? ?? ?? ?? 48 2B E0 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 60 3B 00 00 45 0F B7 68 02 4D 8B E0 44 8B F2 48 8B F9 41 81 FD 7F 03 00 00 0F 85 E7 00 00 00
+DESC: What it is: The deepest generic receive, decode, and dispatch entrypoint under the named packet handlers in the packet dispatcher. When it runs: When a raw inbound packet has reached the dispatcher and is about to be decoded, normalized, and routed into the packet-specific handling layer. Why you would care: Use this as the broadest generic network-ingress hook when you want to observe packet flow before it fans out into per-packet handlers.
+----------------------------------------
+CATEGORY: Network - UI Packet Bridge Hooks
+----------------------------------------
+NAME: PacketDispatcher_HandleUIModulePacketPacket
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F1 41 8B D8 48 8B 0D ?? ?? ?? ?? 48 8B FA E8 ?? ?? ?? ?? 48 85 C0 74 15 4C 8B 10 4C 8B CF 44 8B C3 8B D6 48 8B C8 41 FF 92 D8 03 00 00 48 8B 5C 24 30 48 8B 74 24 38 48 83 C4 20 5F C3
+DESC: What it is: The packet-dispatch bridge that forwards a UI-targeted packet from the network layer into the live UI module. When it runs: When the dispatcher receives a packet intended for UI-side handling and invokes the UI-module packet entrypoint. Why you would care: Use this as the network-side companion to `UIModule_HandlePacket` if you want to hook the exact handoff point between generic packet dispatch and UI packet routing.
+----------------------------------------
+CATEGORY: Network - Network State and Update Hooks
+----------------------------------------
+NAME: Framework_GetNetworkModuleProxy
+SIG:  80 B9 80 16 00 00 00 74 08 48 8B 81 78 16 00 00 C3 33 C0 C3
+DESC: What it is: The framework-side accessor that returns the live network module proxy only after the framework marks networking as initialized. When it runs: When code asks the framework for the active network proxy instead of reaching into framework state directly. Why you would care: Use this as a non-core state helper when you want a stable way to retrieve the live network proxy for higher-level network inspection.
+----------------------------------------
+CATEGORY: Network - Chat and Protocol Receive Hooks
+----------------------------------------
+NAME: PacketDispatcher_ChatProtocol_OnReceivePacket
+SIG:  48 81 EC F8 03 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 E8 03 00 00 41 0F B7 40 02 44 8B CA 83 C0 9C 3D CB 00 00 00 0F 87 6B 03 00 00
+DESC: What it is: The chat-protocol receive callback that ingests inbound chat-layer packets before they fan out into narrower chat handlers. When it runs: When a packet routed through the chat protocol layer reaches the receive callback and is about to be classified by packet id. Why you would care: Use this as the deepest named generic receive hook for chat and protocol traffic without dropping into lower-level socket internals.
+----------------------------------------
+CATEGORY: Network - Send and Request Hooks
+----------------------------------------
+NAME: ZoneClient_SendPacket
+SIG:  48 83 EC 28 48 8B 89 98 00 00 00 48 85 C9 74 1F 44 89 44 24 30 4C 8D 44 24 30 44 89 4C 24 34 44 0F B6 4C 24 50 E8 ?? ?? ?? ?? 48 83 C4 28 C3 32 C0
+DESC: What it is: The generic zone-client send path used to transmit an outbound packet through the active zone connection. When it runs: When client code has already built a zone packet and is handing it off to the live zone-network client for transmission. Why you would care: Use this as the clearest generic send hook if you need to observe or audit outbound zone-side packet traffic.
+----------------------------------------
+NAME: ServerRequestCallbackManager_Request
+SIG:  48 89 5C 24 08 57 48 83 EC 30 41 8B D9 41 8B F8 E8 ?? ?? ?? ?? 44 8B CB 44 8B C7 B9 2B 23 00 00 8B D0 48 8B 5C 24 40 48 83 C4 30 5F E9 ?? ?? ?? ??
+DESC: What it is: The generic server-request dispatch path that turns a request id and payload into a live game-server command callback. When it runs: When client systems issue a generic server request rather than a packet-specific send helper. Why you would care: Use this as a broad request-layer hook when you want to see high-level server requests before they disappear into narrower subsystem code.
+----------------------------------------
+NAME: PacketDispatcher_SendEventCompletePacket
+SIG:  4C 8B DC 49 89 73 20 55 41 56 41 57 49 8D AB 68 F1 FF FF 48 81 EC 80 0F 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4
+DESC: What it is: The dispatcher-side send helper for the generic event-complete packet path. When it runs: When the client notifies the server that a scripted event or event-driven interaction has completed and needs an explicit completion packet. Why you would care: Use this as a targeted send hook for event-complete traffic without widening the pack into every subsystem-specific request helper.
+----------------------------------------
+CATEGORY: Network - Content Packet Hooks - Combat and Actor Control
+----------------------------------------
+NAME: PacketDispatcher_HandleActionEffect1Packet
+SIG:  48 89 5C 24 08 57 48 83 EC 30 48 8B DA 8B F9 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 26 4C 8D 43 70
+DESC: What it is: The packet-dispatch handler for the single-target action-effect packet variant. When it runs: When the client receives the smallest action-effect packet form and forwards it into the action-effect handler. Why you would care: Use this as the earliest packet-side hook for simple one-target combat effects before later combat systems aggregate or interpret them.
+----------------------------------------
+NAME: PacketDispatcher_HandleActionEffect8Packet
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B F0 48 85 C0 74 38 48 8D 93 70 02 00 00 48 8D 4C 24 30 E8 ?? ?? ?? ?? 4C 8D 83 30 02 00 00
+DESC: What it is: The packet-dispatch handler for the 8-target action-effect packet variant. When it runs: When the client receives a medium fan-out action-effect packet and prepares quantized positions plus target arrays for the shared action-effect handler. Why you would care: Use this if you want packet-level visibility into multi-target combat effects without waiting for the deeper shared receive path.
+----------------------------------------
+NAME: PacketDispatcher_HandleActionEffect16Packet
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B F0 48 85 C0 74 38 48 8D 93 B0 04 00 00 48 8D 4C 24 30 E8 ?? ?? ?? ?? 4C 8D 83 30 04 00 00
+DESC: What it is: The packet-dispatch handler for the 16-target action-effect packet variant. When it runs: When the server sends a larger action-effect packet and the dispatcher prepares its embedded target and position data for the combat effect layer. Why you would care: Use this as a packet-level hook for broad multi-target combat actions that exceed the smaller action-effect packet forms.
+----------------------------------------
+NAME: PacketDispatcher_HandleActionEffect24Packet
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B F0 48 85 C0 74 38 48 8D 93 F0 06 00 00 48 8D 4C 24 30 E8 ?? ?? ?? ?? 4C 8D 83 30 06 00 00
+DESC: What it is: The packet-dispatch handler for the 24-target action-effect packet variant. When it runs: When the client ingests one of the largest combat action-effect packet layouts and forwards its expanded target set into the shared combat effect pipeline. Why you would care: Use this if you want packet-level coverage for very large action-effect fan-out patterns common in raids and large encounters.
+----------------------------------------
+NAME: PacketDispatcher_HandleActionEffect32Packet
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B F0 48 85 C0 74 38 48 8D 93 30 09 00 00 48 8D 4C 24 30 E8 ?? ?? ?? ?? 4C 8D 83 30 08 00 00
+DESC: What it is: The packet-dispatch handler for the 32-target action-effect packet variant. When it runs: When the client receives the widest named action-effect packet form and prepares the largest embedded target set for the combat effect handler. Why you would care: Use this as the broadest packet-side action-effect hook if you want complete coverage of the named action-effect packet family.
+----------------------------------------
+NAME: PacketDispatcher_HandleEffectResultPacket
+SIG:  48 8B C4 44 88 40 18 89 48 08 53 55 57 48 81 EC 80 00 00 00 83 3D ?? ?? ?? ?? 03 41 0F B6 D8 48 8B EA 8B F9 0F 84 B1 03 00 00
+DESC: What it is: The packet-dispatch handler for the full effect-result packet path. When it runs: When the server sends a resolved combat effect-result packet and the client begins applying the result data to live actor state. Why you would care: Use this as a packet-level hook for the resolved outcome of actions rather than only the original action-effect packet itself.
+----------------------------------------
+NAME: PacketDispatcher_HandleEffectResultBasicPacket
+SIG:  40 53 41 54 41 55 48 83 EC 40 83 3D ?? ?? ?? ?? 03 45 0F B6 E0 48 8B DA 44 8B E9 0F 84 AE 01 00 00
+DESC: What it is: The packet-dispatch handler for the smaller basic effect-result packet form. When it runs: When the client receives the compact result variant used for simpler resolved combat outcomes. Why you would care: Use this alongside the full effect-result handler if you want broad coverage of packet-side result application across multiple effect-result formats.
+----------------------------------------
+NAME: PacketDispatcher_HandleActorCastPacket
+SIG:  40 53 57 48 81 EC 98 00 00 00 48 8B FA 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 B0 03 00 00
+DESC: What it is: The packet-dispatch handler for actor cast packets. When it runs: When the server sends cast-start data for an actor and the client begins the packet-side cast setup path. Why you would care: Use this as the earliest packet-level hook for cast bars, cast timing, and cast-source state.
+----------------------------------------
+NAME: PacketDispatcher_HandleActorControlPacket
+SIG:  40 55 53 57 41 54 41 56 48 8D AC 24 40 EE FF FF B8 C0 12 00 00 E8 ?? ?? ?? ?? 48 2B E0 48 8B 05 ?? ?? ?? ?? 48 33 C4
+DESC: What it is: The central packet-dispatch handler for actor-control packets. When it runs: When the server delivers actor-control data and the dispatcher begins decoding subtype-specific control behavior. Why you would care: Use this as one of the highest-value generic network hooks for mechanics, state changes, and server-driven actor events that do not arrive as simple UI updates.
+----------------------------------------
+NAME: PacketDispatcher_HandleActorMovePacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 4C 63 05 ?? ?? ?? ?? 48 8B DA 33 D2 8B F9 41 8D 40 01 F7 35 ?? ?? ?? ??
+DESC: What it is: The packet-dispatch handler for actor movement packets. When it runs: When the server pushes a movement update for an actor and the client begins resolving the target actor slot and movement payload. Why you would care: Use this as a packet-level hook for actor movement flow when you need raw server-driven movement changes instead of later animation or position abstractions.
+----------------------------------------
+CATEGORY: Network - Content Packet Hooks - Party, Alliance, and Social State
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdatePartyPacket
+SIG:  48 89 5C 24 08 55 56 57 41 54 41 55 41 56 41 57 48 81 EC F0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 E0 00 00 00 48 8B 0D ?? ?? ?? ?? 41 0F B6 D8
+DESC: What it is: The packet-dispatch handler for the main party update packet. When it runs: When the client receives a full party-state packet and starts rebuilding live party member data from the network payload. Why you would care: Use this as the primary packet-level hook for party roster and party state changes that are broader than one position or invite event.
+----------------------------------------
+NAME: PacketDispatcher_HandlePartyInvitePacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 0D ?? ?? ?? ?? 48 8B FA E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 53 0F B6 57 04 83 EA 01 74 0A 83 EA 0A 74 50 83 FA 03 75 40
+DESC: What it is: The packet-dispatch handler for incoming party invite packets. When it runs: When the server sends a party invite or related invite-state update and the client routes it into live party-invite handling. Why you would care: Use this as the direct packet hook for invite-driven social state instead of waiting for later UI notifications.
+----------------------------------------
+NAME: PacketDispatcher_HandleSocialPacket
+SIG:  48 89 5C 24 10 56 48 83 EC 20 48 8B 0D ?? ?? ?? ?? 48 8B F2 E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 65 01 00 00 0F B6 4E 0C FF C9 83 F9 0C
+DESC: What it is: The packet-dispatch handler for generic social-state packets. When it runs: When the server sends a packet in the shared social-state family and the dispatcher begins decoding its subtype. Why you would care: Use this as a broad packet-level hook for social state that does not belong to one narrow invite or party-only packet path.
+----------------------------------------
+CATEGORY: Network - Content Packet Hooks - Markers, Map, and World State
+----------------------------------------
+NAME: PacketDispatcher_HandleCountdownPacket
+SIG:  40 53 48 83 EC 20 48 8B 0D ?? ?? ?? ?? 48 8B DA E8 ?? ?? ?? ?? 48 85 C0 74 3E 4C 8B 00 48 8B C8 41 FF 90 18 01 00 00 48 8B C8 33 D2 E8 ?? ?? ?? ??
+DESC: What it is: The packet-dispatch handler for countdown-start packets. When it runs: When the server sends a live countdown update and the client begins routing it into countdown state. Why you would care: Use this as the packet-level hook for countdown starts when you want authoritative group countdown state from the network side.
+----------------------------------------
+NAME: PacketDispatcher_HandleInitZonePacket
+SIG:  4C 8B DC 55 56 41 56 48 81 EC D0 0F 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 B0 0F 00 00 41 0F B6 F0 48 8B EA 44 8B F1 45 84 C0 0F 85 E0 00 00 00
+DESC: What it is: The packet-dispatch handler for initial zone setup packets. When it runs: When the client receives the zone-initialization payload that seeds large portions of live world, content, and actor state for a newly entered zone. Why you would care: Use this as a high-value world-state packet hook when you want the earliest network layer for zone initialization and reset flow.
+----------------------------------------
+CATEGORY: Network - Content Packet Hooks - Player, Inventory, and UI Readers
+----------------------------------------
+NAME: PacketDispatcher_HandlePlayerStatsPacket
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 FF 48 8B F2 8B DF E8 ?? ?? ?? ?? 85 C0 74 2F 90 8B CB E8 ?? ?? ?? ?? 48 0F BE 48 44 83 F9 FF 74 12
+DESC: What it is: The packet-dispatch handler for player stat packets. When it runs: When the server sends a player-stat payload and the client begins copying those values into live player state. Why you would care: Use this as the packet-level hook for stat refreshes instead of waiting for later UI or derived-state readers.
+----------------------------------------
+NAME: PacketDispatcher_HandlePlayerGearsetDataPacket
+SIG:  40 53 48 83 EC 20 48 8B DA 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 14 48 8D 88 F8 06 00 00 48 8B D3 48 83 C4 20 5B E9 ?? ?? ?? ??
+DESC: What it is: The packet-dispatch handler for player gearset-data packets. When it runs: When the server sends a gearset-related payload and the client routes it into the live player gearset state structures. Why you would care: Use this as the direct packet-level hook for gearset synchronization instead of relying on later inventory or UI refreshes.
+----------------------------------------
+NAME: PacketDispatcher_HandleInventoryItemUpdatePacket
+SIG:  48 89 5C 24 08 57 48 81 EC 80 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 70 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9
+DESC: What it is: The packet-dispatch handler for inventory item update packets. When it runs: When the server sends an item-slot update for an existing inventory entry and the client begins applying the new container-slot state. Why you would care: Use this as the main packet-level hook for live inventory mutations coming from the server.
+----------------------------------------
+NAME: PacketDispatcher_HandleInventoryItemPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9 48 8D 0D ?? ?? ?? ?? 8B D3 E8 ?? ?? ?? ?? 48 85 C0 0F 84 A5 00 00 00
+DESC: What it is: The packet-dispatch handler for the base inventory item packet form. When it runs: When the server sends a standard inventory item payload and the client starts resolving the target container and slot. Why you would care: Use this as the packet-level hook for general item ingestion when you want a broader inventory feed than narrow update-only packets.
+----------------------------------------
+NAME: PacketDispatcher_HandleInventoryItemCurrencyPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 04 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9 48 8D 0D ?? ?? ?? ?? 8B D3 E8 ?? ?? ?? ?? 48 85 C0 74 47
+DESC: What it is: The packet-dispatch handler for inventory currency item packets. When it runs: When the server sends a currency-style inventory payload and the client begins routing it into the inventory container layer. Why you would care: Use this as the clearest packet-level hook for gil-like and currency-like inventory changes without widening into every special-currency system.
+----------------------------------------
+NAME: PacketDispatcher_HandleInventoryItemSymbolicPacket
+SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 4C 89 74 24 20 41 57 48 83 EC 20 48 8B DA 48 8D 0D ?? ?? ?? ?? 0F B7 52 04 E8 ?? ?? ?? ?? 0F B7 53 0C
+DESC: What it is: The packet-dispatch handler for symbolic inventory item packets. When it runs: When the server sends the symbolic inventory variant and the client resolves it into live container state. Why you would care: Use this alongside the base and update inventory handlers if you want broad packet-side coverage of the inventory family.
+----------------------------------------
+CATEGORY: Network - Non-Core Content Packet Support
+----------------------------------------
+NAME: PlayerState_ReadPacket
+SIG:  48 89 5C 24 18 55 56 57 41 54 41 55 41 56 41 57 48 81 EC A0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 90 00 00 00 48 8B FA 48 8B F1 E8 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 4C 8B F0 E8 ?? ?? ?? ?? C6 06 01
+DESC: What it is: The non-core read-side player-state packet reader that copies network packet data into the live PlayerState structures. When it runs: When the client is already inside the player-state packet read path and is consuming decoded packet data into UI-facing state. Why you would care: Use this as a support hook when the packet handler alone is too early and you want the post-decode player-state copy stage.
+----------------------------------------
+NAME: Buddy_ReadPacket
+SIG:  48 89 5C 24 18 55 56 57 48 81 EC A0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 90 00 00 00 8B 42 50 4C 8D 82 CA 02 00 00 89 81 78 23 00 00 48 8B F2 0F B6 82 39 07 00 00
+DESC: What it is: The non-core read-side buddy packet reader that copies decoded companion or buddy packet data into the live buddy-state structures. When it runs: When the client is already inside the buddy-state packet read path and is materializing decoded packet data into stable in-memory state. Why you would care: Use this as a support hook when you want the post-decode buddy-state layer rather than the earlier packet-dispatch wrapper.
+----------------------------------------
+CATEGORY: Party Finder - Network and Listing Hooks
+----------------------------------------
+NAME: InfoProxyCrossRealm_ReceiveListing
+SIG:  40 53 41 57 48 83 EC 28 48 8B D9 4C 8B FA 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 41 81 7F 10 00 00 00 80 75 0F C6 83 75 04 00 00 00 48 83 C4 28 41 5F 5B C3
+DESC: What it is: The cross-realm info-proxy receive path that ingests party-finder listing payloads into the live listing cache. When it runs: When the client receives party-finder listing data and begins copying the returned listings into the cross-realm listing structures and active LookingForGroup view. Why you would care: Use this as the clearest packet-adjacent receive hook for party finder if you want live listing data as it arrives instead of waiting for later UI-only refresh logic.
+----------------------------------------
+CATEGORY: Party Finder - Non-Core and Request Hooks
+----------------------------------------
+NAME: AgentLookingForGroup_RequestListingsUpdate
+SIG:  40 53 48 83 EC 40 48 8B D9 48 8B 89 E0 00 00 00 48 85 C9 75 08 32 C0 48 83 C4 40 5B C3 8B 83 F8 31 00 00 C1 E8 02 A8 01 74 0D E8 ?? ?? ?? ?? B0 01 48 83 C4 40 5B C3
+DESC: What it is: The LookingForGroup agent request path that asks the game to refresh or fetch the current party-finder listing set. When it runs: When the party-finder UI requests a listings refresh based on the current filter and listing state. Why you would care: Use this as a non-core request hook if you want to observe when the client actively asks for new party-finder listings rather than only consuming the received results.
+----------------------------------------
+CATEGORY: Treasure Maps - Door Choice and Instance State
+----------------------------------------
+NAME: EventFramework_GetTreasureHuntDungeonDirector
+SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09 80 B8 CE 0D 00 00 0A 74 02 33 C0 C3
+DESC: What it is: The treasure-specific event-framework accessor for the live treasure-hunt dungeon director. When it runs: When code asks the event framework for the active content director and needs the treasure-hunt dungeon controller specifically. Why you would care: Use this as the cleanest treasure-specific state entrypoint before hooking deeper door-result, timer, or object-identification behavior.
+----------------------------------------
+NAME: TreasureHuntDirector_SetSequence
+SIG:  48 83 EC 28 41 3A D0 0F 84 ?? ?? ?? ?? 41 0F B6 C0 89 81 94 04 00 00 83 C0 FC 3D FB 00 00 00 0F 87 ?? ?? ?? ?? 4C 8D 05 ?? ?? ?? ?? 48 98 41 0F B6 84 00 24 32 AB 00 41 8B 94 80 0C 32 AB 00 49 03 D0 FF E2
+DESC: What it is: The treasure-hunt director phase change path that advances the dungeon to the next internal door or outcome state. When it runs: When the active treasure instance changes sequence after a door choice, success branch, failure branch, or other major treasure-room progression step. Why you would care: Use this as the clearest phase-progression hook for door-result logic in portal-style treasure instances.
+----------------------------------------
+NAME: TreasureHuntDirector_Synchronize
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 20 0F B6 91 EA 02 00 00 48 8B F1 0F B6 81 EB 02 00 00 C1 E2 08 0B D0 0F B7 FA 81 FF 00 01 00 00 0F 83 ?? ?? ?? ??
+DESC: What it is: The strongest treasure-specific server-fed state synchronization path in the treasure-hunt director. When it runs: When the client consumes synchronized treasure-room state such as door outcomes, timers, flags, or other dungeon progression values pushed into the live treasure director. Why you would care: Use this as the main packet-and-state hook for treasure door outcomes when no clean treasure-specific packet-dispatch handler is exposed by name.
+----------------------------------------
+NAME: TreasureHuntDirector_Update2
+SIG:  40 55 56 48 8B EC 48 83 EC 78 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 E8 48 83 B9 30 04 00 00 00 48 8B F1 0F 84 ?? ?? ?? ?? 48 89 9C 24 98 00 00 00 E8 ?? ?? ?? ?? 8B D0 48 8B CE E8 ?? ?? ?? ??
+DESC: What it is: The treasure-hunt director update path that manages countdown, minute-state, and timed progression support for the live treasure instance. When it runs: When the treasure director ticks and recalculates time remaining or emits timed status changes tied to the current treasure-room phase. Why you would care: Use this as the timer and countdown support hook if you need the live progression clock around treasure-door mechanics.
+----------------------------------------
+CATEGORY: Treasure Maps - Shared Door and Interaction Hooks
+----------------------------------------
+NAME: EventFramework_CheckInteractRangeEx
+SIG:  40 53 57 41 56 48 83 EC 70 48 8B 02 48 8B CA 41 0F B6 F9 4D 8B F0 48 8B DA FF 50 10 83 F8 01 74 19 48 8B 84 24 B0 00 00 00 C7 00 01 00 00 00 32 C0 48 83 C4 70 41 5E 5F 5B C3
+DESC: What it is: The shared event-framework range gate that decides whether a target object is close enough and valid enough to interact with. When it runs: When the client checks if a selected object, including treasure-map doors, can currently be used based on range, object type, and status rules. Why you would care: Use this as the strongest shared interaction-range hook for treasure doors when you need the client-side pass or fail decision before the interaction is allowed.
+----------------------------------------
+NAME: EventFramework_InteractWithObject
+SIG:  40 55 56 57 41 55 48 81 EC 88 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 60 01 00 00 48 8B 2D ?? ?? ?? ?? 45 0F B6 E8 48 8B F2 48 8B F9 48 85 ED 0F 84 ?? ?? ?? ??
+DESC: What it is: The shared event-framework object interaction path used by event objects, doors, and similar interactables. When it runs: When the client submits a real object interaction through the event framework after target and range checks have already passed. Why you would care: Use this as the shared treasure-door interaction hook when you want the event-framework layer that actually begins the object-use flow.
+----------------------------------------
+NAME: TargetSystem_InteractWithObject
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 48 8B E9 41 0F B6 F0 48 8B CA 48 8B DA E8 ?? ?? ?? ?? 84 C0 74 1D B2 01 48 8D 0D ?? ?? ?? ??
+DESC: What it is: The shared target-system interaction entrypoint for the currently selected object. When it runs: When the client begins an interact attempt on a selected target object before handing the action deeper into the event framework. Why you would care: Use this as the higher client-side interaction entrypoint if you want to catch treasure-door usage before the event-framework object flow takes over.
+----------------------------------------
+CATEGORY: Treasure Maps - Mob Radius and Range Hooks
+----------------------------------------
+NAME: Character_GetRadius
+SIG:  40 53 48 83 EC 20 48 8B D9 80 FA 01 75 37 48 8B 01 FF 50 10 83 F8 01 75 2C 0F B7 83 C4 01 00 00 66 85 C0 74 12 8B C8 E8 ?? ?? ?? ?? 48 85 C0 74 06 F6 40 3A 08 75 0E F3 0F 10 05 ?? ?? ?? ?? 48 83 C4 20 5B C3
+DESC: What it is: The direct character radius reader for a live character object. When it runs: When code asks a character for its effective radius or half-width based on its current actor data and special cases. Why you would care: Use this as the cleanest mob radius hook if you want treasure-room enemy spacing, hitbox radius, or proximity logic without guessing from model scale.
+----------------------------------------
+NAME: GameObject_DistanceBetweenHitboxesXYZ
+SIG:  48 89 74 24 20 57 48 83 EC 30 48 8B FA 48 8B F1 48 85 C9 0F 84 ?? ?? ?? ?? 48 85 D2 0F 84 ?? ?? ?? ?? 48 3B CA 0F 84 ?? ?? ?? ?? 48 89 5C 24 40 48 8B CA 48 89 6C 24 48 4C 89 74 24 50 0F 29 74 24 20 E8 ?? ?? ?? ?? 48 8B CE 48 8B D8 E8 ?? ?? ?? ?? 48 8B 0E F3 0F 10 40 08
+DESC: What it is: The shared 3D hitbox-distance helper between two live game objects. When it runs: When the client needs the full XYZ distance between two object hitboxes rather than simple origin-to-origin distance. Why you would care: Use this as a support hook for treasure-room mob range logic when you care about real spatial separation between player, mob, and door objects.
+----------------------------------------
+CATEGORY: Treasure Maps - Non-Core Object and UI Support
+----------------------------------------
+NAME: TreasureHuntDirector_GetNameplateIconForObject
+SIG:  48 89 5C 24 08 57 48 83 EC 20 F6 81 A4 04 00 00 02 48 8B DA 48 8B F9 74 3B 48 8B 02 48 8B CA FF 50 10 83 F8 02 75 2D 0F B6 83 91 00 00 00 2C 02 3C 01 76 20 66 83 BF 90 04 00 00 06 B8 BE EA 00 00 B9 C0 EA 00 00 0F 44 C1
+DESC: What it is: The treasure-hunt director object-nameplate icon selector for live treasure-instance objects. When it runs: When the client decides which nameplate icon should be shown for a treasure-hunt object based on the current treasure-room state. Why you would care: Use this as a non-core support hook when you want to identify or classify treasure-door and treasure-object state through the live director instead of only watching interactions.
+----------------------------------------
+NAME: TreasureHuntDirector_GetIconId
+SIG:  48 83 EC 28 80 FA 02 75 0F 45 85 C9 74 33 B8 C1 EB 00 00 48 83 C4 28 C3 80 FA 04 75 24 45 85 C9 74 1F 44 89 89 A0 04 00 00 0F B7 89 90 04 00 00 E8 ?? ?? ?? ?? 48 85 C0 74 07 8B 00 48 83 C4 28 C3
+DESC: What it is: The treasure-hunt director icon resolver for live treasure-room object state. When it runs: When the director resolves which icon id should represent a treasure-hunt object or treasure-state case in the current instance. Why you would care: Use this as a non-core object-identification helper when you need a compact treasure-object state signal without hooking broader UI refresh code.
+----------------------------------------
+NAME: InstanceContentTreasureHuntDungeon0_vf401
+SIG:  40 55 56 57 48 8D 6C 24 B9 48 81 EC F0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 37 48 8B F1 E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B F8 48 85 C0 0F 84 ?? ?? ?? ?? 4C 89 B4 24 20 01 00 00 44 0F BE B6 EB 02 00 00
+DESC: What it is: The treasure-hunt dungeon content-specific status and text helper that builds localized state text from the current treasure-room bytes. When it runs: When the treasure instance updates its current status text or formatted treasure-state message for the live content flow. Why you would care: Use this as a non-core support hook when you want treasure-room status text or object-state presentation after the lower-level director bytes have already been set.
+----------------------------------------
+
