@@ -1,3 +1,4 @@
+----------------------------------------
 CATEGORY: General and Core Signatures
 ----------------------------------------
 NAME: ActionEffect
@@ -500,14 +501,6 @@ DESC: What it is: The weather-change packet implementation that applies a server
 
 CATEGORY: Network - Content Packet Hooks - Player, Inventory, and UI Readers
 ----------------------------------------
-NAME: PacketDispatcher_HandleInventoryItemCurrencyPacket
-SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 04 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9 48 8D 0D ?? ?? ?? ?? 8B D3 E8 ?? ?? ?? ?? 48 85 C0 74 47
-DESC: What it is: The packet-dispatch handler for inventory currency item packets. When it runs: When the server sends a currency-style inventory payload and the client begins routing it into the inventory container layer. Why you would care: Use this as the clearest packet-level hook for gil-like and currency-like inventory changes without widening into every special-currency system.
-----------------------------------------
-NAME: PacketDispatcher_HandleInventoryItemPacket
-SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9 48 8D 0D ?? ?? ?? ?? 8B D3 E8 ?? ?? ?? ?? 48 85 C0 0F 84 A5 00 00 00
-DESC: What it is: The packet-dispatch handler for the base inventory item packet form. When it runs: When the server sends a standard inventory item payload and the client starts resolving the target container and slot. Why you would care: Use this as the packet-level hook for general item ingestion when you want a broader inventory feed than narrow update-only packets.
-----------------------------------------
 NAME: PacketDispatcher_HandleInventoryItemSymbolicPacket
 SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 4C 89 74 24 20 41 57 48 83 EC 20 48 8B DA 48 8D 0D ?? ?? ?? ?? 0F B7 52 04 E8 ?? ?? ?? ?? 0F B7 53 0C
 DESC: What it is: The packet-dispatch handler for symbolic inventory item packets. When it runs: When the server sends the symbolic inventory variant and the client resolves it into live container state. Why you would care: Use this alongside the base and update inventory handlers if you want broad packet-side coverage of the inventory family.
@@ -515,10 +508,6 @@ DESC: What it is: The packet-dispatch handler for symbolic inventory item packet
 NAME: PacketDispatcher_HandleInventoryItemUpdatePacket
 SIG:  48 89 5C 24 08 57 48 81 EC 80 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 70 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9
 DESC: What it is: The packet-dispatch handler for inventory item update packets. When it runs: When the server sends an item-slot update for an existing inventory entry and the client begins applying the new container-slot state. Why you would care: Use this as the main packet-level hook for live inventory mutations coming from the server.
-----------------------------------------
-NAME: PacketDispatcher_HandlePlayerGearsetDataPacket
-SIG:  40 53 48 83 EC 20 48 8B DA 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 14 48 8D 88 F8 06 00 00 48 8B D3 48 83 C4 20 5B E9 ?? ?? ?? ??
-DESC: What it is: The packet-dispatch handler for player gearset-data packets. When it runs: When the server sends a gearset-related payload and the client routes it into the live player gearset state structures. Why you would care: Use this as the direct packet-level hook for gearset synchronization instead of relying on later inventory or UI refreshes.
 ----------------------------------------
 NAME: PacketDispatcher_HandlePlayerStatsPacket
 SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 FF 48 8B F2 8B DF E8 ?? ?? ?? ?? 85 C0 74 2F 90 8B CB E8 ?? ?? ?? ?? 48 0F BE 48 44 83 F9 FF 74 12
@@ -592,53 +581,9 @@ NAME: DutyActionManager_ProcessActorControlStatic
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 40 41 8B F9 41 8B F0 8B EA 44 8B F1 E8 D6 7E 3A 00 48 8B C8 E8 2E 53 3B 00 48 8B D8 E8 C6 7E 3A 00
 DESC: What it is: The bridge that forwards static actor-control updates into live content state. When it runs: After actor-control data has been received and the client is routing it into the active content or massive-content systems. Why you would care: Use this when you want a shared mechanic hook after packet receipt but before the state is fully consumed by encounter logic.
 ----------------------------------------
-NAME: PacketDispatcher_HandleActionEffect16Packet
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D A3 E9 C1 01 E8 1E D8 F1 FF 48 8B F0 48 85 C0 74 38 48 8D 93 B0 04 00 00 48 8D 4C 24 30 E8 A5 6F D4 FF 4C 8D 83 30 04
-DESC: What it is: The packet-dispatch path for the sixteen-entry action-effect payload variant. When it runs: When the client receives a denser action-effect packet used for large shared combat result sets. Why you would care: Use this if you want packet-level boss-mechanic coverage that stays correct when the server uses larger action-effect variants.
-----------------------------------------
-NAME: PacketDispatcher_HandleActionEffect1Packet
-SIG:  48 89 5C 24 08 57 48 83 EC 30 48 8B DA 8B F9 8B D1 48 8D 0D 88 EA C1 01 E8 03 D9 F1 FF 48 85 C0 74 26 4C 8D 43 70 48 8B D0 4C 89 44 24 28 4C 8D 4B 2A 4C 89 4C 24 20 4C 8D 05 42 34 E0 01 4C 8B
-DESC: What it is: The packet-dispatch path for the smallest single-entry action-effect payload. When it runs: When the client receives an action-effect packet variant carrying one target payload. Why you would care: Use this as the earliest clean packet-level hook for shared combat mechanics before they are normalized deeper in the action-effect handler.
-----------------------------------------
-NAME: PacketDispatcher_HandleActionEffect24Packet
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D 23 E9 C1 01 E8 9E D7 F1 FF 48 8B F0 48 85 C0 74 38 48 8D 93 F0 06 00 00 48 8D 4C 24 30 E8 25 6F D4 FF 4C 8D 83 30 06
-DESC: What it is: The packet-dispatch path for the twenty-four-entry action-effect payload variant. When it runs: When the client decodes a larger action-effect packet carrying many resolved target results. Why you would care: Use this if your mechanic tracking needs early packet visibility across the broader action-effect family instead of only the smallest variant.
-----------------------------------------
-NAME: PacketDispatcher_HandleActionEffect32Packet
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D A3 E8 C1 01 E8 1E D7 F1 FF 48 8B F0 48 85 C0 74 38 48 8D 93 30 09 00 00 48 8D 4C 24 30 E8 A5 6E D4 FF 4C 8D 83 30 08
-DESC: What it is: The packet-dispatch path for the largest shared action-effect payload variant in this family. When it runs: When the server sends a thirty-two-entry action-effect packet and the client starts unpacking it. Why you would care: Use this when you want maximum early coverage of action-effect-driven boss mechanics at the packet layer.
-----------------------------------------
-NAME: PacketDispatcher_HandleActionEffect8Packet
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 40 48 8B DA 8B F9 8B D1 48 8D 0D 23 EA C1 01 E8 9E D8 F1 FF 48 8B F0 48 85 C0 74 38 48 8D 93 70 02 00 00 48 8D 4C 24 30 E8 25 70 D4 FF 4C 8D 83 30 02
-DESC: What it is: The packet-dispatch path for the action-effect variant that carries a larger multi-target payload. When it runs: When the server sends an eight-target style action-effect packet and the client begins decoding it. Why you would care: Use this when you want packet-level coverage for shared raid and boss mechanics that often hit more than one target.
-----------------------------------------
-NAME: PacketDispatcher_HandleActorCastPacket
-SIG:  40 53 57 48 81 EC 98 00 00 00 48 8B FA 8B D1 48 8D 0D AA F1 C1 01 E8 25 E0 F1 FF 48 8B D8 48 85 C0 0F 84 B0 03 00 00 0F B7 0F 48 89 AC 24 B0 00 00 00 8B 6F 04 48 89 B4 24 B8 00 00 00 E8 9E D6
-DESC: What it is: The packet-dispatch path for actor cast packets. When it runs: When the client receives server-fed cast-start or cast-update data for an actor. Why you would care: Use this as the earliest packet-level hook for boss casts and telegraph startup before cast state is reflected in higher-level systems.
-----------------------------------------
-NAME: PacketDispatcher_HandleActorControlPacket
-SIG:  40 55 53 57 41 54 41 56 48 8D AC 24 40 EE FF FF B8 C0 12 00 00 E8 F6 20 14 01 48 2B E0 48 8B 05 64 80 C4 01 48 33 C4 48 89 85 60 11 00 00 8B 85 10 12 00 00 8B F9 44 0F B6 A5 48 12 00 00 8B DA
-DESC: What it is: The main packet-dispatch path for actor-control messages. When it runs: When the client receives server-fed actor-control data used for many mechanic, state, and encounter events. Why you would care: Use this as one of the highest-value shared hooks for boss mechanics that are conveyed through actor-control traffic instead of visible UI changes.
-----------------------------------------
-NAME: PacketDispatcher_HandleEffectResultBasicPacket
-SIG:  40 53 41 54 41 55 48 83 EC 40 83 3D 47 DE E0 01 03 45 0F B6 E0 48 8B DA 44 8B E9 0F 84 AE 01 00 00 48 89 74 24 68 48 89 7C 24 70 33 FF 45 84 C0 75 0D F6 05 02 B0 E0 01 04 0F 85 EB 00 00 00 41
-DESC: What it is: The packet-dispatch path for the compact basic effect-result packet variant. When it runs: When the server sends the smaller form of effect-result data and the client begins decoding it. Why you would care: Use this alongside the larger effect-result handler if you want fuller coverage of server-fed post-action mechanic state.
-----------------------------------------
-NAME: PacketDispatcher_HandleEffectResultPacket
-SIG:  48 8B C4 44 88 40 18 89 48 08 53 55 57 48 81 EC 80 00 00 00 83 3D 2D E2 E0 01 03 41 0F B6 D8 48 8B EA 8B F9 0F 84 B1 03 00 00 48 89 70 10 4C 89 60 E0 4C 89 68 D8 4C 89 70 D0 45 33 F6 4C 89 78
-DESC: What it is: The packet-dispatch path for effect-result packets after combat resolution. When it runs: When the client receives server-fed effect-result data that updates target state after an action has already been processed. Why you would care: Use this as a packet-level shared mechanic hook for post-resolution state changes that are useful beyond the raw action-effect family.
-----------------------------------------
-NAME: PacketDispatcher_HandleSpawnBossPacket
-SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 E8 A9 40 F2 FF 3C 01 75 21 E8 C0 40 F2 FF 3C 01 75 18 80 BB 82 00 00 00 02 75 0F 8B 05 95 6A E1 01 39 43 54 0F 85 9A 00 00 00 0F B6 53 7E
-DESC: What it is: The packet-dispatch path that handles boss-style spawn packets. When it runs: When the client receives server-fed spawn data for a boss or boss-relevant encounter actor. Why you would care: Use this if your encounter tooling needs the earliest strong signal that a boss entity or boss-owned mechanic actor has entered the scene.
-----------------------------------------
 NAME: PacketDispatcher_HandleStatusEffectListPacket
 SIG:  45 33 C9 E9 98 F9 FF FF CC CC CC CC CC CC CC CC 48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 83 3D 92 E8 E0 01 03 41 0F B6 E8 48 8B DA 8B F1 0F 84 1F 01 00 00 48 83 C2 04 48 89 7C 24 30 45 33
 DESC: What it is: The packet-dispatch path for status-effect list updates on general actors. When it runs: When the client receives refreshed server-fed status arrays and starts applying them to non-player targets. Why you would care: Use this as a strong shared support hook for mechanics that are easiest to consume from authoritative status changes rather than only from action effects.
-----------------------------------------
-NAME: PacketDispatcher_HandleStatusEffectListPlayerPacket
-SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D 5F 68 E1 01 48 8B FA 48 85 DB 74 28 48 8B 03 48 8B CB FF 90 70 02 00 00 48 85 C0 74 17 48 8B 03 48 8B CB FF 90 70 02 00 00 48 8B C8 48 8B D7 E8 9F 10 CF
-DESC: What it is: The packet-dispatch path for player-focused status-effect list updates. When it runs: When the client receives refreshed server-fed status arrays for the local player or player-targeted state. Why you would care: Use this for mechanics that are best tracked from the authoritative status state applied to the player rather than only from downstream UI refreshes.
 ----------------------------------------
 NAME: PacketDispatcher_HandleUnlockedMapMarkersPacket
 SIG:  48 83 EC 28 48 83 FA 40 75 57 0F 10 01 0F 11 05 6B ED E3 01 0F 10 49 10 0F 11 0D 70 ED E3 01 0F 10 41 20 0F 11 05 75 ED E3 01 0F 10 49 30 48 8B 0D EB 2B C5 01 0F 11 0D 73 ED E3 01 E8 0F AF 52
@@ -738,32 +683,12 @@ DESC: What it is: The specialized actor-control handler that applies weapon-draw
 
 CATEGORY: Shared Boss Mechanics - Spawn, Despawn, and Object Lifecycle
 ----------------------------------------
-NAME: PacketDispatcher_HandleDespawnCharacterPacket
-SIG:  48 89 5C 24 10 57 48 83 EC 40 0F B6 1A 48 8B FA 4C 8B 0D 01 63 C2 01 8B 15 F7 62 C2 01 41 3B D1 0F 84 07 01 00 00 4C 8B 15 DB 62 C2 01 4C 8B 1D DC 62 C2 01 48 63 C2 48 69 C8 18 04 00 00 42 80 BC 11 10 04 00 00 00 75 12 8D 42 01 33 D2 41 F7 F3 41 3B D1 75 DE E9 D2 00 00 00 4E 8D 04 11 83
-DESC: What it is: The packet-dispatch path for character despawn and removal. When it runs: When the client receives server-fed despawn data and tears an actor out of live scene state. Why you would care: Use this as a lifecycle hook for mechanics that end when a boss, add, helper, or temporary encounter actor disappears.
-----------------------------------------
-NAME: PacketDispatcher_HandleSpawnBossPacket
-SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 E8 A9 40 F2 FF 3C 01 75 21 E8 C0 40 F2 FF 3C 01 75 18 80 BB 82 00 00 00 02 75 0F 8B 05 95 6A E1 01 39 43 54 0F 85 9A 00 00 00 0F B6 53 7E
-DESC: What it is: The packet-dispatch path that handles boss-style spawn packets. When it runs: When the client receives server-fed spawn data for a boss or boss-relevant encounter actor. Why you would care: Use this if your encounter tooling needs the earliest strong signal that a boss entity or boss-owned mechanic actor has entered the scene.
-----------------------------------------
-NAME: PacketDispatcher_HandleSpawnNPCPacket
-SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 E8 A9 41 F2 FF 3C 01 75 21 E8 C0 41 F2 FF 3C 01 75 18 80 BB 82 00 00 00 02 75 0F 8B 05 95 6B E1 01 39 43 54 0F 85 A0 00 00 00 0F B6 53 7E 48 8D 0D F9 10 C2 01 E8 14 FD F1 FF 0F B6 53 7E 48 8D 0D 59 64 C2 01 E8 44 8E 01 00 48 8D 44 24
-DESC: What it is: The packet-dispatch path for spawning NPC and encounter-owned non-player actors. When it runs: When the client receives a server-fed NPC spawn packet for an enemy, helper, event actor, or mechanic-owned object. Why you would care: Use this for boss fights and event content that create mechanic actors, adds, or encounter objects through spawn flow.
-----------------------------------------
-NAME: PacketDispatcher_HandleSpawnPlayerPacket
-SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 0F B6 92 8E 00 00 00 48 8D 0D 20 12 C2 01 E8 3B FE F1 FF 0F B6 93 8E 00 00 00 48 8D 0D 7D 65 C2 01 E8 68 8F 01 00 48 8D 54 24 28 C7 44 24 20 01 00 00 00 B8 05 00 00 00 66 0F 1F 44 00 00 48 8D 92 80 00 00 00 0F 10 03 0F 10 4B 10 48 8D
-DESC: What it is: The packet-dispatch path for spawning player characters into the live scene. When it runs: When the client receives a server-fed player spawn packet and begins materializing that actor and its attached state. Why you would care: Use this as a lifecycle hook for mechanics that depend on fresh actor presence, phase adds, or newly visible participants.
-----------------------------------------
 NAME: ReactionEventObjectManager_CreateObject *
 SIG:  48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 20 49 8B E9 48 8D 41 08 45 8B F0 44 8B FA 48 8B F1 33 FF 48 83 38 00 74 15 FF C7 48 83 C0 08 83 FF 64 72 EF B8 FF FF FF FF E9 92 00 00 00 83 FF FF 75 07 8B C7 E9 86 00 00 00 8D 0C FF 48 89 5C 24 40 C1 E1 06 48 03 0E E8 41 32 2B 00
 DESC: What it is: The reaction-event-object manager creation path that allocates and initializes a live reaction event object. When it runs: When the client materializes a reaction object with position and rotation into the active object manager. Why you would care: Use this as a lower-level event-object mechanics hook when you want the actual creation of reaction objects rather than only later interaction attempts.
 ----------------------------------------
 
 CATEGORY: Shared Boss Mechanics - Interactables and Event Object State
-----------------------------------------
-NAME: TargetSystem_InteractWithObject
-SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 48 8B E9 41 0F B6 F0 48 8B CA 48 8B DA E8 0F 54 4D 00 84 C0 74 1D B2 01 48 8D 0D 22 64 3C 02 48 8B 5C 24 38 48 8B 6C 24 40 48 83 C4 20 5E E9 FE 2A 4F 00 48 8B 03 48 8B CB FF 50 10 83 C0 FE 83 F8 0C 0F 87 44 01 00 00 48 8D 15 32 AA 9F FF 48 98 8B 8C 82 58 57 60 00 48 03 CA FF E1 8B 8B 84 00
-DESC: What it is: The target-system interaction path that routes a selected object into event-framework interaction handling. When it runs: When the player or game tries to interact with an event object, reaction object, loot object, or other non-enemy target. Why you would care: Use this for mechanics and content that depend on clicking, activating, or interacting with encounter objects rather than only reacting to combat packets.
 ----------------------------------------
 NAME: TargetSystem_OpenObjectInteraction
 SIG:  48 89 74 24 20 57 48 83 EC 30 F6 81 35 01 00 00 08 48 8B FA 48 8B F1 0F 85 76 02 00 00 48 8B 0D 4C FB 1E 02 E8 77 7E AC FF 48 8B C8 48 85 FF 0F 84 69 02 00 00 48 8B 05 34 FB 1E 02 48 89 5C 24 40 48 89 6C 24 48 4C 89 74 24 50 48 85 C0 0F 84 9A 00 00 00 48 8D 58 10 BA 4C 01 00 00 48 8B CB
@@ -832,10 +757,6 @@ DESC: What it is: The shared event-framework accessor that returns the active in
 NAME: EventFramework_GetQuestBattleDirector
 SIG:  48 8B 81 00 01 00 00 4C 8B 81 08 01 00 00 49 3B C0 74 2C 41 B9 06 80 00 00 0F 1F 80 00 00 00 00 48 8B 10 48 85 D2 74 0E 48 8B 8A D8 02 00 00 66 44 39 49 02 74 0C 48 83 C0 08 49 3B C0 75 E1 33 C0 C3 48 8B C2 C3
 DESC: What it is: The event-framework accessor that locates the live quest-battle director used by solo duties and scripted story encounters. When it runs: Whenever code needs the current quest-battle controller for state, timing, or phase logic. Why you would care: Use this as the stable shared handoff into solo-duty mechanics instead of chasing each quest battle path separately. Extra context: Unlike the instance-content accessor, this scans the framework's active director list until it finds the quest-battle director type. Pairs with: QuestBattleDirector_SetSequence, QuestBattleDirector_Update2
-----------------------------------------
-NAME: EventFramework_GetTreasureHuntDungeonDirector
-SIG:  48 8B 81 58 01 00 00 48 85 C0 74 1B 48 8B 88 D8 02 00 00 BA 03 80 00 00 66 39 51 02 75 09 80 B8 CE 0D 00 00 0A 74 02 33 C0 C3
-DESC: What it is: The event-framework accessor that resolves the active treasure-hunt dungeon director. When it runs: Whenever the client needs the live controller for treasure portal content and its encounter state. Why you would care: Use this to bridge into treasure-hunt mechanics without scraping unrelated UI or generic event plumbing. Extra context: This starts from the current instance-content director slot and then applies a treasure-specific subtype check, so it is narrower than the generic instance-content accessor. Pairs with: TreasureHuntDirector_SetSequence, TreasureHuntDirector_Synchronize
 ----------------------------------------
 
 CATEGORY: Content Directors - Quest and Solo Duty Mechanics
@@ -908,22 +829,6 @@ NAME: DpsChallengeDirector_SetSequence
 SIG:  40 53 48 83 EC 30 41 0F B6 D0 48 8B D9 83 EA 02 74 56 83 EA 01 74 12 81 FA FB 00 00 00 75 68 48 83 C4 30 5B E9 07 CF D6 FF E8 B2 9B 61 FF 48 05 20 BF 02 00 48 8B CB 48 89 83 E0 04 00 00 E8 5D 00 00 00 B9 6C 00 00 00 C6 44 24 28 00 45 33 C9 C7 44 24 20 00 00 00 00 45 33 C0 33 D2 E8 3E CE
 DESC: What it is: The DPS-challenge director phase setter used by special solo challenge content to advance timed encounter state. When it runs: When the challenge director enters a new timing or result phase such as active challenge, completion, or fail handling. Why you would care: Use this for special encounter content that behaves like a boss challenge but does not live under the standard dungeon or quest-battle families. Extra context: This is not just a generic phase edge; specific sequence values start the challenge timer window, extend or reset the internal deadline, and switch content BGM for the active result phase. Parameters: the final sequence arg is the meaningful phase value. Pairs with: Director_SetSequence
 ----------------------------------------
-NAME: TreasureHuntDirector_GetIconId
-SIG:  48 83 EC 28 80 FA 02 75 0F 45 85 C9 74 33 B8 C1 EB 00 00 48 83 C4 28 C3 80 FA 04 75 24 45 85 C9 74 1F 44 89 89 A0 04 00 00 0F B7 89 90 04 00 00 E8 3B B9 D5 FF 48 85 C0 74 07 8B 00 48 83 C4 28 C3 33 C0 48 83 C4 28 C3
-DESC: What it is: The treasure-hunt director icon resolver for encounter object and state-specific icon output. When it runs: When the active treasure controller maps a live state or object type to the icon used for that encounter element. Why you would care: Use this if you want the resolved mechanic icon state directly rather than only checking nameplate output later. Extra context: This is a compact read-side resolver that returns specific treasure icon ids for a small set of room-state cases, including the branch that reuses the current synchronized treasure-room data. Parameters: the object or state type byte and the final int decide which treasure icon path is taken. Pairs with: TreasureHuntDirector_GetNameplateIconForObject, TreasureHuntDirector_Synchronize
-----------------------------------------
-NAME: TreasureHuntDirector_GetNameplateIconForObject
-SIG:  48 89 5C 24 08 57 48 83 EC 20 F6 81 A4 04 00 00 02 48 8B DA 48 8B F9 74 3B 48 8B 02 48 8B CA FF 50 10 83 F8 02 75 2D 0F B6 83 91 00 00 00 2C 02 3C 01 76 20 66 83 BF 90 04 00 00 06 B8 BE EA 00 00 B9 C0 EA 00 00 0F 44 C1 48 8B 5C 24 30 48 83
-DESC: What it is: The treasure-hunt director helper that resolves nameplate icons for treasure-owned encounter objects. When it runs: When the client decides what icon should appear over a live treasure-hunt target or mechanic object. Why you would care: Use this as a direct read-side hook for portal encounter targets that announce themselves through special nameplate icons. Extra context: This is the object-side nameplate icon reader and only returns a treasure icon when the synchronized treasure-room flags already indicate the relevant room state is active. Parameters: second arg is the live object being classified for nameplate output. Pairs with: TreasureHuntDirector_GetIconId, TreasureHuntDirector_Synchronize
-----------------------------------------
-NAME: TreasureHuntDirector_SetSequence
-SIG:  48 83 EC 28 41 3A D0 0F 84 A7 00 00 00 41 0F B6 C0 89 81 94 04 00 00 83 C0 FC 3D FB 00 00 00 0F 87 8F 00 00 00 4C 8D 05 84 CE 54 FF 48 98 41 0F B6 84 00 24 32 AB 00 41 8B 94 80 0C 32 AB 00 49 03 D0 FF E2 45 33 C9 45 33 C0 BA AC 1F 00 00 48 83 C4 28 E9 A8 0F 00 00 45 33 C9 45 33 C0 BA AD
-DESC: What it is: The treasure-hunt director phase setter used when portal content advances to a new internal stage. When it runs: When a treasure-hunt encounter changes phase, room state, or scripted progression inside the active portal instance. Why you would care: Use this as the main high-level phase hook for treasure-hunt mechanics instead of only reading downstream markers and icons. Extra context: This is not only a state write; it also emits treasure-specific todo or log messages for several sequence values, including the hide path at `0xFF`. Parameters: the byte args are the previous and new treasure sequence values. Pairs with: TreasureHuntDirector_Synchronize, TreasureHuntDirector_Update2
-----------------------------------------
-NAME: TreasureHuntDirector_Synchronize
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 56 41 57 48 83 EC 20 0F B6 91 EA 02 00 00 48 8B F1 0F B6 81 EB 02 00 00 C1 E2 08 0B D0 0F B7 FA 81 FF 00 01 00 00 0F 83 A5 00 00 00 8B EF 40 0F B6 CF 80 E1 3F 48 C1 ED 06 41 BE 01 00 00 00
-DESC: What it is: The treasure-hunt synchronization path that applies fresh encounter state into the live portal controller. When it runs: When the treasure-hunt instance consumes updated director data after the content is already running. Why you would care: Use this when you want more than phase edges and need the broader mechanics-state refresh path for treasure encounters. Extra context: This is the real server-fed treasure state apply path and it handles more than one opcode family, including countdown setup, room-state bytes, and treasure-specific UI or screen events. Pairs with: TreasureHuntDirector_SetSequence, TreasureHuntDirector_Update2
-----------------------------------------
 
 CATEGORY: Quest - Core State and Access
 ----------------------------------------
@@ -970,10 +875,6 @@ NAME: EventFramework_IsDailyQuestAvailable
 SIG:  48 83 EC 38 48 81 C1 D8 42 00 00 C7 44 24 20 FF FF FF FF E8 48 2C 11 00 48 85 C0 0F 95 C0 48 83
 DESC: What it is: The EventFramework check for daily quest availability. When it runs: When higher-level event code needs a simple yes-or-no answer for a daily quest. Why you would care: Use this if you want a compact availability hook without walking the full daily quest map flow.
 ----------------------------------------
-NAME: PacketDispatcher_HandleUnlockedMapMarkersPacket
-SIG:  48 83 EC 28 48 83 FA 40 75 57 0F 10 01 0F 11 05 6B ED E3 01 0F 10 49 10 0F 11 0D 70 ED E3 01 0F
-DESC: What it is: The network handler that updates the client's unlocked quest and event map-marker flags. When it runs: As soon as the server sends fresh marker-unlock data. Why you would care: Use this as the earliest server-fed hook for visible quest map-marker availability.
-----------------------------------------
 NAME: QuestEventHandler_GetTodoArgs
 SIG:  40 53 55 57 41 55 41 56 48 81 EC A0 00 00 00 48 8B 05 02 F1 A3 01 48 33 C4 48 89 44 24 78 48 8B
 DESC: What it is: The quest-event helper that prepares the visible todo arguments for an active quest objective. When it runs: When the client is building or refreshing the quest objective text shown to the player. Why you would care: Use this to catch quest objective text and argument changes before they reach the UI.
@@ -989,18 +890,6 @@ NAME: EventFramework_CheckInteractRange
 SIG:  48 83 EC 48 0F B6 44 24 70 88 44 24 28 48 8D 44 24 30 48 89 44 24 20 E8 74 34 00 00 48 83 C4 48
 DESC: What it is: The standard interaction range check for event objects and NPCs. When it runs: Before the client allows or denies a normal interaction attempt. Why you would care: Use this to see when an object becomes interactable or blocked by simple range logic.
 ----------------------------------------
-NAME: EventFramework_CheckInteractRangeEx
-SIG:  40 53 57 41 56 48 83 EC 70 48 8B 02 48 8B CA 41 0F B6 F9 4D 8B F0 48 8B DA FF 50 10 83 F8 01 74
-DESC: What it is: The extended interaction check for more complex event objects and quest interactions. When it runs: When the client needs more than a simple range check before allowing interaction. Why you would care: Use this to catch quest objects becoming usable, blocked, or conditionally available.
-----------------------------------------
-NAME: EventFramework_GetEventMapMarkers
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 49 8B F0 0F B7 EA 48 8B F9 E8 CE 66
-DESC: What it is: The EventFramework path that builds or retrieves the active quest-style event markers. When it runs: When the client updates marker output for quests and related event systems. Why you would care: Use this as a central hook for visible marker generation instead of checking only quest acceptance.
-----------------------------------------
-NAME: EventFramework_InteractWithObject
-SIG:  40 55 56 57 41 55 48 81 EC 88 01 00 00 48 8B 05 14 66 B5 01 48 33 C4 48 89 84 24 60 01 00 00 48
-DESC: What it is: The main EventFramework interaction path for quest and event objects. When it runs: When the client attempts to interact with an NPC or event object through the higher-level event system. Why you would care: Use this as the broad gameplay hook for quest-related object interaction.
-----------------------------------------
 NAME: QuestManager_GetQuestClassJob
 SIG:  40 53 48 83 EC 20 0F B7 D9 E8 32 5C E1 FF 45 33 C0 41 8B D0 48 83 C0 10 66 39 58 08 74 18 41 FF
 DESC: What it is: A reader for the class or job tied to a quest. When it runs: When the game checks role restrictions or job-specific quest behavior. Why you would care: Use it to understand job-locked quest flow.
@@ -1008,10 +897,6 @@ DESC: What it is: A reader for the class or job tied to a quest. When it runs: W
 NAME: QuestManager_IsMapMarkerUnlocked
 SIG:  40 53 48 83 EC 20 0F B7 DA 66 85 DB 74 30 E8 3D 60 E1 FF 44 8B C3 49 C1 E8 03 49 83 F8 40 73 1E
 DESC: What it is: The core check for whether a quest-related map marker is unlocked for the player. When it runs: When the game needs to decide whether to show or use a quest marker that depends on unlock state. Why you would care: Use this as the fast read-side gate before deeper quest marker logic.
-----------------------------------------
-NAME: TargetSystem_InteractWithObject
-SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 48 8B E9 41 0F B6 F0 48 8B CA 48 8B DA E8 0F 54 4D
-DESC: What it is: The target-system side of object interaction. When it runs: When the player tries to interact with their current target and the request is passed into gameplay code. Why you would care: Use this if you want a practical hook for player-initiated interaction before it fans out into quest or event systems.
 ----------------------------------------
 
 CATEGORY: Quest - Journal and Input Hooks
@@ -1046,10 +931,6 @@ DESC: What it is: The event-scene path for learning or granting a quest reward a
 NAME: QuestBattleDirector_IsUnlocked
 SIG:  48 83 EC 28 48 8B 02 48 8B CA FF 50 10 83 F8 02 0F 95 C0 48 83 C4 28 C3
 DESC: What it is: A gate for whether a quest battle director is active and available. When it runs: Before the game allows a quest battle sequence to proceed. Why you would care: Use it for a high-signal locked-versus-live quest battle hook.
-----------------------------------------
-NAME: QuestBattleDirector_SetSequence
-SIG:  40 53 56 57 48 81 EC B0 00 00 00 48 8B 05 C6 12 A3 01 48 33 C4 48 89 84 24 A0 00 00 00 41 0F B6
-DESC: What it is: The function that changes the active sequence inside a quest battle. When it runs: When a quest battle moves from one phase or stage to another. Why you would care: Use it for direct quest battle phase tracking. Extra context: This is the quest-battle-specific sequence edge and includes extra script notification and fail or result handling beyond the shared director sequence callback. Parameters: the byte args are the previous and new quest-battle sequence values. Pairs with: QuestBattleDirector_Update2
 ----------------------------------------
 NAME: QuestBattleDirector_Update
 SIG:  40 53 48 83 EC 20 48 8B D9 E8 C2 60 EB FF 84 C0 0F 85 8D 00 00 00 38 83 70 04 00 00 0F 84 81 00
@@ -1219,10 +1100,6 @@ DESC: What it is: A function that stores a small piece of Criterion Dungeon stat
 NAME: CriterionDungeon_vf331
 SIG:  40 53 48 83 EC 20 F6 81 8D 1F 00 00 10 48 8B D9 75 3B 80 B9 09 20 00 00 01 75 32 8B 81 04 20 00 00 85 C0 78 1B 3B D0 77 17 45 33 C0
 DESC: What it is: A Criterion Dungeon progression check. When it runs: Before the game continues into the next Criterion step or related action. Why you would care: Use it if you want a clean gate for allowed versus blocked progression. Extra context: This is the downstream cleanup or closeout branch for one active criterion state and clears the tracked threshold once the compared live value has reached it. Parameters: second arg is the live progress or timer value being compared against the cached threshold. Pairs with: CriterionDungeon_vf346
-----------------------------------------
-NAME: EventFramework_CheckInteractRangeEx_Deep
-SIG:  40 53 57 41 56 48 83 EC 70 48 8B 02 48 8B CA 41 0F B6 F9 4D 8B F0 48 8B DA FF 50 10 83 F8 01 74 19 48 8B 84 24 B0 00 00 00 C7 00 01 00 00 00 32 C0 48 83 C4 70 41 5E 5F 5B C3
-DESC: What it is: The extended interaction check used before the client allows complex world-object interaction. When it runs: When the game needs more than a simple distance check to decide if a pickup-style object can be used. Why you would care: Use this to track when a live object is treated as interactable instead of just present.
 ----------------------------------------
 NAME: EventObject_ApplyStateTransition_Deep
 SIG:  40 53 55 56 57 41 56 48 81 EC 40 01 00 00 48 8B 05 13 C0 14 01 48 33 C4 48 89 84 24 30 01 00 00 0F B7 B1 B2 01 00 00
@@ -1609,14 +1486,6 @@ NAME: PacketDispatcher_HandleInventoryItemPacket
 SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9
 DESC: What it is: The packet-dispatch path that materializes a standard inventory item payload into a live container slot. When it runs: When the client receives a regular inventory item packet for a container and slot, including armoury chest pages when they are addressed through item packet flow. Why you would care: Use this for direct packet-side visibility into server-fed item arrival and slot population.
 ----------------------------------------
-NAME: PacketDispatcher_HandleInventoryItemSymbolicPacket
-SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 4C 89 74 24 20 41 57 48 83 EC 20 48 8B DA
-DESC: What it is: The packet-dispatch path that applies symbolic or linked-item inventory updates across two resolved slots. When it runs: When the client receives an inventory payload that links one slot to another item reference rather than behaving like a plain standalone item update. Why you would care: Use this for inventory tooling that needs the packet layer for linked or symbolic item relationships instead of only ordinary slot updates.
-----------------------------------------
-NAME: PacketDispatcher_HandleInventoryItemUpdatePacket
-SIG:  48 89 5C 24 08 57 48 81 EC 80 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 70 0F B7 5A 08
-DESC: What it is: The server packet path that applies a full inventory-item update onto an existing live slot. When it runs: When the client receives an item update packet and copies the changed item fields into the resolved container slot, including armoury chest slots. Why you would care: Use this as the strongest packet-side hook for armoury and inventory changes after the server has already identified the exact slot being updated.
-----------------------------------------
 NAME: PacketDispatcher_HandlePlayerGearsetDataPacket
 SIG:  40 53 48 83 EC 20 48 8B DA 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 14 48 8D 88 F8 06 00 00 48 8B D3 48 83 C4 20 5B E9 ?? ?? ?? ??
 DESC: What it is: The server packet path that applies gearset draw-data updates to a live character. When it runs: When the client receives gearset appearance data for a character and loads it into that actor's draw-data container after resolving the target by entity id. Why you would care: Use this for gear and appearance-aware tooling when you need the authoritative server-fed moment a character's equipped visual set is refreshed.
@@ -1649,10 +1518,6 @@ DESC: What it is: The direct player-gil reader from the main inventory gil conta
 ----------------------------------------
 
 CATEGORY: Gil - Packet and Server-Fed Hooks
-----------------------------------------
-NAME: PacketDispatcher_HandleInventoryItemCurrencyPacket
-SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 04 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9 48 8D 0D ?? ?? ?? ?? 8B D3 E8 ?? ?? ?? ?? 48 85 C0 74 47 48 8B 08 0F B7 57 06 4C 8B 41 28 48 8B C8 41 FF D0 48 8B D8 48 85 C0 74 2E 48 8B 10 48 8B C8 FF 52 20 4C 8B 0B 41 B0 01 8B 57 10 48 8B CB 41 FF 51 38
-DESC: What it is: The packet-dispatch path that applies server-fed currency-item updates into the relevant inventory container. When it runs: When the client receives a currency-item packet and updates the matching container slot with the new item and amount data. Why you would care: Use this as the closest named server-fed money or currency ingestion hook when you need packet-side update visibility.
 ----------------------------------------
 
 CATEGORY: Gil - Shop and Server-Fed Support
