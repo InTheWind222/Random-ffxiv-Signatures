@@ -1,4 +1,3 @@
-----------------------------------------
 CATEGORY: General and Core Signatures
 ----------------------------------------
 NAME: ActionEffect
@@ -219,6 +218,129 @@ SIG:  48 89 5C 24 08 57 48 83 EC 20 8D 82 17 FC FF FF 49 63 D8 48 8B F9 83 F8 07
 DESC: What it is: The conditions helper that checks a specific permission-mapped condition index against the local player's current condition state. When it runs: When client logic translates a permission or gate id into an underlying condition slot and tests whether the local player currently satisfies it. Why you would care: Use this as a non-core local-player support hook when you need direct access to permission-condition checks that sit above the raw condition bitfield. Extra context: This sits one layer above the raw condition table and remaps several permission ids into the fixed condition-slot range before doing the final test. Parameters: second arg is the permission or gate id being translated; third arg is the local condition-state base or index context. Pairs with: Conditions_ReadPacket, Conditions_HasPermission
 ----------------------------------------
 
+CATEGORY: Other Players - Core Character and Target Hooks
+----------------------------------------
+NAME: Character_GetName
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B F9 0F B6 DA 8B 89 84 00 00 00 81 F9 72 03 00 00 75 33 48 8B 07 48 8B CF FF 50 10 48 8B 17 48 8B CF 8B D8 FF
+DESC: What it is: The remote-character name accessor used to resolve a player character's display name from the live character object. When it runs: When client code needs the current player-name string for a character object that is already live in the scene. Why you would care: Use this as the cleanest read-side hook for other-player names when building target, roster, or overlay tools.
+----------------------------------------
+NAME: Character_GetGMRank
+SIG:  40 53 48 83 EC 20 45 33 C0 33 D2 48 8B D9 E8 ?? ?? ?? ?? 84 C0 74 10 F6 05 0D CA 0B 02 04 0F B6 05 16 96 10 02 75 07 0F B6 83 66 23 00 00 48 83
+DESC: What it is: The character-side reader for a remote player's GM or special-account rank field. When it runs: When the client needs to check whether a live player character carries a GM-style account rank before exposing badges or protected behavior. Why you would care: Use this if your tool needs to distinguish ordinary remote players from GM-flagged or special-account characters.
+----------------------------------------
+NAME: Character_HasStatus
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 01 8B DA 48 8B F9 FF 90 68 02 00 00 48 85 C0 74 45 48 8B 07 48 8B CF FF 90 68 02 00 00 45 33 C0 41 8B C8 48 8D 50 08 0F B7 02 3B C3 74 16 41 FF C0 48 FF C1
+DESC: What it is: The live character status-check helper for any currently loaded player character. When it runs: When client code scans the resolved status list attached to a remote character and tests for a specific status id. Why you would care: Use this as the cleanest remote-player read-side status test instead of manually walking the character status array yourself. Extra context: This is a read-side accessor downstream of the status packet/apply layer, so it is best used after status payloads have already been copied into live actor state. Parameters: first arg is the remote character object; second arg is the status id being tested. Pairs with: PacketDispatcher_HandleStatusEffectListPacket
+----------------------------------------
+NAME: Character_GetTargetId
+SIG:  40 53 48 83 EC 20 45 33 C0 B2 01 48 8B D9 E8 ?? ?? ?? ?? 84 C0 74 11 48 8D 0D ?? ?? ?? ?? 48 83 C4 20 5B E9 ?? ?? ?? ?? 48 8B 83 08 23 00 00 48
+DESC: What it is: The character-side accessor for the current hard target id stored on a live player character. When it runs: When client code wants to know who or what a remote player is actively targeting. Why you would care: Use this when you need other-player target context for target-of-target, assist, or encounter-tracking tools.
+----------------------------------------
+NAME: Character_GetSoftTargetId
+SIG:  40 53 48 83 EC 20 45 33 C0 B2 01 48 8B D9 E8 ?? ?? ?? ?? 84 C0 74 11 48 8D 0D ?? ?? ?? ?? 48 83 C4 20 5B E9 ?? ?? ?? ?? 48 8B 83 10 23 00 00 48
+DESC: What it is: The character-side accessor for the current soft-target id stored on a live player character. When it runs: When client code needs the softer target-selection state rather than the committed hard target. Why you would care: Use this to distinguish tentative other-player targeting from their committed hard target state.
+----------------------------------------
+NAME: Character_IsWanderer
+SIG:  40 53 48 83 EC 20 48 8B 01 48 8B D9 FF 50 10 83 F8 01 75 29 0F B7 83 60 23 00 00 BA FD FF 00 00 66 3B C2 77 18 0F B7 8B 62 23 00 00 66 3B CA 77
+DESC: What it is: The remote-character world-state helper that checks whether a live player is marked as a wanderer rather than a normal same-world player. When it runs: When the client needs to decide how to present or classify a remote player from a different world context. Why you would care: Use this when your tool needs to flag or filter other players by cross-world travel state. Pairs with: InfoProxyCrossRealm_GetMemberByContentId
+----------------------------------------
+NAME: CharacterData_IsClassJobCategory
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B D9 8B FA 0F B7 49 24 85 C9 74 ?? E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 30 00 74 ?? 33 DB EB ?? 0F B6 5B 2A 8B CF E8 ?? ?? ?? ?? 48 85 C0 75 ??
+DESC: What it is: The remote-character data helper that tests whether another player's effective current class/job belongs to a specific class-job category. When it runs: When client code needs a grouped answer such as combat, crafter, or gatherer membership instead of one exact job id. Why you would care: Use this as the best grouped remote-player job classifier when you need combat, crafter, or gatherer-style buckets without hardcoding every job id. Extra context: This resolves the effective class/job first, then queries the class-job-category data row for membership in the requested category. Parameters: first arg is the remote character-data context; second arg is the class-job-category id being checked. Pairs with: CharacterData_IsLimitedJob, GetClassJobParentId
+----------------------------------------
+NAME: CharacterData_IsLimitedJob
+SIG:  53 48 83 EC 20 48 8B D9 0F B7 49 24 85 C9 74 ?? E8 ?? ?? ?? ?? 48 85 C0 74 ?? 80 78 30 00 74 ?? 33 C9 EB ?? 0F B6 4B 2A E8 ?? ?? ?? ?? 48 85 C0 74 ?? F6 40 6C 01 74 ?? B0 01
+DESC: What it is: The remote-character data helper that checks whether another player's current effective job is flagged as a limited job. When it runs: When client code wants a direct yes-or-no answer for limited-job state instead of inferring it from class-job ids manually. Why you would care: Use this when filtering or annotating other players whose job rules differ from normal jobs. Extra context: This resolves the effective class/job first and then tests the limited-job flag on the class-job data row. Pairs with: CharacterData_IsClassJobCategory, GetClassJobParentId
+----------------------------------------
+
+CATEGORY: Other Players - Packet and Server-Fed Hooks
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdateHatePacket
+SIG: 0F B6 02 45 33 C0 89 05 ?? ?? ?? ?? 44 38 02 76 3C 4C 8D 0D ?? ?? ?? ?? 4C 2B CA 4C 8D 15 ?? ?? ?? ?? 4C 2B D2 48 8D 42 08 0F 1F 80 00 00 00 00 8B 48 FC 41 FF C0 41 89 0C 01 0F B6 08 41 89 0C 02 48 8D 40 08 0F B6 0A 44 3B C1 7C E3 C3
+DESC: What it is: The packet-side enmity update handler that writes per-entry hate values into the live hater UI/state. When it runs: When the server sends an updated hate-value payload for entities already tracked in the hater list. Why you would care: Use this as the strongest remote-player enmity ingest hook when you need live threat-value updates instead of only roster membership. Extra context: This is the packet-side value apply layer for the hater system, downstream from generic packet ingress and upstream of read-side hater queries. Parameters: first arg is dispatcher context; later packet data contains the entry count and repeated hate values. Pairs with: PacketDispatcher_HandleUpdateHaterPacket, Hater_IsEntityInList
+----------------------------------------
+NAME: PacketDispatcher_HandleUpdateHaterPacket
+SIG: 48 89 74 24 20 57 48 83 EC 20 0F B6 02 33 F6 89 05 ?? ?? ?? ?? 48 8B FA 40 38 32 76 79 48 89 5C 24 30 48 8D 5A 04 4C 89 74 24 38 4C 8D 35 ?? ?? ?? ?? 4C 89 7C 24 40 4C 8D 3D ?? ?? ?? ?? 66 90 8B 03 48 8D 0D ?? ?? ?? ?? 41 89 46 FC 45 33 C0 0F B6 43 04 41 89 06 8B 13 E8 ?? ?? ?? ?? 4C 8B C0 BA 40 00 00 00 48 63 C6 48 8D 0C C0 49 8D 0C CF E8 ?? ?? ?? ??
+DESC: What it is: The packet-side hater roster update handler that resolves entity ids into visible hater entries and related threat state. When it runs: When the server sends a refreshed hater-list payload and the client rebuilds or updates the live hater roster. Why you would care: Use this as the strongest remote-player hater roster ingest hook when you need entity-to-name/threat correlation rather than only per-entry values. Extra context: This is the packet-side roster apply layer for the hater system and pairs naturally with the separate hate-value update path. Parameters: first arg is dispatcher context; later packet data contains repeated hater entry records. Pairs with: PacketDispatcher_HandleUpdateHatePacket, Hater_UpdateAllNames, Hater_UpdateEntityName
+CATEGORY: Other Players - Party, Alliance, and Cross-Realm State
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetGroupMember
+SIG:  4C 8B C1 85 D2 78 23 48 63 C2 48 69 D0 48 03 00 00 4D 6B C0 68 48 8B 05 ?? ?? ?? ?? 48 03 C2 49 81 C0 88 04 00 00 49 03 C0 C3 48 8B 15 ?? ?? ?? ?? 48 85 D2 74 21 80 BA 71 04 00 00 00 74 18 0F
+DESC: What it is: The cross-realm roster accessor that returns a member record for a given group and slot index. When it runs: When client code reads the live cross-realm party or alliance roster instead of waiting for a UI presentation layer. Why you would care: Use this as the core accessor for remote-player roster records when building cross-world, party, or alliance tools. Parameters: first arg is the info proxy; second and third args are the group and member indices. Pairs with: InfoProxyCrossRealm_GetGroupMemberCount, InfoProxyCrossRealm_GetGroupIndex
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetGroupMemberCount
+SIG:  48 83 EC 28 48 8B 15 ?? ?? ?? ?? 48 85 D2 74 1F 80 BA 71 04 00 00 00 74 16 8B C9 48 69 C1 48 03 00 00 0F B6 84 10 80 04 00 00 48 83 C4 28 C3 85
+DESC: What it is: The cross-realm roster reader for the member count of one party or alliance subgroup. When it runs: When client code needs the live remote-member count for a specific group inside the cross-realm roster. Why you would care: Use this when walking party or alliance groups safely without guessing fixed group sizes. Pairs with: InfoProxyCrossRealm_GetGroupMember, InfoProxyCrossRealm_GetAllianceGroupCount, InfoProxyCrossRealm_GetTotalMemberCount
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetGroupIndex
+SIG:  48 8B 05 ?? ?? ?? ?? 48 85 C0 74 30 44 0F B6 80 6D 04 00 00 84 C9 74 1F 32 D2 32 C0 0F 1F 40 00 41 3A C0 74 06 FE C2 3A D1 74 08 FE C0 3C 06 73
+DESC: What it is: The helper that resolves which cross-realm party or alliance subgroup currently contains a given member slot. When it runs: When client code needs to map a remote roster slot into its owning group instead of reading raw list storage. Why you would care: Use this when correlating party and alliance members with group layout or leader context. Pairs with: InfoProxyCrossRealm_GetGroupMember, InfoProxyCrossRealm_GetGroupMemberCount
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetMemberByContentId
+SIG:  48 89 5C 24 08 48 89 7C 24 10 48 8B 3D ?? ?? ?? ?? 4C 8B D9 48 85 FF 74 21 80 BF 71 04 00 00 00 74 18 0F B6 9F 6E 04 00 00 84 DB 75 0F 33 C0 48 8B 5C 24 08 48 8B 7C 24 10 C3 B3 01 45 32 C9 90
+DESC: What it is: The cross-realm roster lookup for a remote player by stable content id. When it runs: When client code wants to resolve a specific other player in the cross-realm roster without walking every member manually. Why you would care: Use this as the best stable-id lookup for remote roster correlation across targeting, cross-world state, and other player identity. Pairs with: InfoProxyCrossRealm_GetMemberByEntityId, Character_IsWanderer
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetMemberByEntityId
+SIG:  48 89 5C 24 08 48 89 7C 24 10 4C 8B 15 ?? ?? ?? ?? 8B D9 4D 85 D2 74 24 41 80 BA 71 04 00 00 00 74 1A 41 0F B6 BA 6E 04 00 00 40 84 FF 75 10 33 C0 48 8B 5C 24 08 48 8B 7C 24 10 C3 40 B7 01 45
+DESC: What it is: The cross-realm roster lookup for a remote player by live entity id. When it runs: When client code needs to translate a live actor/entity id into the matching cross-realm roster member record. Why you would care: Use this when correlating an in-world player actor with cross-realm roster metadata. Pairs with: InfoProxyCrossRealm_GetMemberByContentId, TargetSystem_GetMouseOverTargetPlayerId
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetPartyMemberCount
+SIG:  48 83 EC 28 E8 ?? ?? ?? ?? 84 C0 74 3C 48 8B 15 ?? ?? ?? ?? 48 85 D2 74 24 80 BA 71 04 00 00 00 74 1B 0F B6 82 6D 04 00 00 48 69 C8 48 03 00 00
+DESC: What it is: The cross-realm helper that returns the active remote party-member count. When it runs: When client code needs the live party-member count after cross-realm roster state has already been built. Why you would care: Use this as the clearest party-size reader for remote-player tools that need a current remote party count.
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetAllianceGroupCount
+SIG:  48 8B 05 ?? ?? ?? ?? 48 85 C0 74 11 80 B8 71 04 00 00 00 74 08 0F B6 80 6E 04 00 00 C3 B0 03 C3
+DESC: What it is: The cross-realm helper that returns how many alliance groups are currently represented in the live roster. When it runs: When client code needs to know whether the current remote roster is party-only or split across alliance groups. Why you would care: Use this to size alliance-aware tools without hardcoding alliance assumptions. Pairs with: InfoProxyCrossRealm_GetGroupMemberCount, InfoProxyCrossRealm_GetTotalMemberCount
+----------------------------------------
+NAME: InfoProxyCrossRealm_GetTotalMemberCount
+SIG:  48 83 EC 28 E8 ?? ?? ?? ?? 84 C0 74 37 48 8B 0D ?? ?? ?? ?? 32 C0 48 81 C1 80 04 00 00 BA 06 00 00 00
+DESC: What it is: The cross-realm helper that returns the total live remote-member count across the full roster. When it runs: When client code needs one total member count spanning all represented party or alliance groups. Why you would care: Use this as the broadest remote-player count reader when you need total roster population rather than one subgroup count.
+----------------------------------------
+----------------------------------------
+NAME: InfoProxyCrossRealm_IsCrossRealmParty
+SIG:  48 83 EC 28 E8 ?? ?? ?? ?? 84 C0 75 5C 33 D2 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 B8 DC 7F 00 00 01 77 45 E8 ?? ?? ?? ?? 84 C0 75 3C 33 D2 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 B8 DC 7F 00 00 01 77 25 48 8B 05 ?? ?? ?? ?? 48 85 C0 74 19 80 B8 70 04 00 00 00 74 10 80 B8 73 04 00 00 00 74 07 B0 01 48 83 C4 28 C3
+DESC: What it is: A cross-realm roster state check that tells you whether the current group context is treated as a cross-realm party. When it runs: You call it while resolving remote-party roster state after party/cross-world info has already been populated. Why you would care: Use this to gate other-player logic that should behave differently for cross-world party members. Extra context: This is a read-side roster-state helper, not a packet ingress hook; it sits downstream of cross-realm roster population and is most useful once the info proxy already has live group data. Parameters: No explicit payload parameters; it reads the live InfoProxyCrossRealm instance and its current state bytes. Pairs with: Character_IsWanderer, InfoProxyCrossRealm_GetGroupMemberCount
+----------------------------------------
+NAME: InfoProxyCrossRealm_IsAllianceRaid
+SIG:  48 83 EC 28 E8 ?? ?? ?? ?? 84 C0 75 2F 33 D2 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 80 B8 DC 7F 00 00 01 77 18 48 8B 05 ?? ?? ?? ?? 48 85 C0 74 0C 0F B6 80 71 04 00 00 48 83 C4 28 C3
+DESC: What it is: A cross-realm roster state check that reports whether the current remote-player roster is in alliance-raid layout rather than a simple party layout. When it runs: You call it after the cross-realm info proxy has been populated and you need to interpret party/alliance grouping for remote players. Why you would care: Use this to decide whether to read remote-player state as party-only or alliance-grouped roster data. Extra context: This is a read-side topology helper on the cross-realm roster layer; it pairs best with alliance-group/member-count helpers rather than raw packet hooks. Parameters: No explicit payload parameters; it reads the live InfoProxyCrossRealm instance and its alliance-state byte. Pairs with: InfoProxyCrossRealm_GetAllianceGroupCount, InfoProxyCrossRealm_GetTotalMemberCount
+
+CATEGORY: Other Players - Non-Core and Support Hooks
+----------------------------------------
+NAME: TargetSystem_GetMouseOverTargetPlayerId
+SIG:  48 83 EC 28 48 8B 89 D0 00 00 00 48 85 C9 74 12 48 8B 01 FF 50 08 48 8B C8 48 83 C4 28 E9 ?? ?? ?? ?? B8 00 00 00 E0 8B C8 48 83 C4 28 E9 BE 71
+DESC: What it is: The target-system helper that resolves the current mouseover target into a player id. When it runs: When client code wants player identity from the mouseover target rather than the active hard or soft target. Why you would care: Use this as a non-core support hook for mouseover-based other-player tools and roster correlation. Pairs with: InfoProxyCrossRealm_GetMemberByEntityId
+----------------------------------------
+NAME: TargetSystem_GetSoftTargetObjectId
+SIG:  48 8B 89 88 00 00 00 48 85 C9 74 07 48 8B 01 48 FF 60 08 B8 00 00 00 E0 C3
+DESC: What it is: The target-system accessor for the current soft-target object id. When it runs: When client code needs the hovered or tentative target object id without committing to a hard target. Why you would care: Use this as a non-core support hook when correlating remote players with the client's soft-target selection state.
+----------------------------------------
+NAME: GetClassJobParentId
+SIG:  53 48 83 EC 20 48 8B C2 8B D9 48 85 D2 75 ?? E8 ?? ?? ?? ?? 48 85 C0 75 ?? 48 83 C4 20 5B C3 80 78 5C 00 76 ?? 0F B6 40 60 48 83 C4 20 5B C3 8B C3 48 83 C4 20 5B C3
+DESC: What it is: The class-job support helper that maps a class/job id to its parent class/job id when one exists. When it runs: When client code needs to normalize a job to its parent relationship instead of using the raw class/job id. Why you would care: Use this as a support hook when grouping or comparing other-player jobs across class/job parent relationships. Extra context: This is a data-side support helper rather than a direct remote-player reader, but it complements remote class/job checks when the exact job id is not enough. Parameters: first arg is the class/job id; second arg is an optional pre-resolved row pointer. Pairs with: CharacterData_IsClassJobCategory, CharacterData_IsLimitedJob
+----------------------------------------
+NAME: Hater_IsEntityInList
+SIG: 4C 63 89 00 09 00 00 4D 85 C9 7E 17 45 33 C0 48 8D 41 40 39 10 74 0F 49 FF C0 48 83 C0 48 4D 3B C1 7C F0 32 C0 C3 B0 01 C3
+DESC: What it is: The read-side helper that checks whether a given entity id is already present in the current hater list. When it runs: When client code needs a fast membership test after the packet-side hater roster has already been populated. Why you would care: Use this as the cleanest remote-player enmity presence check without walking the full hater list manually. Extra context: This sits downstream of the hater packet handlers and answers membership, not value magnitude. Parameters: first arg is the hater UI/state object; second arg is the entity id to test. Pairs with: PacketDispatcher_HandleUpdateHaterPacket
+----------------------------------------
+NAME: Hater_UpdateAllNames
+SIG: 48 89 74 24 10 57 48 83 EC 20 33 FF 48 8B F1 39 B9 00 09 00 00 7E 4B 48 89 5C 24 30 48 8B D9 90 80 3B 00 75 2A 8B 53 40 48 8D 0D ?? ?? ?? ?? 45 33 C0 E8 ?? ?? ?? ?? 4C 8B C0 BA 40 00 00 00 48 63 C7 48 8D 0C C0 48 8D 0C CE E8 ?? ?? ?? ?? FF C7 48 83 C3 48 3B BE 00 09 00 00 7C C3
+DESC: What it is: The downstream name-refresh path that backfills visible names for entities already present in the hater list. When it runs: After hater roster entries exist and the client resolves or refreshes their display names. Why you would care: Use this when correlating remote-player entity ids with the names shown in the hater UI. Extra context: This is a read/apply support layer after the packet-side hater roster has already been populated. Pairs with: PacketDispatcher_HandleUpdateHaterPacket, Hater_UpdateEntityName
+----------------------------------------
+NAME: Hater_UpdateEntityName
+SIG: 48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 33 DB 8B EA 48 8B F1 39 99 00 09 00 00 7E 49 48 89 7C 24 30 48 8D 79 40 8B 17 3B D5 75 27 45 33 C0 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 4C 8B C0 BA 40 00 00 00 48 63 C3 48 8D 0C C0 48 8D 0C CE E8 ?? ?? ?? ?? FF C3 48 83 C7 48 3B 9E 00 09 00 00 7C C5
+DESC: What it is: The one-entry name-refresh helper for a specific hater-list entity. When it runs: When the client refreshes or resolves the displayed name for one existing hater entry rather than the whole list. Why you would care: Use this as a finer-grained remote-player hater-name support hook when you need one-entry refresh timing. Extra context: This is the per-entry counterpart to the bulk hater-name refresh path. Parameters: first arg is the hater UI/state object; second arg is the entity id whose displayed name should be refreshed. Pairs with: PacketDispatcher_HandleUpdateHaterPacket, Hater_IsEntityInList, Hater_UpdateAllNames
+----------------------------------------
+----------------------------------------
+NAME: Character_GetRadius
+SIG:  40 53 48 83 EC 20 48 8B D9 80 FA 01 75 37 48 8B 01 FF 50 10 83 F8 01 75 2C 0F B7 83 C4 01 00 00 66 85 C0 74 12 8B C8 E8 ?? ?? ?? ?? 48 85 C0 74 06 F6 40 3A 08 75 0E F3 0F 10 05 ?? ?? ?? ?? 48 83 C4 20 5B C3
+DESC: What it is: A direct hitbox-radius reader for a character object. When it runs: You call it after resolving a remote player character and need the actual collision radius for distance or spacing checks. Why you would care: Use this when tracking other-player spacing, proximity, or collision-aware overlays instead of relying on center-point distance alone. Extra context: This is a read-side geometry helper on the character object itself, so it is best used after remote-player spawn/roster resolution rather than as a packet hook. Parameters: The first argument is the resolved character/game-object pointer whose radius is being read. Pairs with: GameObject_DistanceBetweenHitboxesXYZ, PacketDispatcher_HandleSpawnPlayerPacket
+----------------------------------------
+NAME: GameObject_DistanceBetweenHitboxesXYZ
+SIG:  48 89 74 24 20 57 48 83 EC 30 48 8B FA 48 8B F1 48 85 C9 0F 84 ?? ?? ?? ?? 48 85 D2 0F 84 ?? ?? ?? ?? 48 3B CA 0F 84 ?? ?? ?? ?? 48 89 5C 24 40 48 8B CA 48 89 6C 24 48 4C 89 74 24 50 0F 29 74 24 20 E8 ?? ?? ?? ?? 48 8B CE 48 8B D8 E8 ?? ?? ?? ?? 48 8B 0E F3 0F 10 40 08
+DESC: What it is: A 3D hitbox-aware distance helper between two game objects. When it runs: You call it once you already have two resolved objects, such as the local player and a remote player, and need their true spacing including hitbox radii. Why you would care: Use this for remote-player proximity checks, stack/spread logic, or spacing overlays where center-point distance is not accurate enough. Extra context: This is a support/helper layer rather than a roster or packet hook; it sits downstream of target/roster resolution and geometry reads. Parameters: The first two arguments are the two game-object pointers being compared. Pairs with: Character_GetRadius, InfoProxyCrossRealm_GetMemberByEntityId
+----------------------------------------
+
 CATEGORY: Animation Lock - Core State and Action Hooks
 ----------------------------------------
 NAME: ActionManager_UseAction
@@ -309,6 +431,28 @@ SIG:  B8 42 03 00 00 4C 8B C9 66 3B D0 73 20 0F B7 C2 41 B8 01 00 00 00 0F B7 CA
 DESC: What it is: The local title-list reader that checks whether a specific title is unlocked for the current player. When it runs: When the client queries local title ownership before presentation or selection logic. Why you would care: Use this for local-player presentation tools or profile overlays that need to test title availability.
 ----------------------------------------
 
+CATEGORY: APIs - Framework and Service Entry Points
+----------------------------------------
+NAME: EventFramework_GetCurrentContentType
+SIG:  48 83 EC 28 48 8B 05 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 83 B8 18 3C 00 00 06 0F 85 ?? ?? ?? ?? 48 89 5C 24 20 32 DB E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 85 C0 74 4A 48 8B 80 D8 02 00 00 0F B7 48 02 81 E9 03 80 00 00 74 28 83 E9 01 74 14 83 F9 08
+DESC: What it is: A high-level EventFramework service entrypoint that resolves the current content type from the active content or director state. When it runs: When client systems need to branch on the current content mode instead of only the current content id. Why you would care: Use this as the cleanest internal API-level content-type query rather than scraping lower-level director fields.
+----------------------------------------
+NAME: EventFramework_ProcessSystemLogMessage
+SIG:  40 55 56 41 54 41 55 41 57 48 8D 6C 24 D1 48 81 EC B0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 FF 49 8B F1 4C 89 4D DF 45 8B E8 89 55 D7 E8 ?? ?? ?? ?? 44 0F B6 65 7F 4C 8B F8 48 85 C0 74 1C
+DESC: What it is: A high-level EventFramework service boundary that routes system-log events either to an event handler or the live UI log module. When it runs: When the client needs to materialize a system-log message with optional text parameters and source context. Why you would care: Use this as the internal API-like hook for service-level system-log emission rather than lower-level packet ingress. Extra context: This sits above raw network or system-message ingestion and below the final UI or event-handler consumers, so it is the best API-style boundary for observing or detouring client-side system-log delivery.
+----------------------------------------
+NAME: EventFramework_SetTerritoryTypeId
+SIG:  48 89 5C 24 18 48 89 7C 24 20 41 56 48 83 EC 20 48 8B D9 48 89 6C 24 30 0F B7 EA 66 89 A9 54 3C 00 00 48 81 C1 88 41 00 00 E8 ?? ?? ?? ?? 48 8D 8B 98 41 00 00 E8 ?? ?? ?? ?? 48 8D 8B B0 41 00 00 E8 ?? ?? ?? ??
+DESC: What it is: A high-level EventFramework service entrypoint that applies the active territory type and triggers the related framework refresh paths. When it runs: When content or territory state changes and the EventFramework needs to update its active territory context. Why you would care: Use this as an internal API-level territory-state boundary instead of chasing lower-level territory field writes. Extra context: This is the service-layer territory setter, not just a raw field write, so it is the better hook when a plugin needs to observe territory-context transitions at the framework level.
+CATEGORY: APIs - Action and Gameplay Services
+----------------------------------------
+NAME: ActionManager_CanUseAction
+SIG:  48 83 EC 48 48 C7 44 24 30 00 00 00 00 41 B9 00 00 00 E0 C6 44 24 28 01 C6 44 24 20 00 E8 ?? ?? ?? ?? 85 C0 0F 94 C0 48 83 C4 48 C3
+DESC: What it is: A high-level ActionManager service entrypoint that answers whether an action is currently usable. When it runs: When client gameplay code needs a yes or no action-availability check instead of the lower-level action-status code. Why you would care: Use this as the cleanest API-like action-availability boundary for tools that need to reason about usability without duplicating status logic. Extra context: This is a service-layer decision helper, so it is most useful for pre-checks and rules engines rather than post-action timing. Pairs with: ActionManager_GetActionRange, ActionManager_GetAdjustedCastTime
+----------------------------------------
+NAME: ActionManager_GetActionRange
+SIG:  48 89 5C 24 08 57 48 83 EC 30 48 8B 3D ?? ?? ?? ?? 8B D9 0F 29 74 24 20 E8 ?? ?? ?? ?? 48 85 C0 0F 84 EE 00 00 00 81 FB 22 03 00 00 0F 84 CA 00 00 00 81 FB 0E 1D 00 00 0F 84 BE 00 00 00 81 FB A4 40 00 00 0F 84 B2 00 00 00
+DESC: What it is: A high-level ActionManager service entrypoint that computes the effective action range, including action-specific exceptions and local status adjustments. When it runs: When gameplay code needs a resolved usable range rather than raw data-sheet values. Why you would care: Use this as the internal API-level range query for action-range checks, overlays, and rule helpers. Extra context: This is a gameplay-service range resolver, not just a table lookup, so it is the best API-like boundary when a plugin needs the same resolved range the client uses. Pairs with: ActionManager_CanUseAction, ActionManager_GetAdjustedCastTime
 CATEGORY: Network - Core Packet Dispatcher Hooks
 ----------------------------------------
 NAME: PacketDispatcher_HandleEventPlayPacket
@@ -334,10 +478,6 @@ NAME: PacketDispatcher_HandleSpawnNPCPacket
 SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 E8 ?? ?? ?? ?? 3C 01 75 21 E8 ?? ?? ?? ?? 3C 01 75 18 80 BB 82 00 00 00 02 75 0F 8B 05 ?? ?? ?? ?? 39 43 54 0F 85 A0 00 00 00 0F B6 53 7E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 53 7E 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 44 24 28 C7 44 24 20 02 00 00 00 BA 05 00 00 00
 DESC: What it is: The packet-dispatch spawn handler for generic NPC actor packets. When it runs: When the client receives a server-fed NPC spawn packet and creates or refreshes the corresponding live NPC actor entry. Why you would care: Use this as a generic network hook for NPC lifecycle and packet-ingest state before higher-level systems abstract the spawn event away.
 ----------------------------------------
-NAME: PacketDispatcher_HandleSpawnPlayerPacket
-SIG:  48 89 5C 24 08 57 48 81 EC 30 04 00 00 48 8B DA 8B F9 0F B6 92 8E 00 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 93 8E 00 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 54 24 28 C7 44 24 20 01 00 00 00 B8 05 00 00 00 66 0F 1F 44 00 00
-DESC: What it is: The packet-dispatch spawn handler for player actor packets. When it runs: When the client receives a full player spawn packet and builds or replaces the live player character entry from network data. Why you would care: Use this as a generic actor-ingest hook when you need the earliest reliable packet layer for player appearance, setup, and spawn lifecycle.
-----------------------------------------
 NAME: PacketDispatcher_HandleStatusEffectListPlayerDoublePacket
 SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 2F 48 8B 03 48 8B CB FF 90 70 02 00 00 48 85 C0 74 1E 48 8B 03 48 8B CB FF 90 70 02 00 00 4C 8D 87 68 01 00 00 48 8B D7 48 8B C8 E8 ?? ?? ?? ?? 48 8B 5C 24 30 48 83 C4 20 5F C3
 DESC: What it is: The packet-dispatch handler for the second half of the local player status-effect list. When it runs: When the client receives the extended player status packet that fills the second block of live status entries. Why you would care: Use this alongside the first-half player status packet if you want complete local-player status coverage at the packet-ingest layer.
@@ -345,6 +485,10 @@ DESC: What it is: The packet-dispatch handler for the second half of the local p
 NAME: PacketDispatcher_HandleStatusEffectListPlayerPacket
 SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 1D ?? ?? ?? ?? 48 8B FA 48 85 DB 74 28 48 8B 03 48 8B CB FF 90 70 02 00 00 48 85 C0 74 17 48 8B 03 48 8B CB FF 90 70 02 00 00 48 8B C8 48 8B D7 E8 ?? ?? ?? ?? 48 8B 5C 24 30 48 83 C4 20 5F C3
 DESC: What it is: The packet-dispatch handler for the first half of the local player status-effect list. When it runs: When the client receives the player-targeted status packet that fills the first block of live status entries. Why you would care: Use this as a direct server-fed hook for local-player buff and debuff state before higher-level status readers flatten the data.
+----------------------------------------
+NAME: PacketDispatcher_HandleStatusEffectListPacket
+SIG:  48 8B C4 44 88 48 20 53 55 41 56 48 83 EC 60 83 3D ?? ?? ?? ?? 03 41 0F B6 E8 48 8B DA 44 8B F1 0F 84 ?? ?? ?? ?? 0F B6 0A 48 89 70 08 33 F6 4C 89 60 18 44 8B E6 4C 89 68 E0 44 8B EE 4C 89 78 D8 44 8B FE 89 74 24 48 89 74 24 44 89 74 24 40
+DESC: What it is: The deeper generic status-list packet implementation for non-player actors. When it runs: When the dispatcher has already selected the general actor status packet path and the client starts applying the incoming status array into live actor, party, and alliance state. Why you would care: Use this when you want the authoritative server-fed status apply layer for non-player targets instead of a thin dispatcher thunk. Extra context: This is the real apply-side implementation under the tiny packet wrapper, so it sits downstream of packet selection and upstream of the live actor and group status writes. Parameters: first arg is the target entity id; second arg is the status-list packet payload; third arg is the group or context selector; fourth arg is an internal mode flag used to choose the exact write path. Pairs with: PacketDispatcher_HandleStatusEffectListPlayerPacket, PacketDispatcher_HandleStatusEffectListPlayerDoublePacket
 ----------------------------------------
 NAME: PacketDispatcher_HandleUpdateHpMpTpPacket
 SIG:  48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 83 3D ?? ?? ?? ?? 03 41 0F B6 E8 48 8B DA 8B F1 0F 84 19 01 00 00 48 89 7C 24 30 45 84 C0 75 0D F6 05 ?? ?? ?? ?? 04 0F 85 A0 00 00 00 8B D6 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 1F 8B 0B 89 88 AC 01 00 00
@@ -370,6 +514,10 @@ CATEGORY: Network - Chat and Protocol Receive Hooks
 NAME: PacketDispatcher_ChatProtocol_OnReceivePacket
 SIG:  48 81 EC F8 03 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 E8 03 00 00 41 0F B7 40 02 44 8B CA 83 C0 9C 3D CB 00 00 00 0F 87 6B 03 00 00
 DESC: What it is: The chat-protocol receive callback that ingests inbound chat-layer packets before they fan out into narrower chat handlers. When it runs: When a packet routed through the chat protocol layer reaches the receive callback and is about to be classified by packet id. Why you would care: Use this as the deepest named generic receive hook for chat and protocol traffic without dropping into lower-level socket internals.
+----------------------------------------
+NAME: PacketQue_OnReceivePacket
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 81 EC 80 00 00 00 41 0F B7 40 02 BD 11 01 00 00 49 8B F8 48 8B F1 66 3B C5 0F 84 ?? ?? ?? ?? B9 C7 01 00 00 66 3B C1 0F 85 ?? ?? ?? ?? 48 8B 5E 38 48 85 DB 74 17 41 8B 40 10
+DESC: What it is: The queued receive implementation that batches inbound network packets before they are handed off into queued game-side consumption. When it runs: When the client receives packet fragments or queued packet records and is about to group, queue, or flush them into the downstream inventory or game-state apply paths. Why you would care: Use this as a non-core generic receive hook when you need visibility below raw dispatcher ingress but above the deeper per-system consumers. Extra context: This sits beside the chat/protocol receive callback and below the raw dispatcher ingress, so it is most useful when you care about queued packet assembly or grouped packet delivery rather than single packet-id routing. Parameters: first arg is the packet-queue object; later args are the queue source, packet record, and routing mode used for the queue insert or flush path. Pairs with: PacketDispatcher_OnReceivePacket, PacketDispatcher_ChatProtocol_OnReceivePacket
 ----------------------------------------
 
 CATEGORY: Network - Send and Request Hooks
@@ -451,26 +599,6 @@ NAME: PacketDispatcher_HandleSocialPacket
 SIG:  48 89 5C 24 10 56 48 83 EC 20 48 8B 0D ?? ?? ?? ?? 48 8B F2 E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 65 01 00 00 0F B6 4E 0C FF C9 83 F9 0C
 DESC: What it is: The packet-dispatch handler for generic social-state packets. When it runs: When the server sends a packet in the shared social-state family and the dispatcher begins decoding its subtype. Why you would care: Use this as a broad packet-level hook for social state that does not belong to one narrow invite or party-only packet path.
 ----------------------------------------
-NAME: PacketDispatcher_HandleUpdatePartyPacket
-SIG:  48 89 5C 24 08 55 56 57 41 54 41 55 41 56 41 57 48 81 EC F0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 E0 00 00 00 48 8B 0D ?? ?? ?? ?? 41 0F B6 D8
-DESC: What it is: The packet-dispatch handler for the main party update packet. When it runs: When the client receives a full party-state packet and starts rebuilding live party member data from the network payload. Why you would care: Use this as the primary packet-level hook for party roster and party state changes that are broader than one position or invite event.
-----------------------------------------
-NAME: PacketDispatcher_HandleUpdateAllianceNormalPacket
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 4C 8B 35 ?? ?? ?? ?? 48 8D 99 78 28 00 00 45 0F B6 E0 48 8B EA 48 8B F1 BF 10 00 00 00 0F 1F 80 00 00 00 00 F6 83 8C 00 00 00 01 74 12
-DESC: What it is: The alliance update packet handler implementation for the normal-size alliance roster. When it runs: When the client applies a generic alliance member-state update for a full alliance grouping. Why you would care: Use this for alliance-aware tools that need server-fed roster or per-member state refreshes beyond standard party updates.
-----------------------------------------
-NAME: PacketDispatcher_HandleUpdateAllianceSmallPacket
-SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 20 45 0F B6 E0 48 8B EA 48 8B F1 45 84 C0 75 45 4C 8B 35 ?? ?? ?? ?? 48 8D 99 78 28 00 00 BF 14 00 00 00 66 90 F6 83 8C 00 00 00 01 74 12
-DESC: What it is: The alliance update packet handler implementation for the small alliance roster variant. When it runs: When the client applies the compact alliance update form used for smaller alliance-state payloads. Why you would care: Use this when you need complete alliance-state coverage instead of assuming only one alliance packet shape exists.
-----------------------------------------
-NAME: PacketDispatcher_HandleUpdateAllianceNormalPositionsPacket
-SIG:  F3 0F 10 1D ?? ?? ?? ?? 4C 8D 42 0C F3 0F 10 25 ?? ?? ?? ?? 48 8D 91 F8 2C 00 00 F3 0F 10 2D ?? ?? ?? ?? 41 B9 02 00 00 00 0F 1F 80 00 00 00 00 41 0F B7 40 F6 66 0F 6E D0 41 0F B7 40 F8 0F 5B D2 66 0F 6E C8
-DESC: What it is: The alliance position packet handler implementation for the normal alliance layout. When it runs: When the client applies server-fed position data for alliance members in the normal alliance payload shape. Why you would care: Use this for alliance overlays, position tracking, or distance logic that needs more than party-only positions.
-----------------------------------------
-NAME: PacketDispatcher_HandleUpdateAllianceSmallPositionsPacket
-SIG:  F3 0F 10 1D ?? ?? ?? ?? 4C 8D 42 0C F3 0F 10 25 ?? ?? ?? ?? 48 8D 91 F8 2C 00 00 F3 0F 10 2D ?? ?? ?? ?? 41 B9 04 00 00 00 0F 1F 80 00 00 00 00 41 0F B7 40 F6 66 0F 6E D0 41 0F B7 40 F8 0F 5B D2 66 0F 6E C8
-DESC: What it is: The alliance position packet handler implementation for the compact alliance payload. When it runs: When the client applies the smaller server-fed alliance position update shape. Why you would care: Use this for complete alliance position coverage across both normal and compact packet variants.
-----------------------------------------
 
 CATEGORY: Network - Content Packet Hooks - Markers, Map, and World State
 ----------------------------------------
@@ -505,6 +633,10 @@ DESC: What it is: The weather-change packet implementation that applies a server
 
 CATEGORY: Network - Content Packet Hooks - Player, Inventory, and UI Readers
 ----------------------------------------
+NAME: PacketDispatcher_HandleInventoryItemPacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9
+DESC: What it is: The packet-dispatch path that materializes a standard inventory item payload into a live container slot. When it runs: When the client receives a regular inventory item packet for a container and slot, including armoury chest pages when they are addressed through item packet flow. Why you would care: Use this for direct packet-side visibility into server-fed item arrival and slot population.
+----------------------------------------
 NAME: PacketDispatcher_HandleInventoryItemSymbolicPacket
 SIG:  48 89 5C 24 08 48 89 74 24 10 48 89 7C 24 18 4C 89 74 24 20 41 57 48 83 EC 20 48 8B DA 48 8D 0D ?? ?? ?? ?? 0F B7 52 04 E8 ?? ?? ?? ?? 0F B7 53 0C
 DESC: What it is: The packet-dispatch handler for symbolic inventory item packets. When it runs: When the server sends the symbolic inventory variant and the client resolves it into live container state. Why you would care: Use this alongside the base and update inventory handlers if you want broad packet-side coverage of the inventory family.
@@ -535,6 +667,18 @@ DESC: What it is: The UI-module packet bridge that dispatches a table of UI-faci
 ----------------------------------------
 
 CATEGORY: Network - Non-Core Content Packet Support
+----------------------------------------
+NAME: PacketQue_OnReceiveCreateNonPlayerBattleCharaPacket
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 81 EC 30 04 00 00 8B F2 49 8B D8 41 0F B6 50 7E 48 8B F9 E8 ?? ?? ?? ?? 48 8D 44 24 28 C7 44 24 20 02 00 00 00 41 B8 05 00 00 00 66 0F 1F 84 00 00 00 00 00 48 8D 80 80 00 00 00 0F 10 03 0F 10 4B 10 48 8D 9B 80 00 00 00 0F 11 40 80
+DESC: What it is: The queue-side receive hook for non-player battle-character creation packets. When it runs: After generic packet ingress but before queued NPC or boss creation data is turned into a live actor, while the packet queue stores the creation payload into its queue record. Why you would care: Use this when you need queued non-player creation data before the later materialization stage, especially for NPC or boss spawn analysis. Extra context: This is the non-player sibling of the queued player create receive path and feeds the same queue-processing pipeline. Pairs with: PacketQue_OnReceivePacket, PacketQue_ProcessBattleCharaCreationQueue, PacketQue_CreateQueuedBattleChara
+----------------------------------------
+NAME: PacketQue_CreateQueuedBattleChara
+SIG:  40 53 48 83 EC 20 41 8B 08 49 8B D8 44 8B C1 41 83 E8 01 74 2E 41 83 E8 01 74 1B 41 83 F8 01 74 15 44 8B 4B 60 83 E9 01 74 1D 83 E9 01 74 0B 83 F9 01 74 06 EB 11 44 8B 4B 50 48 8D 83 86 00 00 00 EB 0B 44 8B 4B 60 48 8D 83 96 00 00 00 44 0F B6 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ??
+DESC: What it is: The queue processor that materializes one queued player, NPC, or boss creation record into a live battle character. When it runs: While the packet queue is draining a queued create record and deciding which battle-character setup path to execute for the queued payload. Why you would care: Use this if you want the first strong post-queue creation hook before higher-level gameplay systems have moved far past the original create packet. Extra context: This is downstream of the queue-side receive hooks and upstream of normal live actor state consumption. Parameters: first arg is the queued battle-character record being materialized; later state selects whether the record is a player, NPC, or boss create shape. Pairs with: PacketQue_OnReceiveCreatePlayerBattleCharaPacket, PacketQue_OnReceiveCreateNonPlayerBattleCharaPacket, PacketQue_ProcessBattleCharaCreationQueue
+----------------------------------------
+NAME: PacketQue_ProcessBattleCharaCreationQueue
+SIG:  85 D2 0F 84 ?? ?? ?? ?? 48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F2 48 8B D9 33 FF 66 90 44 8B 43 54 8B 4B 58 44 3B C1 0F 84 ?? ?? ?? ?? 44 8B 5B 50 41 8B D0 4C 8B 53 48 0F 1F 44 00 00 8D 42 01 4D 63 C8 33 D2 41 F7 F3 49 69 C1 18 04 00 00 89 53 54 42 80 BC 10 10 04 00 00 00 75 17
+DESC: What it is: The ring-buffer processor that drains queued battle-character create records. When it runs: After queue-side receive has stored one or more battle-character create payloads and the client is ready to process the pending queue entries. Why you would care: Use this for a broader queued-creation hook when you care about the whole create-queue lifecycle instead of one specific player or NPC receive path. Extra context: This is the queue-management layer above the actual materialization helper and is useful when you want to observe batched creation processing. Pairs with: PacketQue_OnReceivePacket, PacketQue_OnReceiveCreatePlayerBattleCharaPacket, PacketQue_OnReceiveCreateNonPlayerBattleCharaPacket, PacketQue_CreateQueuedBattleChara
 ----------------------------------------
 NAME: Buddy_ReadPacket
 SIG:  48 89 5C 24 18 55 56 57 48 81 EC A0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 90 00 00 00 8B 42 50 4C 8D 82 CA 02 00 00 89 81 78 23 00 00 48 8B F2 0F B6 82 39 07 00 00
@@ -589,10 +733,6 @@ CATEGORY: Shared Boss Mechanics - Packet and Server-Fed Delivery
 NAME: DutyActionManager_ProcessActorControlStatic
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 83 EC 40 41 8B F9 41 8B F0 8B EA 44 8B F1 E8 D6 7E 3A 00 48 8B C8 E8 2E 53 3B 00 48 8B D8 E8 C6 7E 3A 00
 DESC: What it is: The bridge that forwards static actor-control updates into live content state. When it runs: After actor-control data has been received and the client is routing it into the active content or massive-content systems. Why you would care: Use this when you want a shared mechanic hook after packet receipt but before the state is fully consumed by encounter logic.
-----------------------------------------
-NAME: PacketDispatcher_HandleStatusEffectListPacket
-SIG:  45 33 C9 E9 98 F9 FF FF CC CC CC CC CC CC CC CC 48 89 5C 24 10 48 89 6C 24 18 56 48 83 EC 20 83 3D 92 E8 E0 01 03 41 0F B6 E8 48 8B DA 8B F1 0F 84 1F 01 00 00 48 83 C2 04 48 89 7C 24 30 45 33
-DESC: What it is: The packet-dispatch path for status-effect list updates on general actors. When it runs: When the client receives refreshed server-fed status arrays and starts applying them to non-player targets. Why you would care: Use this as a strong shared support hook for mechanics that are easiest to consume from authoritative status changes rather than only from action effects.
 ----------------------------------------
 NAME: PacketDispatcher_HandleUnlockedMapMarkersPacket
 SIG:  48 83 EC 28 48 83 FA 40 75 57 0F 10 01 0F 11 05 6B ED E3 01 0F 10 49 10 0F 11 0D 70 ED E3 01 0F 10 41 20 0F 11 05 75 ED E3 01 0F 10 49 30 48 8B 0D EB 2B C5 01 0F 11 0D 73 ED E3 01 E8 0F AF 52
@@ -1075,15 +1215,6 @@ DESC: What it is: The shared target-system interaction entrypoint for the curren
 ----------------------------------------
 
 CATEGORY: Treasure Maps - Mob Radius and Range Hooks
-----------------------------------------
-NAME: Character_GetRadius
-SIG:  40 53 48 83 EC 20 48 8B D9 80 FA 01 75 37 48 8B 01 FF 50 10 83 F8 01 75 2C 0F B7 83 C4 01 00 00 66 85 C0 74 12 8B C8 E8 ?? ?? ?? ?? 48 85 C0 74 06 F6 40 3A 08 75 0E F3 0F 10 05 ?? ?? ?? ?? 48 83 C4 20 5B C3
-DESC: What it is: The direct character radius reader for a live character object. When it runs: When code asks a character for its effective radius or half-width based on its current actor data and special cases. Why you would care: Use this as the cleanest mob radius hook if you want treasure-room enemy spacing, hitbox radius, or proximity logic without guessing from model scale.
-----------------------------------------
-NAME: GameObject_DistanceBetweenHitboxesXYZ
-SIG:  48 89 74 24 20 57 48 83 EC 30 48 8B FA 48 8B F1 48 85 C9 0F 84 ?? ?? ?? ?? 48 85 D2 0F 84 ?? ?? ?? ?? 48 3B CA 0F 84 ?? ?? ?? ?? 48 89 5C 24 40 48 8B CA 48 89 6C 24 48 4C 89 74 24 50 0F 29 74 24 20 E8 ?? ?? ?? ?? 48 8B CE 48 8B D8 E8 ?? ?? ?? ?? 48 8B 0E F3 0F 10 40 08
-DESC: What it is: The shared 3D hitbox-distance helper between two live game objects. When it runs: When the client needs the full XYZ distance between two object hitboxes rather than simple origin-to-origin distance. Why you would care: Use this as a support hook for treasure-room mob range logic when you care about real spatial separation between player, mob, and door objects.
-----------------------------------------
 
 CATEGORY: Treasure Maps - Non-Core Object and UI Support
 ----------------------------------------
@@ -1487,10 +1618,6 @@ NAME: InventoryManager_HandleActionAck
 SIG:  48 89 5C 24 08 57 48 83 EC 30 48 8B 05 ?? ?? ?? ?? 48 8B D9 41 0F B6 50
 DESC: What it is: The deeper inventory-manager handler that processes acknowledged inventory operations after the packet-dispatch wrapper forwards them. When it runs: When the client handles server acknowledgements for inventory operations and updates internal inventory state, UI dirty flags, or operation-specific follow-up logic. Why you would care: Use this instead of the tiny packet thunk when you want a stronger hook for acknowledged inventory actions that affect armoury or related inventory state. Extra context: This is the applied-state inventory-side layer after packet ingress, so it is usually a better hook than the dispatcher if you care about the actual accepted operation rather than raw packet arrival. Pairs with: PacketDispatcher_HandleInventoryActionAckPacket
 ----------------------------------------
-NAME: PacketDispatcher_HandleInventoryItemPacket
-SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 5A 08 48 8B FA 8B CB E8 ?? ?? ?? ?? 84 C0 B9 DA 07 00 00 0F 45 D9
-DESC: What it is: The packet-dispatch path that materializes a standard inventory item payload into a live container slot. When it runs: When the client receives a regular inventory item packet for a container and slot, including armoury chest pages when they are addressed through item packet flow. Why you would care: Use this for direct packet-side visibility into server-fed item arrival and slot population.
-----------------------------------------
 NAME: PacketDispatcher_HandlePlayerGearsetDataPacket
 SIG:  40 53 48 83 EC 20 48 8B DA 8B D1 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 14 48 8D 88 F8 06 00 00 48 8B D3 48 83 C4 20 5B E9 ?? ?? ?? ??
 DESC: What it is: The server packet path that applies gearset draw-data updates to a live character. When it runs: When the client receives gearset appearance data for a character and loads it into that actor's draw-data container after resolving the target by entity id. Why you would care: Use this for gear and appearance-aware tooling when you need the authoritative server-fed moment a character's equipped visual set is refreshed.
@@ -1538,6 +1665,10 @@ DESC: What it is: The gil-shop header parser that loads the main gil-shop metada
 NAME: ShopEventHandler_StartReadGilShopItems
 SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 33 D2 48 8B F9 45 33 C0 8D 4A 60 E8 ?? ?? ?? ?? 33 DB 48 8B F0 48 85 C0 74 4E 48 8D 05 ?? ?? ?? ?? 89 5C 24 28 33 D2 48 89 44 24 20 48 8B CE E8 ?? ?? ?? ?? 0F 10 44 24 20 B8 FF FF FF FF 48 89 5C 24 20 89 5C 24 28 0F 11 46 40 48 89 46 30
 DESC: What it is: The gil-shop startup path that begins reading and staging gil-shop item rows. When it runs: After the gil-shop header has been accepted and the handler moves into the item-read phase. Why you would care: Use this as a server-fed gil-shop flow hook when you want the boundary where gil-shop row loading begins. Extra context: This is the staging boundary where the handler allocates the async row reader, binds the gil-shop item callback, and clears the per-row buffers before item data starts arriving. Pairs with: ShopEventHandler_OnGilShopItemRead, ShopEventHandler_OnGilShopRead
+----------------------------------------
+NAME: ShopEventHandler_UpdateOwnedItemCounts
+SIG:  48 89 5C 24 20 41 56 48 83 EC 30 E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 0F 84 ?? ?? ?? ?? 66 83 78 22 04 0F 85 ?? ?? ?? ?? 83 3D ?? ?? ?? ?? 00 0F 84 ?? ?? ?? ?? 80 B8 5E 32 00 00 00 0F 85 ?? ?? ?? ?? 48 89 6C 24 40 45 33 F6 48 89 74 24 48
+DESC: What it is: The shared shop-event handler path that recomputes owned item counts and refreshes the active shop state when those counts change. When it runs: After the live shop handler is already open and the client needs to update owned-count values that can affect item availability or presentation. Why you would care: Use this as the strongest deeper named shop refresh hook when you want the applied-state point where changed inventory ownership counts force a shop or buyback refresh. Extra context: This is a downstream apply/refresh layer rather than the initial shop packet ingress; it walks the current live handler rows, recalculates owned counts through InventoryManager, and then reopens or refreshes the active addon when something changed. Pairs with: ShopEventHandler_OnGilShopRead, ShopEventHandler_StartReadGilShopItems, ShopEventHandler_OpenOrRefreshAddon
 ----------------------------------------
 
 CATEGORY: Gil - UI and State Hooks
@@ -1862,12 +1993,20 @@ NAME: InfoProxyCrossRealm_ReceiveListing
 SIG:  40 53 41 57 48 83 EC 28 48 8B D9 4C 8B FA 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 41 81 7F 10 00 00 00 80 75 0F C6 83 75 04 00 00 00 48 83 C4 28 41 5F 5B C3
 DESC: What it is: The cross-realm info-proxy receive path that ingests party-finder listing payloads into the live listing cache. When it runs: When the client receives party-finder listing data and begins copying the returned listings into the cross-realm listing structures and active LookingForGroup view. Why you would care: Use this as the clearest packet-adjacent receive hook for party finder if you want live listing data as it arrives instead of waiting for later UI-only refresh logic.
 ----------------------------------------
+NAME: AgentLookingForGroup_PopulateListingData
+SIG:  40 55 53 41 54 41 57 48 8D AC 24 88 C2 FF FF B8 78 3E 00 00 E8 ?? ?? ?? ?? 48 2B E0 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 50 3D 00 00 80 B9 83 32 00 00 00 4C 8B FA 48 89 54 24 68 48 8B D9 74 1D C6 81 83 32 00 00 00 48 8B 42 20 48 89 81 10 24 00 00 48 8B 42 28 48 89 81 18 24 00 00
+DESC: What it is: The LookingForGroup agent materialization path that converts received party-finder listing data into the live agent/UI listing state. When it runs: After listing data has already been received and the client is populating the usable listing tables, text, and slot state consumed by the party-finder interface. Why you would care: Use this as the deeper PF applied-state hook when you want the point where listing data becomes usable to the agent/UI layer rather than only knowing that a receive happened. Extra context: This is downstream of the raw listing receive path and sits on the applied-state/UI materialization layer, so it is better for detecting when listing data is actually ready to consume. Parameters: first arg is the LookingForGroup agent instance; second arg is the listing payload/source block being materialized into agent state. Pairs with: InfoProxyCrossRealm_ReceiveListing, AgentLookingForGroup_RequestListingsUpdate
+----------------------------------------
 
 CATEGORY: Party Finder - Non-Core and Request Hooks
 ----------------------------------------
 NAME: AgentLookingForGroup_RequestListingsUpdate
 SIG:  40 53 48 83 EC 40 48 8B D9 48 8B 89 E0 00 00 00 48 85 C9 75 08 32 C0 48 83 C4 40 5B C3 8B 83 F8 31 00 00 C1 E8 02 A8 01 74 0D E8 ?? ?? ?? ?? B0 01 48 83 C4 40 5B C3
 DESC: What it is: The LookingForGroup agent request path that asks the game to refresh or fetch the current party-finder listing set. When it runs: When the party-finder UI requests a listings refresh based on the current filter and listing state. Why you would care: Use this as a non-core request hook if you want to observe when the client actively asks for new party-finder listings rather than only consuming the received results. Extra context: This is the UI-to-network bridge point for listing refreshes, so it is useful when you want outbound request timing instead of only the later listing-data apply path.
+----------------------------------------
+NAME: InfoProxyCrossRealm_EndRequest
+SIG:  40 57 48 83 EC 30 48 8B F9 48 89 6C 24 48 48 8B 49 08 48 89 74 24 50 48 8B 01 FF 50 40 48 8B C8 48 8B 10 4C 8B 42 48 BA 48 00 00 00 41 FF D0 48 8B 4F 08 48 8B E8 48 8B 11 FF 52 40 BA 43 00 00 00 48 8B 08 4C 8B 41 50 48 8B C8 41 FF D0 48 8B F0 48 85 ED 0F 84 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B6 8F 6C 04 00 00 84 C9 74 7C 66 83 7F 34 00 7D 75
+DESC: What it is: The cross-realm info-proxy request finalization path that closes out a party-finder listing request after the receive/apply work is complete. When it runs: When the PF request cycle finishes or aborts and the client clears pending request state, updates UI-facing counters, and notifies the LookingForGroup layer that the request is ending. Why you would care: Use this as the clean downstream request-lifecycle hook when you want to know that a PF listing update has fully settled rather than only when it started or when raw listing data first arrived. Extra context: This sits after listing receive and applied-state population, so it is the finalization boundary for request/UI state rather than the raw network ingress point. Pairs with: InfoProxyCrossRealm_ReceiveListing, AgentLookingForGroup_RequestListingsUpdate
 ----------------------------------------
 
 CATEGORY: PvP Core Systems
