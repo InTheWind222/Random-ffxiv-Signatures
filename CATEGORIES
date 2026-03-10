@@ -173,3 +173,5 @@ CATEGORY: Local Character - Conditions and Permission Support
 CATEGORY: Animation Lock - Core State and Action Hooks
 CATEGORY: Animation Lock - Cast, Forced-Cast, and Reset Hooks
 CATEGORY: Animation Lock - Non-Core Timing and Support
+CATEGORY: APIs - Framework and Service Entry Points
+CATEGORY: APIs - Action and Gameplay Services
