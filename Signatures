@@ -2054,6 +2054,22 @@ SIG:  40 53 48 83 EC 20 41 8B D8 45 85 C0 74 34 48 8D 8A A0 01 00 00 E8 ?? ?? ??
 DESC: What it is: A check that answers whether a given Limit Break action belongs to the actor's current job or role. When it runs: When the client is validating a Limit Break action before using or displaying it. Why you would care: Use this if you want to know whether an LB action id is valid for the current actor.
 ----------------------------------------
 
+CATEGORY: Limit Break - Advanced and Research
+
+----------------------------------------
+NAME: LimitBreakTier_SelectAndDispatch
+SIG:  40 53 48 83 EC 40 FE CA 48 8B D9 80 FA 03 0F 83 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 85 C0 74 7A 44 0F B6 C2 48 89 7C 24 50 48 8B D0 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 8B F8 85 C0 75 1D 45 33 C0 BA 3C 02 00 00 48 8B CB E8 ?? ?? ?? ?? 48 8B 7C 24 50 32 C0 48 83 C4 40 5B C3
+DESC: What it is: A small activation-adjacent wrapper that takes a tier-like selector, resolves the corresponding LB action id, and hands it into shared action use. When it runs: When a caller chooses LB tier 1..3 and needs to dispatch the resolved action into the normal action system. Why you would care: Use this as the closest proven activation-side LB boundary before the path merges into shared action execution below FUN_1408BFC40. Extra context: This is not a PvP-only activator. Pairs with: LimitBreakController_GetActionId, ActionValidation_LimitBreakBranch
+----------------------------------------
+NAME: PacketDispatcher_LimitBreakStateSyncBranch
+SIG:  48 8D 0D ?? ?? ?? ?? 44 0F B7 4D 80 44 0F B7 44 24 78 0F B6 54 24 70 88 44 24 28 0F B6 45 88 88 44 24 20 E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B C8 48 8B 10 FF 92 28 01 00 00
+DESC: What it is: A branch-local inbound state-sync path that packages Limit Break controller values and writes them through LimitBreakController_SetValues. When it runs: During broader inbound PacketDispatcher state handling when the client decodes LB gauge, units, and PvP flag data from a larger update bundle. Why you would care: Use this as the best inbound LB-state boundary without overclaiming a dedicated packet handler. Extra context: This is a branch inside a broader inbound update path, not a full standalone LB packet handler. Pairs with: LimitBreakController_SetValues, LimitBreakUI_Update
+----------------------------------------
+NAME: ActionValidation_LimitBreakBranch
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 54 41 56 41 57 48 83 EC 40 48 8B 1D ?? ?? ?? ?? 33 F6 4D 8B F9 41 8B E8 41 8B F8 83 EA 01 74 32 83 EA 08 0F 84 ?? ?? ?? ?? 83 FA 05 0F 85 ?? ?? ?? ?? 41 8B C8 E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 0F B7 38 44 8B FE 48 8B 1D ?? ?? ?? ?? 8B EF 8B D7 B9 01 00 00 00 E8 ?? ?? ?? ?? 44 8B F0 85 C0 0F 84 ?? ?? ?? ??
+DESC: What it is: The generic action-validation branch that performs LB-specific rule checks inside the broader action resource and legality gate. When it runs: When the client validates whether an LB action can be used, including tier-specific checks and downstream controller lookups. Why you would care: Use this when you want the first broad validation boundary where LB-only rules appear inside the shared action system. Extra context: This is a validation gate, not a dedicated LB helper. Pairs with: LimitBreakController_IsValidLBActionForClass, LimitBreakController_GetActionId
+----------------------------------------
+
 CATEGORY: Speed and Mobility - Cast Speed
 NAME: ActionManager_AdjustRecastTimeByStatusesAndStats
 SIG:  40 53 48 83 EC 50 48 8D 44 24 40 C6 44 24 40 00 48 89 44 24 30 8B 84 24 80 00 00 00 89 44 24 28 44 88 4C 24 20 45 8B C8 44 8B C2 48 8B D1 48 8B
