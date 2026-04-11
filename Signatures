@@ -591,7 +591,7 @@ DESC: What it is: A small but unique `ZoneProto` or `IpcChannel` manager state-t
 ----------------------------------------
 NAME: ZoneProto_IpcChannel_DecodeTransportBuffer
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 49 8B F1 41 8B D8 48 8B EA 48 8B F9 FF 15 ??
-DESC: What it is: The transport-side decode wrapper inside the `ZoneProto` or `IpcChannel` path that chooses between the TCP and UDP Oodle decode routines before execution returns to higher-level channel logic. When it runs: When a zone-proto transport buffer is about to be decoded and the wrapper is selecting the concrete decode path for the current transport object. Why you would care: Use this as the first practical game- or transport-owned handoff above `OodleNetwork1UDP_Decode` when you want a decode-layer hook that still belongs to the game’s channel stack instead of the raw library alone. Extra context: This is a stand-in role name based on observed behavior, not a named public symbol, and it is the cleanest validated caller above the Oodle UDP decode entrypoint in this build. Pairs with: OodleNetwork1UDP_Decode, OodleNetwork1TCP_Decode, OodleNetwork1UDP_State_Normalize, ZoneProto_IpcChannelManager_TransitionToState4
+DESC: What it is: The transport-side decode wrapper inside the `ZoneProto` or `IpcChannel` path that chooses between the TCP and UDP Oodle decode routines before execution returns to higher-level channel logic. When it runs: When a zone-proto transport buffer is about to be decoded and the wrapper is selecting the concrete decode path for the current transport object. Why you would care: Use this as the first practical game- or transport-owned handoff above `OodleNetwork1UDP_Decode` when you want a decode-layer hook that still belongs to the gameâ€™s channel stack instead of the raw library alone. Extra context: This is a stand-in role name based on observed behavior, not a named public symbol, and it is the cleanest validated caller above the Oodle UDP decode entrypoint in this build. Pairs with: OodleNetwork1UDP_Decode, OodleNetwork1TCP_Decode, OodleNetwork1UDP_State_Normalize, ZoneProto_IpcChannelManager_TransitionToState4
 ----------------------------------------
 NAME: OodleNetwork1UDP_Decode
 SIG:  40 53 48 83 EC 30 48 8B 44 24 68 49 8B D9 48 85 C0 7E 2E 48
@@ -2138,11 +2138,11 @@ DESC: What it is: The game-speed multiplier update path tied into movement and l
 
 CATEGORY: Speed and Mobility - Teleport
 NAME: Teleport_CanUseTeleport
-SIG:  8B C3 48 83 C4 20 5B C3 8B C3 48 83 C4 20 5B C3 CC CC CC CC
+SIG:  48 83 EC 28 BA 04 00 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 84 C0 75 0A B8 7D 06
 DESC: What it is: The client-side teleport eligibility check. When it runs: When the client decides whether teleport is allowed for the current actor and destination context. Why you would care: This is the best general gating hook for teleport availability checks in a plugin.
 ----------------------------------------
 NAME: Teleport_Execute
-SIG:  48 8B 05 ?? ?? ?? ?? 48 8B 50 48 8B 41 38 44 8B 82 ?? ?? ?? ?? 85 C0 78 ?? 41 3B C0 7C ?? 49 63 C0 48 89 0C C2
+SIG:  40 53 55 56 57 41 56 48 83 EC 50 48 8B E9 45 0F B6 F0 48 8B 0D ??
 DESC: What it is: The main teleport execution path. When it runs: When the client commits a teleport request after the destination and requirements are already selected. Why you would care: This is the direct teleport action hook for logging, gating, or telemetry around actual teleport use.
 ----------------------------------------
 NAME: Teleport_GetTeleportCost
@@ -2150,19 +2150,19 @@ SIG:  66 44 89 44 24 18 53 55 56 57 41 54 41 55 41 56 48 83 EC 50 0F B7 3D ??
 DESC: What it is: The cost calculation path for teleport. When it runs: When the client needs the gil cost for a selected teleport destination. Why you would care: Useful for tools that want exact client-side teleport cost data instead of recalculating from sheet data.
 ----------------------------------------
 NAME: Teleport_IsTeleportTimeframeOpen
-SIG:  40 53 48 83 EC 20 8B 81 1C 65 00 00 48 8B D9 C1 E8 ?? ?? ?? ?? ?? E8 ?? ?? ?? ?? 3B 83 20
+SIG:  40 53 48 83 EC 20 8B 81 1C 65 00 00 48 8B D9 C1 E8 09 A8 01 74 22 E8 ??
 DESC: What it is: The check for whether the client currently allows teleport execution. When it runs: When teleport UI or teleport logic needs to know if the active timeframe is open. Why you would care: Use this to detect live teleport availability without relying only on the window state.
 ----------------------------------------
 NAME: Teleport_ToAetheryte
-SIG:  01 00 00 49 89 5B 20 49 89 73 E0 49 89 7B D8 4D 89 73 D0 4D 89 7B C8 66 0F 1F 84 00 00 00 00 00 0F B7 C5 48 8D 0C 40 4C 8D 34 CD 2C 07 00 00 4D 03 F1 41 80 7E 16 00 0F 84 12 01 00 00 45 0F B6
+SIG:  40 53 55 56 48 83 EC 60 4C 8B 49 28 48 8B F1 0F B6 EA 41 0F
 DESC: What it is: The teleport path that resolves and routes travel to a specific aetheryte destination. When it runs: When the client has a chosen destination and starts preparing the actual move request. Why you would care: Useful when you need the destination-specific side of teleport rather than the higher-level generic execute hook.
 ----------------------------------------
 NAME: Teleport_UpdateAetheryteList
-SIG:  48 89 5C 24 10 48 89 74 24 18 48 89 7C 24 20 55 41 54 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 4C 8B F9 48 89
+SIG:  48 89 5C 24 10 48 89 74 24 18 48 89 7C 24 20 55 41 54 41 55 41 56 41 57 48 8D AC 24 90 F5 FF FF 48 81 EC 70 0B 00 00 48 8B 05 ??
 DESC: What it is: The aetheryte-list rebuild path used by the teleport UI and module state. When it runs: When the client refreshes the current destination list after teleport data or ticket state changes. Why you would care: This is the best destination-state hook for tools that need the live teleport destination list instead of only the final selected teleport.
 ----------------------------------------
 NAME: Teleport_WithTickets
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 80 79 21 00 41
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 80 79 21 00 41 0F B6 F8 8B F2 48 8B D9 75 55 33 C0 48 8D 0D ??
 DESC: What it is: The teleport path that consumes teleport tickets instead of normal gil cost. When it runs: When the client executes a ticket-based teleport flow. Why you would care: This is the practical hook for distinguishing ticket teleports from the normal teleport path.
 ----------------------------------------
 NAME: Teleport_InvokeSelectUseTicket
@@ -2172,6 +2172,114 @@ DESC: What it is: The teleport ticket-selection invoke path. When it runs: When 
 NAME: TeleportHistoryModule_AddHistoryEntry
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 20 44 88 44 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 0F B6 AC 24 88 00 00 00 48 8D 59 4E 44 0F B6 B4 24 80 00 00 00 33 FF 44 8B EF 44 8B D7 48 8B C3
 DESC: What it is: The teleport history writer used by the teleport history module. When it runs: After a destination is accepted and the client stores it into recent teleport history. Why you would care: This is the strongest practical destination-history hook if you want to track where the player has actually teleported.
+----------------------------------------
+NAME: Teleport_OpenFriendEstateTeleportation
+SIG:  57 48 83 EC 20 48 83 79 28 00 48 8B FA 48 8B D9 75 1E 48 8B
+DESC: What it is: The housing-adjacent teleport flow for friend-estate travel. When it runs: When the client opens or commits a teleport route to a friend's estate instead of a normal aetheryte destination. Why you would care: Useful when you need teleport handling that bypasses the ordinary aetheryte list.
+----------------------------------------
+NAME: Teleport_SetupWorldTravelInfo
+SIG:  57 48 83 EC 20 48 8B F9 41 0F B7 F0 48 8B 49 10 0F B7 DA 48 8B 01 FF 90 E0 00 00 00 48 8B C8 0F B7 D3 E8 ??
+DESC: What it is: The world-travel setup helper tied to travel-capable aetherytes. When it runs: When the client prepares cross-world destination data before the world-travel flow continues. Why you would care: This is the practical setup hook for world-travel state before the UI or teleport request layers take over.
+----------------------------------------
+NAME: Teleport_OpenTeleportTown
+SIG:  40 53 57 41 57 48 81 EC 80 06 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89
+DESC: What it is: The helper that opens the town teleport picker from an aetheryte row. When it runs: When the client expands a town destination into its selectable teleport-town list. Why you would care: This is the cleanest UI-side hook for town-list composition before the visible window is populated.
+----------------------------------------
+NAME: Teleport_OpenWorldTravelUI
+SIG:  48 89 5C 24 08 57 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 38 48 85 FF 74 7E
+DESC: What it is: The helper that opens the world-travel UI for supported aetherytes. When it runs: When the client transitions from an aetheryte row into the dedicated world-travel interface. Why you would care: Use this when you want the UI bridge for world travel rather than the deeper setup or final teleport call.
+----------------------------------------
+NAME: Teleport_OpenTeleportTownUI
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 54 41 55 41 56 41 57 48 81 EC 90 06 00 00 48 8B 05 ??
+DESC: What it is: The event/UI layer that populates the visible teleport-town window. When it runs: When the client is building the on-screen town teleport interface and its destination entries. Why you would care: Useful when you want the concrete UI-population hook instead of the higher-level request helper.
+----------------------------------------
+NAME: Aetheryte_GetAetheryteId
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 0F B7 91 D8
+DESC: What it is: The row-wrapper helper that returns the current aetheryte's id. When it runs: When Lua or UI-side code asks an aetheryte row for its underlying destination id. Why you would care: This is the cleanest anchor for mapping wrapper objects back to real aetheryte ids.
+----------------------------------------
+NAME: Aetheryte_IsFieldAetheryte
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 8B 81 48 03 00 00 F6 40 37 01 75
+DESC: What it is: The row-wrapper check for whether an entry is a field aetheryte. When it runs: When teleport code or Lua-side helpers need to distinguish field destinations from town-style entries. Why you would care: Useful for filtering destination lists by travel type without scraping sheet data yourself.
+----------------------------------------
+NAME: Aetheryte_IsTownAetheryte
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 8B 81 48 03 00 00 F6 40 37 01 74
+DESC: What it is: The row-wrapper check for whether an entry is a town aetheryte. When it runs: When the client or Lua layer needs to split town destinations from field destinations. Why you would care: This is the most direct helper for town-only filtering inside teleport tooling.
+----------------------------------------
+NAME: Aetheryte_IsAethernet
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 8B 91 48 03 00 00 48 8D
+DESC: What it is: The row-wrapper check for whether an entry is an aethernet destination. When it runs: When the client needs to distinguish intra-city aethernet points from full teleport destinations. Why you would care: Useful for separating short-hop routing from real teleport destinations in plugins.
+----------------------------------------
+NAME: Aetheryte_GetAethernetTownId
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 8B 91 48 03 00 00 48 8B
+DESC: What it is: The row-wrapper helper that returns the owning town id for an aethernet entry. When it runs: When the client groups or labels aethernet points under their parent town destination. Why you would care: Good support hook for reconstructing town-to-aethernet relationships from live wrapper objects.
+----------------------------------------
+NAME: Aetheryte_IsHousingQualified
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? BA 02 00 00 00 48 8D 4C 24 20 48 8B 18 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 02 00 00 00 E8 ?? ?? ?? ?? 48 8B 83
+DESC: What it is: The wrapper-side check for whether the current aetheryte qualifies for housing-style travel. When it runs: When the client decides whether extra housing travel options should be exposed for that entry. Why you would care: This is the cleanest non-core gate for housing-qualified destinations in the telepo flow.
+----------------------------------------
+NAME: Aetheryte_GetFavoritePointMax
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? 0F B6 15 ?? ?? ?? ?? 48 8B 4C 24
+DESC: What it is: The helper that returns the current favorite-point slot limit. When it runs: When the client or Lua layer needs to know how many favorite aetherytes can be configured. Why you would care: Useful if you want the live favorite-slot cap instead of hardcoding it.
+----------------------------------------
+NAME: Aetheryte_GetTelepoPlaceNameKey
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 85 C9 75 04 33
+DESC: What it is: The helper that returns the place-name key tied to an aetheryte row. When it runs: When the client resolves display text or lookup keys for a destination. Why you would care: Handy when you need the real telepo place-name key behind a wrapper entry.
+----------------------------------------
+NAME: Aetheryte_IsTown
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 85 C9 75 04 32 D2 EB 0E
+DESC: What it is: The helper that reports whether the current aetheryte entry is treated as a town. When it runs: When the client needs town-level classification that is broader than the field or aethernet checks. Why you would care: Useful when mirroring the client's own town-grouping logic.
+----------------------------------------
+NAME: Aetheryte_IsWorldTravelAetheryte
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 85 C9 75 04 32 D2 EB 18
+DESC: What it is: The helper that checks whether an entry supports world travel. When it runs: When the client decides if an aetheryte should route into the world-travel flow instead of normal teleport handling. Why you would care: This is the most direct wrapper-side gate for cross-world-capable aetherytes.
+----------------------------------------
+NAME: Aetheryte_IsHomePoint
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 85 C9 75 04 32 D2 EB 11
+DESC: What it is: The wrapper-side check for whether the current entry matches the configured home point. When it runs: When the client highlights or applies home-point logic to an aetheryte row. Why you would care: Good support hook for any plugin that wants the client's own home-point classification.
+----------------------------------------
+NAME: Aetheryte_IsFavoritePoint
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 85 C9 75 04 32 C0 EB 13 0F B7 91 D8 02 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 D0 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 58 C3 CC CC CC CC CC CC CC CC CC CC CC CC CC CC 48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA
+DESC: What it is: The wrapper-side favorite check for the current aetheryte row. When it runs: When Lua or UI code needs to know whether the represented destination is one of the player's favorites. Why you would care: Use this when you need favorite classification from the client's live wrapper layer rather than reconstructing it yourself.
+----------------------------------------
+NAME: Aetheryte_IsFavoritePointSecurityToken
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 48 85 C9 75 04 32 C0 EB 13 0F B7 91 D8 02 00 00 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 0F B6 D0 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 58 C3 CC CC CC CC CC CC CC CC CC CC CC CC CC CC 48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? B2
+DESC: What it is: The wrapper-side check for the security-token free destination slot. When it runs: When the client applies the extra favorite/free-destination rules for the current aetheryte row. Why you would care: Useful when you need to distinguish the token-backed free destination from ordinary favorites.
+----------------------------------------
+NAME: Aetheryte_GetHomePoint
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 0F B7 15 ?? ?? ?? ?? 48 8B 4C 24 28 E8 ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 58 C3 CC CC CC CC CC CC CC CC CC 48 8B
+DESC: What it is: The character-side helper that returns the configured home-point aetheryte id. When it runs: When client logic needs the saved home-point destination for telepo or UI decisions. Why you would care: This is the cleanest live-state read for the player's home point.
+----------------------------------------
+NAME: Aetheryte_IsUnlocked
+SIG:  40 53 48 83 EC 50 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 4C 24 28 BA 02 00 00 00 48 8B 18 E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 39 8B 80 00 00 00 74 04 32 D2 EB 28 0F B7 D0 41 B8 01 00 00 00 8B CA 83 E1 07 41 D3 E0 8B CA 48 C1 E9 03 48 8D 15 ?? ?? ?? ?? 0F B6 0C 11 44 84 C1 0F 95 C2 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 50 5B C3 CC CC CC CC CC CC CC CC CC CC CC CC CC CC CC 0F
+DESC: What it is: The character-side unlocked check for aetheryte ids. When it runs: When the client tests the player's unlocked-aetheryte bitset before exposing or using a destination. Why you would care: This is the strongest live-state support hook for whether a specific aetheryte is unlocked.
+----------------------------------------
+NAME: Aetheryte_GetFavoritePoint
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 4C 24 28 BA 02 00 00 00 E8 ?? ?? ?? ?? FE
+DESC: What it is: The character-side helper that returns the aetheryte id for a specific favorite slot. When it runs: When the client reads one configured favorite destination by index. Why you would care: Useful for inspecting the live favorite list without manually walking saved state.
+----------------------------------------
+NAME: Aetheryte_GetEmptyFavoriteIndex
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B 4C 24 28 66
+DESC: What it is: The character-side helper that finds the next unused favorite slot. When it runs: When the client needs to know where a new favorite aetheryte could be inserted. Why you would care: Good support hook for favorite-management tools that want the client's own slot-selection logic.
+----------------------------------------
+NAME: Aetheryte_GetFavoritePointSecurityToken
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 0F B7 15 ?? ?? ?? ?? 48 8B 4C 24 28 E8 ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 58 C3 CC CC CC CC CC CC CC CC CC 48 8D
+DESC: What it is: The character-side getter for the security-token free aetheryte id. When it runs: When the client reads the special free-destination slot tied to security-token support. Why you would care: Useful if you need the live free-destination id instead of reconstructing it from other checks.
+----------------------------------------
+NAME: Aetheryte_GetFavoritePointPSPlus
+SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 0F B7 15 ?? ?? ?? ?? 48 8B 4C 24 28 E8 ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ?? B8 01 00 00 00 48 83 C4 58 C3 CC CC CC CC CC CC CC CC CC 32
+DESC: What it is: The character-side getter for the PS Plus free-destination slot. When it runs: When the client reads the platform-specific free aetheryte id for supported accounts. Why you would care: This is the cleanest live-state hook for the PS Plus free-destination path.
+----------------------------------------
+NAME: Aetheryte_IsSetAsFavourite
+SIG:  66 85 D2 74 2C 44 0F B6 89 D6 02 00 00 4D 85 C9 74 1F 45 33
+DESC: What it is: The low-level helper that checks whether an aetheryte id is present in the favorite list. When it runs: When higher-level favorite helpers need the actual membership test against the stored favorite array. Why you would care: This is the leanest support hook for favorite membership without going through the wrapper layer.
+----------------------------------------
+NAME: Aetheryte_IsSetAsFree
+SIG:  66 85 D2 75 03 32 C0 C3 66 39 91 E0 02 00 00 0F 94 C0 C3 CC
+DESC: What it is: The low-level helper that checks whether an aetheryte id matches the active free-destination slot. When it runs: When telepo logic needs the raw free-destination comparison. Why you would care: Useful for compact support hooks that only need the free-slot check and not the broader wrapper logic.
+----------------------------------------
+NAME: Aetheryte_IsSetAsFreePSPlus
+SIG:  66 85 D2 75 03 32 C0 C3 66 39 91 E2 02 00 00 0F 94 C0 C3 CC
+DESC: What it is: The low-level helper that checks whether an aetheryte id matches the PS Plus free-destination slot. When it runs: When the client applies the platform-specific free-destination comparison. Why you would care: Useful if you want the smallest practical check for the PS Plus free-aetheryte state.
 ----------------------------------------
 
 CATEGORY: Speed and Mobility - Emote and Emote Speed
