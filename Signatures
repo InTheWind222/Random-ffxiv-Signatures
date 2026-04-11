@@ -128,6 +128,16 @@ SIG:  4C 8B 89 E0 02 00 00 4C 8B D1 4D 85 C9 74 2D 33 C9 49 8B D2
 DESC: What it is: The read-side resolver for the currently active retainer record in `RetainerManager`. When it runs: When client code needs the active retainer after retainer data has already been loaded or refreshed. Why you would care: Use this as the main non-core retainer correlate when you want the live selected retainer record instead of only the earlier apply path. Extra context: This is downstream of `InfoProxyItemSearch_ProcessPlayerRetainerInfo`, so it is a practical live-state accessor rather than a packet-ingest hook. Pairs with: InfoProxyItemSearch_ProcessPlayerRetainerInfo, InventoryManager_GetRetainerGil
 ----------------------------------------
 
+CATEGORY: Retainers - Comments and Notes
+NAME: RetainerCommentModule_GetComment
+SIG:  32 C0 0F 1F 40 00 66 66 0F 1F 84 00 00 00 00 00 44 0F B6 C0 4C 8D 51 50 4D 69 C8 88 00 00 00 4D 03 D1 4D 8B 02 4D 85 C0 74 05 4C 3B C2 74 12 FE C0 3C 0A 72 DB 48 8D 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? 4D 85 D2 74 EF 49 8D 42 08 C3
+DESC: What it is: Retainer comment read-side lookup for one saved retainer comment slot. When it runs: When the client wants the stored note text for a specific retainer id instead of the full comment table. Why you would care: Useful if you want the live comment string without walking the whole user-file layout yourself. Pairs with: RetainerCommentModule_SetComment
+----------------------------------------
+NAME: RetainerCommentModule_SetComment
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 81 EC 90 00 00 00 49 8B F0 4C 8B DA 48 8B F9 45 32 D2 66 90 41 0F B6 C2 48 8D 59 50 4C 69 C8 88 00 00 00 49 03 D9 48 8B 03 48 85 C0 74 05 49 3B C3 74 0B 41 FE C2 41 80 FA 0A 72 D8 EB 05 48 85 DB 75 26
+DESC: What it is: Retainer comment write-side setter for one saved retainer note slot. When it runs: When the client stores or replaces the note text attached to a retainer entry. Why you would care: Good hook if you want the exact point where retainer comment state is updated and the backing user file is marked dirty. Pairs with: RetainerCommentModule_GetComment
+----------------------------------------
+
 CATEGORY: Housing and Workshop - Packet, Server-Fed, and Support Hooks
 NAME: AgentHousingPortal_ReadPacket
 SIG:  40 55 53 41 54 41 55 41 57 48 8D AC 24 C0 E2 FF FF B8 40 1E 00 00 E8 ??
@@ -536,6 +546,186 @@ SIG:  B8 42 03 00 00 4C 8B C9 66 3B D0 73 20 0F B7 C2 41 B8 01 00
 DESC: What it is: The local title-list reader that checks whether a specific title is unlocked for the current player. When it runs: When the client queries local title ownership before presentation or selection logic. Why you would care: Use this for local-player presentation tools or profile overlays that need to test title availability.
 ----------------------------------------
 
+CATEGORY: Crafting and Recipes - Favorites and Recommended Gear
+NAME: RecipeFavoriteModule_IsFavorited
+SIG:  85 D2 78 32 48 63 C2 45 33 D2 45 8B CA 48 8D 14 80 48 03 D2 48 8D 41 4A 48 8D 04 90 0F 1F 40 00 66 44 39 00 74 13 41 FF C2 49 FF C1 48 83 C0 04 49 83 F9 0A 7C EA 32 C0 C3 49 63 C2 48 03 C2 48 8D 0C 81 48 83 C1 4A 74 ED F6 41 02 01 74 E7 B0 01 C3
+DESC: What it is: Recipe-favorite read-side check for one recipe bucket and recipe id. When it runs: When the client tests whether a recipe is already stored in one of the favorite lists. Why you would care: Useful if you want the yes-or-no favorite check instead of scanning the saved recipe favorites by hand. Pairs with: RecipeFavoriteModule_GetEntry, RecipeFavoriteModule_AddToFavorites, RecipeFavoriteModule_RemoveFromFavorites
+----------------------------------------
+NAME: RecipeFavoriteModule_GetEntry
+SIG:  85 D2 78 32 48 63 C2 45 33 D2 45 8B CA 48 8D 14 80 48 03 D2 48 8D 41 4A 48 8D 04 90 0F 1F 40 00 66 44 39 00 74 13 41 FF C2 49 FF C1 48 83 C0 04 49 83 F9 0A 7C EA 33 C0 C3 49 63 C2 48 03 C2 48 8D 04 85 4A 00 00 00 48 03 C1 C3
+DESC: What it is: Recipe-favorite lookup that returns the raw stored slot for one recipe bucket and recipe id. When it runs: When the client needs the saved favorite entry itself instead of a simple membership answer. Why you would care: Good support hook if you need the entry pointer or saved slot data after the favorite match has already been found. Pairs with: RecipeFavoriteModule_IsFavorited
+----------------------------------------
+NAME: RecipeFavoriteModule_RemoveFromFavorites
+SIG:  48 89 74 24 08 57 48 83 EC 20 4C 8B C9 33 F6 48 63 CA 8B FE 48 8D 04 89 4D 8D 14 C1 49 8D 42 4A 66 44 39 00 74 0F FF C6 48 FF C7 48 83 C0 04 48 83 FF 0A 7C EB 83 FE 0A 75 10 B8 FE 04 00 00 48 8B 74 24 30 48 83 C4 20 5F C3 48 63 D6 48 83 FA 09 7D 22
+DESC: What it is: Recipe-favorite write-side remover for one recipe id inside one favorite bucket. When it runs: When the client removes a saved recipe favorite and compacts the remaining slots behind it. Why you would care: Useful if you want the exact place where favorite recipe state is deleted and the backing user-file state is dirtied. Pairs with: RecipeFavoriteModule_AddToFavorites, RecipeFavoriteModule_IsFavorited
+----------------------------------------
+NAME: RecipeFavoriteModule_AddToFavorites
+SIG:  40 53 48 8B D9 85 D2 78 2E 48 63 C2 45 33 DB 45 8B D3 4C 8D 0C 80 4D 03 C9 48 8D 41 4A 4A 8D 04 88 66 44 39 00 74 1C 41 FF C3 49 FF C2 48 83 C0 04 49 83 FA 0A 7C EA 41 B1 01 48 8B CB 5B E9 7D FD FF FF 48 83 C1 4A 49 63 C3 49 03 C1 48 8D 0C 81 48 85 C9 74 E1 F6 41 02 01 74 DB
+DESC: What it is: Recipe-favorite write-side add path for one recipe id inside one bucket. When it runs: When the client stores a new recipe favorite or refreshes an existing favorite slot before writing it back. Why you would care: Use this as the main add/update hook when you want recipe favorites at the moment they are actually committed. Pairs with: RecipeFavoriteModule_RemoveFromFavorites, RecipeFavoriteModule_IsFavorited
+----------------------------------------
+NAME: RecommendEquipModule_SetupForClassJob
+SIG:  40 56 41 54 41 55 41 57 48 83 EC 48 48 8B F1 44 0F B6 FA 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 2D ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 33 D2 44 0F B6 E0 E8 ?? ?? ?? ?? 45 33 C0 88 44 24 20 48 8D 0D ?? ?? ?? ?? 41 8D 50 FF E8 ?? ?? ?? ?? 80 3E 00
+DESC: What it is: Recommended-gear setup path for one selected class/job. When it runs: When the client rebuilds the Recommend Equip working model for a chosen class/job before the candidate list is shown or refreshed. Why you would care: This is the clean setup anchor if you want recommended-gear state before the final equip request is issued. Pairs with: RecommendEquipModule_Clear, RecommendEquipModule_EquipRecommendedGear
+----------------------------------------
+NAME: RecommendEquipModule_Clear
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 F6 66 C7 01 00 00 89 71 04 48 8D 59 08 8D 7E 0E 48 8B 0B 48 85 C9 74 0D 48 8B 01 BA 01 00 00 00 FF 10 48 89 33 48 83 C3 08 48 83 EF 01 75 E1
+DESC: What it is: Recommended-gear cleanup path that clears the live candidate list and releases the temporary item handles behind it. When it runs: When the client resets the Recommend Equip working state before a rebuild or after a commit. Why you would care: Useful if you need the point where the old recommended-gear state is torn down. Pairs with: RecommendEquipModule_SetupForClassJob
+----------------------------------------
+NAME: RecommendEquipModule_EquipRecommendedGear
+SIG:  4C 8B DC 41 54 48 81 EC 40 02 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 10 02 00 00 80 39 00 4C 8B E1 48 89 4C 24 30 0F 85 ?? ?? ?? ?? 49 89 5B 10 49 89 6B 18 33 ED 49 89 73 20 49 89 7B F0 4D 89 6B E8 4D 89 7B D8 4C 8D 79 08
+DESC: What it is: Recommended-gear commit path that packages the prepared slot choices and issues the live equip request. When it runs: When the player confirms Recommend Equip and the client turns the prepared candidate model into the final request payload. Why you would care: This is the strongest request-side hook if you want the actual recommended-gear equip action instead of only the earlier setup and preview steps. Pairs with: RecommendEquipModule_SetupForClassJob, RecommendEquipModule_Clear
+----------------------------------------
+NAME: RecommendEquipModule_Setup
+SIG:  41 54 41 55 41 56 41 57 48 83 EC 28 80 39 00 45 0F B7 F9 45 0F B6 E0 44 0F B6 EA 4C 8B F1 74 0F 32 C0 48 83 C4 28 41 5F 41 5E 41 5D 41 5C C3 48 89 5C 24 50 48 89 6C 24 58 BD 0E 00 00 00
+DESC: What it is: Lower-level Recommend Equip setup path that seeds the working model from explicit race, sex, level, class-job, company, and PvP inputs. When it runs: When the client builds the recommended-gear candidate state from raw parameters instead of directly from the current player state. Why you would care: Useful if you want the generic setup entry below the player-state wrapper, especially when another caller drives Recommend Equip with custom inputs. Pairs with: RecommendEquipModule_SetupForClassJob, RecommendEquipModule_Update
+----------------------------------------
+NAME: RecommendEquipModule_Update
+SIG:  48 8B C4 53 48 81 EC A0 00 00 00 80 39 00 48 8B D9 0F 84 ?? ?? ?? ?? 48 89 68 F0 48 8D 0D ?? ?? ?? ?? 48 89 70 E8 BA E8 03 00 00 48 89 78 E0 4C 89 60 D8 4C 89 68 D0 4C 89 70 C8 4C 89 78 C0 E8
+DESC: What it is: Main Recommend Equip rebuild pass that walks the candidate pool and refreshes the working item choices. When it runs: After Recommend Equip has been seeded and the client is evaluating or refreshing the slot-by-slot recommendations. Why you would care: Good middle anchor when you want the live rebuild logic between setup and the final equip request. Pairs with: RecommendEquipModule_Setup, RecommendEquipModule_EquipRecommendedGear
+----------------------------------------
+
+CATEGORY: Profile and Banner - User File Hooks
+NAME: BannerModule_CreateBanner
+SIG:  48 89 6C 24 20 56 48 83 EC 20 48 8B 71 48 48 8B E9 48 85 F6 75 0D 33 C0 48 8B 6C 24 48 48 83 C4 20 5E C3 48 89 7C 24 40 33 FF 80 BE 4E 3E 00 00 6E 0F 8D 86 00 00 00 48 89 5C 24 38 48 8D 86 86 00 00 00 8B DF 40 38 38 7C 0F
+DESC: What it is: Banner-module create path that allocates the next free banner slot and seeds it with the module's default banner state. When it runs: When the client creates a brand-new banner or adventurer-plate style entry in the saved banner list. Why you would care: Useful as the first write-side hook when you want the moment a new banner slot is actually created.
+----------------------------------------
+NAME: BannerModule_CreateBannerAtBannerIndex
+SIG:  40 55 56 57 48 83 EC 20 48 8B 79 48 48 8B E9 48 63 F2 48 85 FF 75 0A 33 C0 48 83 C4 20 5F 5E 5D C3 48 89 5C 24 48 4C 89 74 24 50 85 D2 78 5F 0F BE 87 4E 3E 00 00 3B F0 7D 54 48 0F BE 84 3E E0 3D 00 00 84 C0 78 47
+DESC: What it is: Banner-module create or reset path for one explicit banner index. When it runs: When the client wants a banner entry for a chosen logical slot instead of always taking the next free one. Why you would care: Good hook if you care about which saved banner index is being materialized, not just that a new banner exists.
+----------------------------------------
+NAME: BannerModule_DeleteBanner
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B 59 48 48 8B F1 48 63 FA 48 85 DB 0F 84 A8 00 00 00 85 D2 0F 88 A0 00 00 00 0F BE 83 4E 3E 00 00 3B F8 0F 8D 91 00 00 00 48 0F BE 8C 1F E0 3D 00 00 84 C9 0F 88 80 00 00 00
+DESC: What it is: Banner-module delete path that removes one saved banner slot and compacts the live banner index mapping behind it. When it runs: When the client deletes one existing banner entry from the saved banner table. Why you would care: Useful if you want the exact point where banner state is removed instead of only watching later list refreshes. Pairs with: BannerModule_CreateBanner, BannerModule_CreateBannerAtBannerIndex
+----------------------------------------
+NAME: BannerModule_GetBannerById
+SIG:  4C 8B 41 48 4D 85 C0 74 2C 85 D2 78 28 41 0F BE 80 4E 3E 00 00 3B D0 7D 1C 48 63 C2 4A 0F BE 8C 00 E0 3D 00 00 84 C9 78 0C 48 8D 04 C9 48 C1 E0 04 49 03 C0 C3
+DESC: What it is: Banner-module read-side lookup that returns the saved banner entry for one logical banner id. When it runs: When the client needs the live banner record after it already knows which saved banner id it wants. Why you would care: Good support hook if you need the raw banner entry pointer or want to pair create and delete events with later read-side access. Pairs with: BannerModule_CreateBanner, BannerModule_DeleteBanner
+----------------------------------------
+NAME: BannerModule_GetBannerIdByBannerIndex
+SIG:  4C 8B 41 48 4D 85 C0 74 28 85 D2 78 24 83 FA 6E 73 1F 48 63 C2 48 8D 0C C0 48 03 C9 41 80 BC C8 86 00 00 00 00 7C 0A 41 0F BE 84 C8 87 00 00 00 C3 B8 FF FF FF FF C3
+DESC: What it is: Banner-module index-to-id lookup for one saved banner slot. When it runs: When the client has a banner-list index and needs the logical banner id stored there. Why you would care: Useful when you want to follow banner selection flow from visible list slot to the saved record the rest of the code uses. Pairs with: BannerModule_GetBannerById, BannerModule_CreateBannerAtBannerIndex
+----------------------------------------
+NAME: BannerModule_SetBannerChecksum
+SIG:  4C 8B 49 48 4C 8B D1 4D 85 C9 74 31 85 D2 78 2D 41 0F BE 81 4E 3E 00 00 3B D0 7D 21 48 63 C2 4A 0F BE 8C 08 E0 3D 00 00 84 C9 78 11 48 8D 0C C9 48 03 C9 45 89 44 C9 78 41 C6 42 44 01 C3
+DESC: What it is: Banner-module checksum write path for one saved banner entry. When it runs: When the client updates the stored checksum for a banner slot after banner data changes. Why you would care: Good write-side hook if you want to know when the client has decided one banner entry is dirty and worth saving again. Pairs with: BannerModule_CreateBanner, BannerModule_DeleteBanner
+----------------------------------------
+NAME: BannerModuleEntry_SetBannerTimelineCustomName
+SIG:  48 89 5C 24 08 57 48 83 EC 20 41 0F B6 F8 48 8B D9 4C 8B C2 BA 40 00 00 00 E8 ?? ?? ?? ?? 40 88 BB 8D 00 00 00 48 8B 5C 24 30 48 83 C4 20 5F C3
+DESC: What it is: Banner-entry setter for the custom timeline name string and its small mode flag. When it runs: When the client writes the user-facing timeline name stored on one banner entry. Why you would care: Useful if you care about portrait/banner labeling changes instead of only broad banner saves. Pairs with: BannerModule_SetBannerChecksum
+----------------------------------------
+NAME: BannerHelper_RequestCurrentBannerData
+SIG:  48 83 EC 38 45 33 C9 C7 44 24 20 00 00 00 00 45 33 C0 33 D2 B9 80 0C 00 00 E8 ?? ?? ?? ?? 48 83 C4 38 C3
+DESC: What it is: Small outbound helper that asks the server for the current live banner data blob. When it runs: When the client wants the up-to-date current banner state instead of only using the saved local banner list. Why you would care: Good request-side anchor if you want the start of current-banner sync rather than the later apply handlers. Pairs with: BannerHelper_HandleCurrentBannerDataPacket, BannerHelper_HandleBannerDataUpdatePacket
+----------------------------------------
+NAME: BannerHelper_SendBannerData
+SIG:  40 55 48 8D AC 24 50 F1 FF FF 48 81 EC B0 0F 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 A8 0E 00 00 80 3A 00 0F 84 ?? ?? ?? ?? 80 39 00 0F 85 ?? ?? ?? ?? 0F 10 02 C7 44 24 58 79 00 00 00
+DESC: What it is: Large outbound banner send path that packages the current banner blob and forwards it into the real send routine. When it runs: When the client submits the current banner or portrait-style state to the server. Why you would care: Strong outbound hook for banner sync because it sits on the real send path, not just on a local temp-data copy. Pairs with: BannerHelper_SetTempBannerData, BannerHelper_RequestCurrentBannerData
+----------------------------------------
+NAME: BannerHelper_SetTempBannerData
+SIG:  80 3A 00 74 28 80 39 00 75 23 0F 10 02 0F 11 01 0F 10 4A 10 0F 11 49 10 0F 10 42 20 0F 11 41 20 8B 42 30 89 41 30 B0 01 80 61 0B FE C3 32 C0 C3
+DESC: What it is: Straight banner-data copy path for the temporary current-banner buffer. When it runs: When the client updates its working current-banner buffer without immediately sending it to the server. Why you would care: Useful if you want the local staging step before the heavier send path runs. Pairs with: BannerHelper_SendBannerData, BannerHelper_HandleCurrentBannerDataPacket
+----------------------------------------
+NAME: BannerHelper_HandleCurrentBannerDataPacket
+SIG:  40 53 48 83 EC 20 48 8B D9 4C 8D 4A 30 48 83 C1 34 4C 8D 42 0C E8 ?? ?? ?? ?? 80 8B E0 01 00 00 01 48 83 C4 20 5B C3
+DESC: What it is: Apply-side handler for the current-banner data packet. When it runs: When the client receives the server packet that fills the live current-banner buffer. Why you would care: Useful if you want the exact point where current banner sync lands on the client instead of only watching local file edits. Pairs with: BannerHelper_RequestCurrentBannerData, BannerHelper_SetTempBannerData
+----------------------------------------
+NAME: BannerHelper_HandleBannerDataUpdatePacket
+SIG:  40 53 48 83 EC 20 8B DA 85 D2 75 75 38 11 0F 84 B6 00 00 00 0F 10 01 8B 41 30 0F 10 49 10 80 89 E0 01 00 00 01 0F 11 41 34 0F 10 41 20 0F 11 49 44 0F 11 41 54 89 41 64 33 C0 48 89 01 48 89 41
+DESC: What it is: Current-banner update response handler that either applies fresh server data or clears it based on the result code. When it runs: After a banner update request comes back from the server. Why you would care: Good sync-side hook if you want to distinguish successful live banner updates from clear or error-style responses. Pairs with: BannerHelper_SendBannerData, BannerHelper_HandleClearCurrentBannerDataPacket
+----------------------------------------
+NAME: BannerHelper_HandleClearCurrentBannerDataPacket
+SIG:  33 C0 48 89 41 34 48 89 41 3C 48 89 41 44 48 89 41 4C 48 89 41 54 89 41 5C 48 89 41 60 80 89 E0 01 00 00 01 C3
+DESC: What it is: Clear path for the cached current-banner data block. When it runs: When the client is told to throw away the current-banner buffer or reset it to empty. Why you would care: Useful if you need the exact reset point for current banner state instead of inferring it from later UI changes. Pairs with: BannerHelper_HandleCurrentBannerDataPacket, BannerHelper_HandleBannerDataUpdatePacket
+----------------------------------------
+NAME: BannerData_ApplyBannerModuleEntry
+SIG:  48 89 5C 24 08 55 56 57 48 81 EC C0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 B0 00 00 00 48 8B F1 49 8B E8 48 8D 4C 24 20 48 8B FA 49 8B D8 E8 ?? ?? ?? ?? 33 D2 48 8B CB E8 ?? ?? ?? ??
+DESC: What it is: Banner-data serializer that copies one banner-module entry into the current-banner packet shape. When it runs: When the client needs to turn a saved banner entry into the working payload used for live sync and preview flows. Why you would care: Strong conversion hook if you want to see the boundary between saved banner data and the packet-style structure the sync code uses. Pairs with: BannerData_ApplyBannerModuleEntryIfNotDefault, BannerModuleEntry_ApplyBannerData
+----------------------------------------
+NAME: BannerData_ApplyBannerModuleEntryIfNotDefault
+SIG:  48 89 5C 24 20 56 57 41 56 48 81 EC 50 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 40 01 00 00 41 83 78 78 00 4D 8D 70 78 49 8B D8 48 8B FA 48 8B F1 0F 84 ?? ?? ?? ?? 33 D2 48 8B CB E8
+DESC: What it is: Banner-data serializer that first skips default-banner cases before building the current-banner packet shape. When it runs: When the client only wants to export non-default banner state instead of always copying a full default preset. Why you would care: Useful when you want the practical export/apply path for edited banners and want to avoid default-noise cases. Pairs with: BannerData_ApplyBannerModuleEntry, BannerModuleEntry_ApplyDefaultBannerPreset
+----------------------------------------
+NAME: BannerModuleEntry_ApplyDefaultBannerPreset
+SIG:  41 0F B7 40 32 4C 8B D2 66 89 42 7C 4D 8B C8 41 0F B7 40 34 66 89 42 7E 41 0F B7 40 36 66 89 82 80 00 00 00 41 0F B7 40 14 66 89 82 82 00 00 00 41 8B 40 18 89 42 6C 41 0F B6 40 1C 88 82 89 00 00 00
+DESC: What it is: Banner-entry apply helper for the default banner preset data block. When it runs: When the client seeds or resets a banner entry from the stock default preset layout. Why you would care: Good hook if you want to catch default preset application separately from user-edited banner imports. Pairs with: BannerData_ApplyBannerModuleEntryIfNotDefault, BannerModule_CreateBanner
+----------------------------------------
+NAME: BannerModuleEntry_ApplyBannerData
+SIG:  41 0F B7 40 2C 66 89 42 7C 41 0F B7 40 2E 66 89 42 7E 41 0F B7 40 2A 66 89 82 80 00 00 00 41 0F B7 40 0C 66 89 82 82 00 00 00 41 0F B7 40 0E 66 0F 6E C0 0F 5B C0 F3 0F 5E 05 ?? ?? ?? ?? F3 0F 11 42 6C
+DESC: What it is: Banner-entry apply helper that imports the packed banner-data structure into one live banner entry. When it runs: When the client takes banner data from a packet-style or exported structure and writes it back into the saved/live banner entry layout. Why you would care: Useful if you want the main import-side banner mutation hook instead of only the later save or send steps. Pairs with: BannerData_ApplyBannerModuleEntry, BannerHelper_HandleCurrentBannerDataPacket
+----------------------------------------
+NAME: AgentBannerEditorState_ToBannerModuleEntry
+SIG:  48 89 5C 24 18 55 48 8B EC 48 83 EC 70 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 F0 48 8B 89 C8 03 00 00 48 8B DA 48 8D 55 B8 E8 ?? ?? ?? ?? 0F B7 45 EA F3 0F 10 45 D0 F3 0F 58 05 ?? ?? ?? ?? 66
+DESC: What it is: Agent-banner-editor conversion path from the editor state object into a banner-module entry. When it runs: When the banner editor finalizes its current working state into the saved banner-entry layout. Why you would care: Strong editor-side hook if you want the point where UI editing becomes a real banner entry rather than just temporary widget state. Pairs with: BannerModuleEntry_ApplyBannerData, BannerHelper_SendBannerData
+----------------------------------------
+NAME: BannerModuleEntry_IsOutdated
+SIG:  48 83 EC 28 F6 05 ?? ?? ?? ?? 04 74 32 8B 05 ?? ?? ?? ?? 85 C0 74 28 3B 42 74 72 23 45 84 C0 74 17 48 8B 49 08 48 8B 01 FF 50 58 48 8B C8 BA F2
+DESC: What it is: Banner-entry stale-check wrapper that only returns success when both current-banner and character-data freshness checks still pass. When it runs: When the client decides whether one banner entry needs to be rebuilt from newer local or live character state. Why you would care: Useful if you want the gate that decides whether a banner entry is considered stale before heavier rebuild code runs. Pairs with: BannerModuleEntry_ApplyDefaultBannerPreset, BannerModuleEntry_ApplyBannerData
+----------------------------------------
+NAME: CharaCardHelper_SendCharaCardData
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 B8 40 10 00 00 E8 ?? ?? ?? ?? 48 2B E0 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 30 10 00 00 48 8B 3D ?? ?? ?? ?? 41 8B E8 48 8B D9
+DESC: What it is: Large outbound CharaCard send path that packages the live card-plus-banner state and forwards it into the real send routine. When it runs: When the client submits adventurer-plate style data to the server. Why you would care: Strong outbound hook if you want the card-side send path that sits next to banner sync instead of only the local editor conversions. Pairs with: CharaCardHelper_HandleCurrentCharaCardDataPacket, AgentBannerEditorState_ToBannerModuleEntry
+----------------------------------------
+NAME: CharaCardHelper_HandleCurrentCharaCardDataPacket
+SIG:  40 53 48 83 EC 20 8B 05 ?? ?? ?? ?? 48 8B DA 39 42 18 0F 85 ?? ?? ?? ?? 83 7A 1C 03 0F 84 ?? ?? ?? ?? 0F B6 42 28 88 81 24 01 00 00 0F B6 42 29 88 81 25 01 00 00 0F B6 42 2A 88 81 26 01 00 00
+DESC: What it is: Current CharaCard packet handler that applies the live card data blob and routes follow-up updates to the right UI owner. When it runs: When the client receives current adventurer-plate style data from the server. Why you would care: Useful if you want the card-side apply path that pairs with live banner/card requests instead of only the local saved-file hooks. Pairs with: CharaCardHelper_SendCharaCardData, CharaCardData_ApplyCharaViewCharacterDataAndBannerModuleEntry
+----------------------------------------
+NAME: CharaCardData_ApplyCharaViewCharacterDataAndBannerModuleEntry
+SIG:  C6 02 03 41 0F B7 41 7C 66 89 42 72 41 0F B7 41 7E 66 89 42 74 41 0F B7 81 80 00 00 00 66 89 42 70 41 0F B7 81 82 00 00 00 66 89 42 52 F3 41 0F 10 41 6C F3 0F 59 05 ?? ?? ?? ?? F3 0F 2C C0 66
+DESC: What it is: CharaCard serializer that combines the live character-view data and one banner entry into the outgoing card-data shape. When it runs: When the client builds the card payload used for current-card sync and related profile views. Why you would care: Good conversion hook if you want the point where character-view state and banner state get merged into one card export. Pairs with: CharaCardHelper_SendCharaCardData, BannerModuleEntry_ApplyCharaCardData
+----------------------------------------
+NAME: CharaViewCharacterData_ApplyCharaCardData
+SIG:  41 80 38 00 75 08 48 8B CA E9 ?? ?? ?? ?? 41 0F B6 40 0B 88 42 74 41 0F B6 40 0C 88 02 41 0F B6 40 0D 88 42 01 41 0F B6 40 0E 88 42 02 41 0F B6 40 0F 88 42 03 41 0F B6 40 10 88 42 04
+DESC: What it is: Character-view import helper that copies CharaCard data back into the local character-view structure. When it runs: When the client takes a received or exported CharaCard blob and applies the character-view portion of it. Why you would care: Useful when you want the card-side character import step without the banner-entry writes around it. Pairs with: CharaCardData_ApplyCharaViewCharacterDataAndBannerModuleEntry, BannerModuleEntry_ApplyCharaCardData
+----------------------------------------
+NAME: BannerModuleEntry_ApplyCharaCardData
+SIG:  41 0F B7 40 72 66 89 42 7C 41 0F B7 40 74 66 89 42 7E 41 0F B7 40 70 66 89 82 80 00 00 00 41 0F B7 40 52 66 89 82 82 00 00 00 41 0F B7 40 54 66 0F 6E C0 0F 5B C0 F3 0F 5E 05 ?? ?? ?? ?? F3 0F
+DESC: What it is: Banner-entry import helper that writes the banner portion of a CharaCard blob into one live banner entry. When it runs: When card data is being applied back onto the saved/live banner-entry layout. Why you would care: Useful if you want the banner-side import hook that sits specifically on the CharaCard path instead of the generic banner-data import path. Pairs with: CharaViewCharacterData_ApplyCharaCardData, CharaCardData_ApplyCharaViewCharacterDataAndBannerModuleEntry
+----------------------------------------
+NAME: BannerGearData_ApplyClassJobIdAndGearVisibilityFromGearset
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B 49 08 48 8B DA 48 8B 01 FF 50 70 0F B6 53 60 48 8B C8 48 8B F8 E8 ?? ?? ?? ?? 84 C0 74 4F 0F B6 53 60 48 8B CF E8 ?? ?? ?? ?? 0F B6 48 31 88 4B 61 44 0F B6
+DESC: What it is: Banner-gear helper that pulls class-job and gear-visibility flags from the linked gearset into the banner working data. When it runs: When the client wants the banner to follow a gearset's class/job and visibility rules. Why you would care: Good hook if you care about the gearset-link side of portraits and banners instead of the later raw gear import. Pairs with: BannerGearData_ApplyGearFromGearset, BannerGearData_UpdateGearsetChecksum
+----------------------------------------
+NAME: BannerGearData_ApplyGearFromGearset
+SIG:  40 53 48 83 EC 40 0F B6 42 63 48 8B DA 84 C0 0F 85 ?? ?? ?? ?? 48 8B 49 08 4C 89 74 24 38 4C 89 7C 24 30 48 8B 01 FF 50 70 0F B6 53 60 48 8B C8 4C 8B F0 E8 ?? ?? ?? ?? 4C 8B F8 80 78 32 00 74
+DESC: What it is: Banner-gear import path that copies the linked gearset's item appearance data into the banner working structure. When it runs: When the client refreshes portrait/banner equipment visuals from a linked gearset. Why you would care: Useful if you want the point where linked gear actually becomes portrait/banner gear data instead of only watching the earlier link flags. Pairs with: BannerGearData_ApplyClassJobIdAndGearVisibilityFromGearset, BannerGearData_UpdateGearsetChecksum
+----------------------------------------
+NAME: BannerGearData_UpdateGearsetChecksum
+SIG:  48 89 5C 24 08 55 48 8B EC 48 83 EC 50 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 F0 80 7A 63 00 48 8B DA 0F 84 ?? ?? ?? ?? 80 7A 62 00 75 0C C7 42 58 00 00 00 00 E9 ?? ?? ?? ?? 0F B6 42 38 4C 8D
+DESC: What it is: Banner-gear checksum rebuild path for linked gearset-based banner data. When it runs: After the banner gear working data has been refreshed and the client wants the matching checksum/state marker updated. Why you would care: Good follow-up hook when you want to know that the linked-gear banner state is now considered current. Pairs with: BannerGearData_ApplyGearFromGearset, BannerModule_SetBannerChecksum
+----------------------------------------
+NAME: AgentCharaCardProfileSetting_ExportToCharaCardData
+SIG:  40 56 41 57 48 83 EC 38 48 8B 01 48 8B F2 4C 8B F9 FF 50 30 84 C0 0F 84 ?? ?? ?? ?? 48 89 5C 24 58 48 89 6C 24 60 49 8B 6F 28 48 89 7C 24 68 4C 89 64 24 30 4C 89 6C 24 28 0F B7 45 58 66 89 46
+DESC: What it is: Agent-side export path from the CharaCard profile-setting UI into the packed CharaCard data structure. When it runs: When the profile-setting UI finalizes its current state into the card-data blob used by the helper send/apply paths. Why you would care: Strong UI-to-data bridge hook if you want the point where profile-setting edits become real CharaCard payload data. Pairs with: CharaCardHelper_SendCharaCardData, CharaCardData_ApplyCharaViewCharacterDataAndBannerModuleEntry
+----------------------------------------
+NAME: BannerHelper_TryCopyCurrentBannerData
+SIG:  F6 05 ?? ?? ?? ?? 01 75 03 32 C0 C3 0F 10 05 ?? ?? ?? ?? 0F 11 02 0F 10 0D ?? ?? ?? ?? 0F 11 4A 10 0F 10 05 ?? ?? ?? ?? 0F 11 42 20 8B 05
+DESC: What it is: Cached current-banner copy helper. When it runs: When code wants the live banner state and first checks whether a current banner snapshot is already present. Why you would care: Useful read-side hook if you want the current banner data without waiting for the full apply or packet path.
+----------------------------------------
+NAME: BannerHelper_TryCopyCurrentCharaCard
+SIG:  F6 05 ?? ?? ?? ?? 02 4C 8B C2 75 03 32 C0 C3 48 8D 0D ?? ?? ?? ?? 0F 10 01 0F 11 02 0F 10 49 10 0F 11 4A 10 0F 10 41 20 0F 11 42 20 0F 10 49 30 0F 11 4A 30
+DESC: What it is: Cached current CharaCard copy helper. When it runs: When the client wants the current card blob and first checks whether the cached copy is valid. Why you would care: Good read-side anchor for grabbing the current card state without going through the editor or packet handlers.
+----------------------------------------
+NAME: CharaCardHelper_RequestCurrentCharaCard
+SIG:  F6 05 ?? ?? ?? ?? 02 75 0C 48 8D 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? C3
+DESC: What it is: Request helper for current CharaCard data. When it runs: When something needs the current card and the local cache is not marked valid. Why you would care: Useful when you want the fetch path that wakes up current-card sync instead of only the later apply handlers.
+----------------------------------------
+NAME: CharaCardHelper_HasCurrentCharaCard
+SIG:  0F B6 05 ?? ?? ?? ?? D0 E8 24 01 C3
+DESC: What it is: Tiny cache-valid check for current CharaCard data. When it runs: When code only needs to know whether a current card snapshot is present. Why you would care: Simple state check if you are tracking whether the card cache exists before copying or requesting it.
+----------------------------------------
+NAME: CharaCardHelper_HasCharaCardCreated
+SIG:  F6 05 ?? ?? ?? ?? 02 75 03 32 C0 C3 80 3D ?? ?? ?? ?? 00 0F 97 C0 C3
+DESC: What it is: Helper that tells whether a CharaCard has actually been created, not just cached. When it runs: When the client needs to distinguish a real created card from an empty or default current-card state. Why you would care: Useful gate when you want to know whether portrait/card data is meaningful before exporting, applying, or syncing it.
+----------------------------------------
+NAME: CharaCardHelper_HandleCharaCardUpdatePacket
+SIG:  48 89 5C 24 08 57 48 83 EC 20 41 8B F8 8B DA 85 D2 0F 85 ?? ?? ?? ?? 38 51 68 0F 84 ?? ?? ?? ?? 44 0F B6 81 E0 01 00 00 45 33 D2 41 F6 C0 04 74
+DESC: What it is: Main CharaCard update-packet handler. When it runs: When the client receives current-card update data or a clear or failure response. Why you would care: Good apply-side hook for the live card sync path because it decides whether to keep, clear, or rewrite the current card state.
+----------------------------------------
+NAME: CharaCardHelper_HandleCharaCardTimestampPacket
+SIG:  80 89 E0 01 00 00 04 89 91 AC 01 00 00 C3
+DESC: What it is: Tiny timestamp or status apply helper for current CharaCard data. When it runs: When the client stores the latest card timestamp or related status field after an update. Why you would care: Useful if you care about staleness or last-update tracking around the current CharaCard cache.
+----------------------------------------
+
 CATEGORY: APIs - Framework and Service Entry Points
 NAME: EventFramework_GetCurrentContentType
 SIG:  48 83 EC 28 48 8B 05 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 83 B8 18 3C 00 00 06 0F
@@ -558,6 +748,136 @@ DESC: What it is: A high-level ActionManager service entrypoint that answers whe
 NAME: ActionManager_GetActionRange
 SIG:  48 89 5C 24 08 57 48 83 EC 30 48 8B 3D ?? ?? ?? ?? 8B D9 0F 29 74 24 20
 DESC: What it is: A high-level ActionManager service entrypoint that computes the effective action range, including action-specific exceptions and local status adjustments. When it runs: When gameplay code needs a resolved usable range rather than raw data-sheet values. Why you would care: Use this as the internal API-level range query for action-range checks, overlays, and rule helpers. Extra context: This is a gameplay-service range resolver, not just a table lookup, so it is the best API-like boundary when a plugin needs the same resolved range the client uses. Pairs with: ActionManager_CanUseAction, ActionManager_GetAdjustedCastTime
+----------------------------------------
+
+CATEGORY: APIs - UI, Text, and Presentation Helpers
+NAME: ClientUI_IsValidPlayerCharacterName
+SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 56 41 57 48 81 EC A0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 90 00 00 00 48 8B F9 33 DB 48 8B 0D ?? ?? ?? ?? 44 8B F3 40 32 F6 40 B5 01 E8 ?? ?? ?? ??
+DESC: What it is: The client-side name validator used for player-character names. When it runs: When the UI needs to accept or reject a player-style name string against the client's own name rules. Why you would care: Useful if you want the same pass/fail answer the client uses instead of rebuilding the naming rules yourself.
+----------------------------------------
+NAME: ClientUI_PlaySoundEffect
+SIG:  40 53 48 81 EC 90 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 50 01 00 00 F6 05 ?? ?? ?? ?? 04 8B D9 44 89 4C 24 40 74 30 80 3D ?? ?? ?? ?? 40 73 27 8D 41 DE 83 F8 27 77 1F
+DESC: What it is: The main UI sound-effect helper that routes regular UI SFX and the special zingle-style sound paths. When it runs: When client UI code wants to play one of the named sound effects instead of talking to the lower sound layer directly. Why you would care: Good central hook if you want UI-triggered sound playback without chasing every caller site.
+----------------------------------------
+NAME: ClientUI_GetUIColor
+SIG:  83 F9 0A 73 24 8B C9 4C 8D 0D ?? ?? ?? ?? 48 85 D2 74 06 41 8B 04 C9 89 02 4D 85 C0 74 08 41 8B 44 C9 04 41 89 00 B0 01 C3
+DESC: What it is: UI color-table helper that returns the color and edge-color pair for one built-in UI color index. When it runs: When the UI needs a resolved color pair instead of a raw table offset. Why you would care: Useful for overlays, theme-aware drawing, or any plugin that wants the same color values the client uses.
+----------------------------------------
+NAME: TextModuleInterface_GetTextLabelByID
+SIG:  48 89 5C 24 20 55 56 57 41 56 41 57 48 81 EC B0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 A0 00 00 00 65 48 8B 04 25 58 00 00 00 4C 8D 3D ?? ?? ?? ?? 4C 8B F1
+DESC: What it is: Text-module helper that resolves one text label id through the client's live localized text path. When it runs: When UI code wants a text-label string by id instead of hardcoding text or looking up sheet rows itself. Why you would care: This is the best named hook when you want localized client text at the same boundary the UI uses.
+----------------------------------------
+NAME: ScreenLog_ConvertLogMessageIdToScreenLogKind
+SIG:  C7 02 05 00 00 00 81 F9 C0 05 00 00 0F 8F ?? ?? ?? ?? 0F 84 ?? ?? ?? ?? 81 C1 41 FE FF FF 81 F9 B8 00 00 00 0F 87 ?? ?? ?? ?? 48 63 C1 4C 8D 05 ?? ?? ?? ?? 41 0F B6 84 00 ?? ?? ?? ?? 41 8B 8C 80 ?? ?? ?? ?? 49 03 C8 FF E1
+DESC: What it is: Screen-log classifier that maps one log-message id to the client's screen-log kind and channel bucket. When it runs: When a system message is being routed into one of the screen-log lanes. Why you would care: Useful if you want to classify or filter screen-log traffic the same way the client does.
+----------------------------------------
+NAME: ClientUI_OpenWebURL
+SIG:  48 83 EC 38 E8 ?? ?? ?? ?? 48 85 C0 74 69 48 8B C8 48 89 5C 24 30 E8 ?? ?? ?? ?? 48 8B 0D ?? ?? ?? ?? 48 8B D8 E8 ?? ?? ?? ?? 48 85 C0 74 43 48 85 DB 74 3E 80 3B 00 74 39
+DESC: What it is: The built-in UI helper that resolves a configured URL and opens it through the Windows shell. When it runs: When the client wants to launch one of its known web links from an in-game UI flow. Why you would care: Good hook if you want the exact point where the client has accepted a link and is about to open it.
+----------------------------------------
+NAME: ClientUI_GetNumberAsBoxedChar
+SIG:  40 53 48 83 EC 20 65 48 8B 04 25 58 00 00 00 8B D9 8B 15 ?? ?? ?? ?? B9 C0 03 02 00 48 8B 14 D0 8B 04 11 39 05 ?? ?? ?? ?? 7F 2A 83 FB 1F 77 1D
+DESC: What it is: Small-number formatter that returns the boxed-glyph string for values in the client's boxed-number range. When it runs: When the UI wants one of the prebuilt boxed number glyphs instead of plain digits. Why you would care: Useful for matching the client's own boxed-number formatting in custom UI work.
+----------------------------------------
+NAME: ClientUI_GetNumberAsDigitChars
+SIG:  44 8B D1 81 F9 E7 03 00 00 0F 87 ?? ?? ?? ?? 4C 8B 1D ?? ?? ?? ?? 4C 8D 0D ?? ?? ?? ?? C6 05 ?? ?? ?? ?? 00 45 33 C0 66 0F 1F 84 00 00 00 00 00 41 0F B6 03 49 83 E9 03 41 88 01 41 0F B6 43 01
+DESC: What it is: Plain-digit formatter that builds the client's cached digit string for values from 0 to 999. When it runs: When UI code wants a ready digit buffer instead of formatting a small number on its own. Why you would care: Useful if you want to reproduce the client's own small-number text output in addons or tooling.
+----------------------------------------
+NAME: GetLanguageCode
+SIG:  48 83 EC 28 8D 41 01 83 F8 08 77 1E 83 F9 FF 75 07 E8 ?? ?? ?? ?? 8B C8 8B C1 48 8D 0D ?? ?? ?? ?? 48 8B 04 C1 48 83 C4 28 C3
+DESC: What it is: Language helper that returns the client language-code string for either the current language or a requested language enum. When it runs: When the client needs the short language code instead of the raw language id. Why you would care: Handy for language-aware logging, URL building, or text-selection logic that needs the same codes the client uses.
+----------------------------------------
+NAME: ScreenLog_AddToScreenLogWithLogMessageId
+SIG:  48 85 C9 0F 84 ?? ?? ?? ?? 48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 50 41 8B F1 48 8B DA 48 8B F9 48 85 D2 0F 84 ?? ?? ?? ?? 48 8D 54 24 60 C7 44 24 60 00 00 00 00 41 8B C8 E8 ?? ?? ?? ??
+DESC: What it is: Screen-log entry path that starts from a raw log-message id and hands it off to the real screen-log writer. When it runs: When code wants to add a screen-log line by message id instead of already knowing the final screen-log kind. Why you would care: Useful if you want to see the message-id conversion step before the final write happens. Pairs with: ScreenLog_ConvertLogMessageIdToScreenLogKind, ScreenLog_AddToScreenLogWithScreenLogKind
+----------------------------------------
+NAME: ScreenLog_AddToScreenLogWithScreenLogKind
+SIG:  48 85 C9 0F 84 ?? ?? ?? ?? 56 41 56 41 57 48 81 EC 80 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 40 44 89 4C 24 20 45 8B F0 48 8B F2 4C 8B F9 48 85 D2 0F 84 ?? ?? ?? ??
+DESC: What it is: Core screen-log writer that takes a resolved screen-log kind and writes the line into the live log path. When it runs: After any caller has already decided which screen-log bucket the message belongs to. Why you would care: Better final hook than the message-id wrapper when you want the shared write point used by different screen-log sources. Pairs with: ScreenLog_AddToScreenLogWithLogMessageId, ScreenLog_ConvertLogMessageIdToScreenLogKind
+----------------------------------------
+
+CATEGORY: APIs - World and Region Helpers
+NAME: GetHomeWorldId
+SIG:  48 83 EC 28 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 22 48 8B 10 48 8B C8 FF 92 28 01 00 00 48 8B C8 33 D2 E8 ?? ?? ?? ?? 0F B7 80 1E 0A 00 00 48 83 C4 28 C3
+DESC: What it is: Read-side helper that returns the local character's configured home world id from the live world state. When it runs: When client systems need the home world value without reading the world-state block directly. Why you would care: Useful as the cleanest home-world accessor when world-travel or cross-world logic needs a stable home-world answer. Pairs with: GetCurrentWorldId, AreWorldsFromSameDC, AreWorldsFromSameRegion
+----------------------------------------
+NAME: GetCurrentWorldId
+SIG:  40 53 48 83 EC 20 48 8B 0D ?? ?? ?? ?? 33 DB E8 ?? ?? ?? ?? 48 8B C8 48 85 C0 74 1F 48 8B 00 FF 90 28 01 00 00 48 8B C8 33 D2 E8 ?? ?? ?? ?? 0F B7 98 1C 0A 00 00 66 85 DB 75 19 48 8B 05 ?? ?? ?? ?? 48 85 C0 74 0D 0F B7 80 60 23 00 00
+DESC: What it is: Read-side helper that returns the local character's current effective world id, with a fallback to the local-player block if the main world service is not ready. When it runs: When client systems need the active world value during normal play or world-travel edge cases. Why you would care: Useful when you need the same current-world answer the client uses without duplicating the fallback logic. Pairs with: GetHomeWorldId, AreWorldsFromSameDC, AreWorldsFromSameRegion
+----------------------------------------
+NAME: AreWorldsFromSameDC
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B7 FA 0F B7 F1 66 3B CA 74 50 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 3C 4C 8B 00 48 8B C8 41 FF 90 E0 00 00 00 48 8B C8 0F B7 D6 E8 ?? ?? ?? ?? 48 8B 13 48 8B CB 48 8B F0 FF 92 E0 00 00 00 48 8B C8 0F B7 D7 E8 ?? ?? ?? ?? 48 85 F6 75 17 48 85 C0 75 31 B0 01
+DESC: What it is: World helper that answers whether two world ids belong to the same data center. When it runs: When client code needs a grouped same-DC answer instead of only raw world ids. Why you would care: Good utility anchor when you want to mirror the client's own DC comparison logic. Pairs with: AreWorldsFromSameRegion, GetHomeWorldId, GetCurrentWorldId
+----------------------------------------
+NAME: AreWorldsFromSameRegion
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 0F B7 FA 0F B7 F1 66 3B CA 74 53 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 3F 4C 8B 00 48 8B C8 41 FF 90 E0 00 00 00 48 8B C8 0F B7 D6 E8 ?? ?? ?? ?? 48 8B 13 48 8B CB 48 8B F0 FF 92 E0 00 00 00 48 8B C8 0F B7 D7 E8 ?? ?? ?? ?? 48 8B D8 48 85 F6 75 17 48 85 C0 75 55 B0 01
+DESC: What it is: World helper that answers whether two world ids resolve to the same region. When it runs: When client code needs the final same-region answer instead of only the narrower same-DC test. Why you would care: Useful when you want the exact region comparison the client performs for cross-world features and UI gating. Pairs with: AreWorldsFromSameDC, GetHomeWorldId, GetCurrentWorldId
+----------------------------------------
+NAME: IsHomeWorldId
+SIG:  40 53 48 83 EC 20 0F B7 D9 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 1F 48 8B 10 48 8B C8 FF 92 28 01 00 00 48 8B C8 33 D2 E8 ?? ?? ?? ??
+DESC: What it is: World check that answers whether a given world id matches the local character's home world. When it runs: When client code only needs a yes-or-no home-world comparison instead of fetching and comparing the value itself. Why you would care: Handy if you want the client’s own home-world check at the same boundary used by UI or world-travel gating. Pairs with: GetHomeWorldId, IsCurrentWorldId
+----------------------------------------
+NAME: IsCurrentWorldId
+SIG:  48 89 5C 24 08 57 48 83 EC 20 0F B7 F9 33 DB 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 22 48 8B 10 48 8B C8 FF 92 28 01 00 00 48 8B C8 33 D2 E8 ?? ?? ?? ?? 0F B7 98 1C 0A 00 00 66 85 DB
+DESC: What it is: World check that answers whether a given world id matches the client’s current effective world. When it runs: When code wants a boolean current-world answer without manually fetching the world state and fallback values. Why you would care: Useful if you want the same current-world test the client uses during cross-world and travel-sensitive UI logic. Pairs with: GetCurrentWorldId, IsHomeWorldId
+----------------------------------------
+NAME: IsMapRegionDiscovered
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 41 0F B6 F8 8B F2 48 8B D9 E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 44 8B C6 BA
+DESC: What it is: Map-region discovery check that resolves one map-specific region slot and returns whether it is already discovered. When it runs: When the client needs to know whether a region inside a particular map is unlocked or visible yet. Why you would care: Useful when you want the same per-map discovery answer the world-map and exploration UI use.
+----------------------------------------
+NAME: IsRegionDiscovered
+SIG:  33 C0 4C 8B D1 66 3B C2 7F 42 45 84 C9 74 1E B8 A2 00 00 00 66 3B D0 73 33 48 0F BF C2 48 C1 E0
+DESC: What it is: Lower-level region discovery check that reads one discovered-state slot directly once the region index and layout are known. When it runs: When code already has the resolved region id and only needs the final discovered-state byte. Why you would care: Good tighter helper under the map-region check when you want the final discovery read without the outer lookup step. Pairs with: IsMapRegionDiscovered
+----------------------------------------
+NAME: WorldHelper_PopulateForRegion
+SIG:  48 89 5C 24 10 48 89 74 24 18 48 89 7C 24 20 55 41 54 41 55 41 56 41 57 48 8D 6C 24 C9 48 81 EC F0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 27 48 8B DA
+DESC: What it is: World-helper rebuild path that fills the internal world list for one region code. When it runs: When the client refreshes the region-scoped world data used by selection lists and region-aware UI flows. Why you would care: Useful if you want the actual rebuild point instead of only reading the finished world list.
+----------------------------------------
+NAME: WorldHelper_GetWorldIdByName
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 48 8B 79 08 48 8B F2 48 8B 1F 48 3B DF 74 76 66 90 48 8D 4B 1F 41 B8 20 00 00 00 48 8B D6 E8 ?? ??
+DESC: What it is: World-helper lookup that resolves a world id from the stored world-name table. When it runs: When the client needs to turn a world name string into the world id used by the rest of the cross-world logic. Why you would care: Good name-to-id hook if you want the same world matching path the client uses instead of building your own lookup table. Pairs with: WorldHelper_PopulateForRegion, GetCurrentWorldId, GetHomeWorldId
+----------------------------------------
+
+CATEGORY: Items and UI Content - Name, Icon, and Formatting Helpers
+NAME: Item_GetItemName
+SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 41 0F B6 F1 49 8B D8 0F B6 EA 8B F9 4D 85 C0 75 0D E8 ?? ?? ?? ?? 48 8B D8 48 85 C0 74 32 48 8B 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 85 C0 74 21 48 8B 10 48 8B C8 FF 52 30 4C 8B CB
+DESC: What it is: Item-name helper that resolves the localized item name from an item id, optional item row, and link-prefix mode. When it runs: When the client needs the final display name for a normal item instead of reading sheet text directly. Why you would care: This is the strongest named hook for item-name resolution because it sits at the point where the client already knows how to format the final item name.
+----------------------------------------
+NAME: Item_GetEventItemName
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 65 48 8B 04 25 58 00 00 00 8B F9 44 8B 0D ?? ?? ?? ?? 49 8B D8 B9 C0 03 02 00 0F B6 F2 4E 8B 14 C8 42 8B 04 11 39 05 ?? ?? ?? ?? 0F 8F ?? ?? ?? ?? 48 85 DB 75 3C
+DESC: What it is: Event-item name helper that resolves the display name for event-style item ids through the event-item path. When it runs: When the client needs the final name for an event item instead of a normal inventory item. Why you would care: Useful if you need the same naming path the client uses for event-item rows and special-item displays. Pairs with: Item_GetItemName
+----------------------------------------
+NAME: Item_GetItemIcon
+SIG:  40 53 48 83 EC 20 8B D9 48 85 D2 75 13 E8 ?? ?? ?? ?? 48 8B D0 48 85 C0 75 06 48 83 C4 20 5B C3 8D 83 BF BD F0 FF 3D ?? ?? ?? ?? 0F B7 82 88 00 00 00 77 05 05 ?? ?? ?? ?? 48 83 C4 20 5B C3
+DESC: What it is: Item-icon helper that resolves the final icon id for an item or special shifted item row. When it runs: When the client wants the actual icon id to draw for one item entry. Why you would care: Good icon-side pair with the item-name helpers when you want the same icon resolution the client uses.
+----------------------------------------
+NAME: ClientUI_FormatNumber
+SIG:  48 89 5C 24 20 55 56 57 41 56 41 57 48 8D 6C 24 80 48 81 EC 80 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 70 48 8B B5 D0 00 00 00 44 8B DA 8B DA 4C 8B F9
+DESC: What it is: General client-side number formatting helper. When it runs: When the UI needs to turn an integer into a formatted localized string instead of just printing raw digits. Why you would care: Useful formatting anchor for plugins or hooks that want the same number presentation rules the client uses.
+----------------------------------------
+NAME: Item_GetItemRowById
+SIG:  48 83 EC 28 8D 81 BF BD F0 FF 3D 3E 42 0F 00 8D 91 C0 BD F0 FF 0F 47 D1 8D 82 DF 5E F8 FF 3D 1E A1 07 00 44 8D 82 E0 5E F8 FF 44 0F 47 C2 41 81
+DESC: What it is: Core item-row resolver behind the name and icon helpers. When it runs: When the client needs to normalize an item id and fetch the backing item row from Excel data. Why you would care: Useful shared hook if you want the real item lookup path instead of only the higher item name or icon wrappers. Pairs with: Item_GetItemName, Item_GetItemIcon, Item_GetEventItemName
+----------------------------------------
+NAME: Item_IsCompanySealItemId
+SIG:  8D 41 EC 83 F8 02 0F 96 C0 C3
+DESC: What it is: Tiny company-seal item-id classifier. When it runs: When the client only needs to know whether an item id falls into the company-seal range. Why you would care: Useful support hook if you are splitting normal items from seal pseudo-items without reimplementing the range check.
+----------------------------------------
+NAME: Item_GetTomestonesItem
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F1 E8 ?? ?? ?? ?? 33 DB 8B F8 85 C0 74 14 66 90 8B CB E8 ?? ?? ?? ?? 39 70 04 74 18 FF C3 3B DF
+DESC: What it is: Tomestone-item table lookup helper. When it runs: When the client wants the tomestone record associated with a given item id instead of treating it like a normal item row. Why you would care: Useful anchor if you need the client’s own tomestone mapping instead of maintaining a duplicate table in plugin code.
+----------------------------------------
+NAME: Item_IsTomestonesItemId
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F1 E8 ?? ?? ?? ?? 33 DB 8B F8 85 C0 74 19 66 90 8B CB E8 ?? ?? ?? ?? 83 78 04 00 74 04 39 30 74
+DESC: What it is: Boolean tomestone-item classifier. When it runs: When the client only needs to know whether an item id belongs to the tomestone table. Why you would care: Useful check if you want the same tomestone split the client uses without pulling the full record every time.
+----------------------------------------
+NAME: Item_IsItemStainConditionUnlocked
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B FA E8 ?? ?? ?? ?? 48 85 C0 75 04 33 DB EB 03 0F B7 18 48 85 FF 74 03 66 89 1F 66 85 DB 75 0D B0 01
+DESC: What it is: Item stain-condition unlock resolver. When it runs: When the client checks whether an item’s linked dye or glamour condition is unlocked and may also return the resolved condition id. Why you would care: Useful for plugins that need the same unlock gate the client uses for item appearance conditions.
+----------------------------------------
+NAME: Item_IsEventItemId
+SIG:  8D 81 80 7B E1 FF 3D E7 0E 00 00 0F 96 C0 C3
+DESC: What it is: Tiny event-item classifier. When it runs: When the client wants to know whether an id belongs to the event-item range before routing it to event-item handling. Why you would care: Useful support hook if you need to split event items from normal items the same way the client does.
 ----------------------------------------
 
 CATEGORY: Network - Infrastructure, IPC, Compression, and Lobby Hooks
@@ -591,7 +911,7 @@ DESC: What it is: A small but unique `ZoneProto` or `IpcChannel` manager state-t
 ----------------------------------------
 NAME: ZoneProto_IpcChannel_DecodeTransportBuffer
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 30 49 8B F1 41 8B D8 48 8B EA 48 8B F9 FF 15 ??
-DESC: What it is: The transport-side decode wrapper inside the `ZoneProto` or `IpcChannel` path that chooses between the TCP and UDP Oodle decode routines before execution returns to higher-level channel logic. When it runs: When a zone-proto transport buffer is about to be decoded and the wrapper is selecting the concrete decode path for the current transport object. Why you would care: Use this as the first practical game- or transport-owned handoff above `OodleNetwork1UDP_Decode` when you want a decode-layer hook that still belongs to the gameâ€™s channel stack instead of the raw library alone. Extra context: This is a stand-in role name based on observed behavior, not a named public symbol, and it is the cleanest validated caller above the Oodle UDP decode entrypoint in this build. Pairs with: OodleNetwork1UDP_Decode, OodleNetwork1TCP_Decode, OodleNetwork1UDP_State_Normalize, ZoneProto_IpcChannelManager_TransitionToState4
+DESC: What it is: The transport-side decode wrapper inside the `ZoneProto` or `IpcChannel` path that chooses between the TCP and UDP Oodle decode routines before execution returns to higher-level channel logic. When it runs: When a zone-proto transport buffer is about to be decoded and the wrapper is selecting the concrete decode path for the current transport object. Why you would care: Use this as the first practical game- or transport-owned handoff above `OodleNetwork1UDP_Decode` when you want a decode-layer hook that still belongs to the gameÃ¢â‚¬â„¢s channel stack instead of the raw library alone. Extra context: This is a stand-in role name based on observed behavior, not a named public symbol, and it is the cleanest validated caller above the Oodle UDP decode entrypoint in this build. Pairs with: OodleNetwork1UDP_Decode, OodleNetwork1TCP_Decode, OodleNetwork1UDP_State_Normalize, ZoneProto_IpcChannelManager_TransitionToState4
 ----------------------------------------
 NAME: OodleNetwork1UDP_Decode
 SIG:  40 53 48 83 EC 30 48 8B 44 24 68 49 8B D9 48 85 C0 7E 2E 48
@@ -722,6 +1042,18 @@ DESC: What it is: The broad network-module maintenance tick that runs above the 
 NAME: NetworkModule_Update_SendKeepAlive
 SIG:  48 8B 8F 78 16 00 00 48 85 C9 0F 84 ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 03 87 B0 17 00 00 0F 57 C0 48 8D 0C C0 48 B8 93 24 49 92 24 49 92 24 48 C1 E1 04 48 F7 E1 48 B8 77 BE 9F 1A 2F DD 24 06 48 2B CA 48 D1 E9 48 03 CA 48 C1 E9 02 48 F7 E1 48 8B C1 48 2B C2 48 D1 E8 48 03 C2 48 C1 E8 09 48 89 87 78 17 00 00 48 69 C0 E8 03 00 00 48 2B C8 78 07 F3 48 0F 2A C1 EB 15 48 8B C1 83 E1 01 48 D1 E8 48 0B C1 F3 48 0F 2A C0 F3 0F 58 C0 F3 0F 11 87 80 17 00 00 48 8B CF 48 8B 5C 24 38 48 83 C4 20 5F E9 ?? ?? ?? ?? CC CC CC CC CC CC CC CC CC CC CC CC CC CC 48 8B
 DESC: What it is: The inner keepalive-send branch inside `NetworkModule_Update`. When it runs: During the same maintenance tick, once the live zone-client pointer has been confirmed and the client is assembling the small keepalive-style payload that it forwards into the zone send path. Why you would care: Use this as the stronger keepalive-specific anchor when the broader network-module tick is too noisy. Extra context: Previously tracked as `KeepAlivePing_StandIn_NetworkModule_Update_Core`; the module-owned branch name is more durable because the embedded packet id and fixed payload size identify a keepalive send path inside the broader update rather than a standalone packet-dispatch function. Pairs with: NetworkModule_Update
+----------------------------------------
+NAME: StateUpdateBatch_ApplyEntries
+SIG:  48 89 5C 24 18 55 48 83 EC 20 48 63 1A 48 8B 69 08 48 03 DA 48 85 ED 75 0D 32 C0 48 8B 5C 24 40 48 83 C4 20 5D C3 48 89 7C 24 38 33 FF 39 7B 04 7E 36
+DESC: What it is: The broader batch update walker that iterates a variable-length entry list and hands each decoded entry to the deeper per-entry state-update dispatcher. When it runs: When the client is applying one of the larger server-fed internal update payloads that contain multiple state records rather than one isolated packet case. Why you would care: This is the strongest higher-level ingress above the hidden telepo callers if you want the owner pipeline that feeds telepo along with sibling state systems. Extra context: This is not teleport-only; telepo is one branch inside a broader internal state-update family. Pairs with: StateUpdateEntry_Dispatch, Telepo_HiddenFullApplyCaller, Telepo_HiddenSyncVariantCaller
+----------------------------------------
+NAME: StateUpdateEntry_Dispatch
+SIG:  40 56 41 56 48 81 EC 98 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 60 44 8B 02 48 8B F2 4C 8B F1 41 83 E8 01 0F 84 ?? ?? ?? ?? 48 89 9C 24 C0 00 00 00
+DESC: What it is: The per-entry dispatcher inside the broader state-update pipeline that switches on entry type and routes each decoded record into the correct apply path. When it runs: After the batch walker pulls out one update entry and before the client decides whether that entry is telepo state, named component state like CrowdControl or ClipOutSafe, or another sibling update type. Why you would care: This is the cleanest owner-layer hook when you want to understand which internal update family is feeding the telepo handlers without dropping all the way down to raw packet dispatch. Extra context: The telepo hidden callers sit under this dispatcher rather than directly under a neat top-level packet handler, which is why the receive path looked so awkward in the debugger. Pairs with: StateUpdateBatch_ApplyEntries, StateUpdateSubtype_Apply, Telepo_HiddenFullApplyCaller, Telepo_HiddenSyncVariantCaller
+----------------------------------------
+NAME: StateUpdateSubtype_Apply
+SIG:  40 53 48 83 EC 50 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 48 8D 42 FF 48 8B D9 83 F8 08 0F 87 ?? ?? ?? ?? 4C 8D 05 ?? ?? ?? ?? 48 98 41 8B 8C 80 6C 25 81 01 49 03 C8 FF E1
+DESC: What it is: The subtype switch under the broader state-update dispatcher that applies small typed flags and specialized side effects for individual update ids. When it runs: When the entry dispatcher has already identified a higher-level state-update record and the client is now applying one of its inner subtype cases. Why you would care: Useful when you want the layer directly above the telepo hidden slab that still keeps per-subtype meaning, instead of only the outer batch loop or the deeper telepo-only apply routines. Extra context: This function is broader than telepo; some cases touch shared booleans and named component state, while the telepo-related cases continue down into the hidden telepo caller slab. Pairs with: StateUpdateEntry_Dispatch, StateUpdateBatch_ApplyEntries
 ----------------------------------------
 
 CATEGORY: Network - Content Packet Hooks - Combat and Actor Control
@@ -2157,21 +2489,45 @@ NAME: Teleport_ToAetheryte
 SIG:  40 53 55 56 48 83 EC 60 4C 8B 49 28 48 8B F1 0F B6 EA 41 0F
 DESC: What it is: The teleport path that resolves and routes travel to a specific aetheryte destination. When it runs: When the client has a chosen destination and starts preparing the actual move request. Why you would care: Useful when you need the destination-specific side of teleport rather than the higher-level generic execute hook.
 ----------------------------------------
+NAME: Teleport_RequestOutboundHelper
+SIG:  40 53 55 56 57 41 56 48 83 EC 50 48 8B E9 45 0F B6 F0 48 8B 0D ?? ?? ?? ?? 8B FA E8 ?? ?? ?? ??
+DESC: What it is: Higher outbound teleport helper that covers the live aetheryte request path and the ticket-gated branch in the current build. When it runs: After destination-specific checks pass and the client is choosing between the normal outbound request path and ticket-mode prep. Why you would care: This is the strongest function-entry hook above both the normal request path and the ticket-specific arm helper. Extra context: This helper contains the live `call 0x140b89b70` site we proved during aetheryte teleport and can branch into `Teleport_WithTickets` when ticket mode is active. Pairs with: Teleport_RequestOutboundCaller, Teleport_WithTickets, Teleport_ToAetheryte
+----------------------------------------
+NAME: Teleport_RequestOutboundCaller
+SIG:  33 C0 45 8B CE 89 74 24 20 8B D7 B9 CA 00 00 00 E8 ?? ?? ?? ?? B0 01 EB 02 32 C0
+DESC: What it is: Outbound teleport request callsite in the deeper teleport request path. When it runs: When a normal aetheryte teleport is confirmed and the client sends the request. Why you would care: Good hook when you want the real request point instead of UI-only teleport flow. Extra context: This is a callsite, not a function entry. The fixed `0xCA` immediate is part of the request setup. Pairs with: Teleport_RequestOutboundCoreCaller, Teleport_Execute, Teleport_ToAetheryte
+----------------------------------------
+NAME: Teleport_RequestOutboundCoreCaller
+SIG:  89 74 24 44 89 7C 24 48 89 5C 24 4C 48 C7 44 24 58 00 00 00 00 E8 ?? ?? ?? ?? 48 8B 8C 24 70 0F 00 00 48 33 CC
+DESC: What it is: Deeper outbound teleport request callsite just above the proved send leaf. When it runs: Right before the prepared teleport request is handed to the inner send routine. Why you would care: Useful if you want a tighter request-side hook than the broader outer teleport helper. Extra context: This path was proved live with the `0x14046a1a0` leaf hit. Pairs with: Teleport_RequestOutboundCaller, Teleport_Execute
+----------------------------------------
+NAME: Teleport_RequestPacketBuilder
+SIG:  C7 44 24 20 16 02 00 00 48 C7 44 24 28 30 00 00 00 89 6C 24 40 89 74 24 44 89 7C 24 48 89 5C 24 4C 48 C7 44 24 58 00 00 00 00 E8 ?? ?? ?? ??
+DESC: What it is: Unique outbound teleport packet-build block inside the deeper request helper. When it runs: After the higher request setup is done and right before the inner send leaf is called. Why you would care: Good sig when you want the packet layout setup itself instead of only the higher or lower callsite. Extra context: This block stamps `0x216`, writes the `0x30` size field, fills the working stack packet, then calls the proved send leaf. Pairs with: Teleport_RequestOutboundCoreCaller, Teleport_RequestOutboundCaller, Teleport_Execute
+----------------------------------------
 NAME: Teleport_UpdateAetheryteList
 SIG:  48 89 5C 24 10 48 89 74 24 18 48 89 7C 24 20 55 41 54 41 55 41 56 41 57 48 8D AC 24 90 F5 FF FF 48 81 EC 70 0B 00 00 48 8B 05 ??
 DESC: What it is: The aetheryte-list rebuild path used by the teleport UI and module state. When it runs: When the client refreshes the current destination list after teleport data or ticket state changes. Why you would care: This is the best destination-state hook for tools that need the live teleport destination list instead of only the final selected teleport.
 ----------------------------------------
 NAME: Teleport_WithTickets
 SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 80 79 21 00 41 0F B6 F8 8B F2 48 8B D9 75 55 33 C0 48 8D 0D ??
-DESC: What it is: The teleport path that consumes teleport tickets instead of normal gil cost. When it runs: When the client executes a ticket-based teleport flow. Why you would care: This is the practical hook for distinguishing ticket teleports from the normal teleport path.
+DESC: What it is: Ticket-mode arm helper inside the teleport flow. When it runs: When ticket mode is chosen and the client stores the pending destination inputs before the later ticket-use invoke request is built. Why you would care: Good small hook for the moment ticket-based teleport prep is armed, before the deeper dialog/request builder runs. Extra context: It sets the pending flag at `+0x21` and caches the current destination inputs for `Teleport_InvokeSelectUseTicket`. Pairs with: Teleport_InvokeSelectUseTicket, Teleport_RequestOutboundHelper
 ----------------------------------------
 NAME: Teleport_InvokeSelectUseTicket
 SIG:  40 56 48 81 EC 30 01 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 10 01 00 00 80
-DESC: What it is: The teleport ticket-selection invoke path. When it runs: When the client transitions into the select-use-ticket flow before a ticket-based teleport is confirmed. Why you would care: This is the cleanest hook for teleport destination state when the player is deciding whether to consume a teleport ticket.
+DESC: What it is: Ticket-selection dialog/request builder for the ticket-based teleport flow. When it runs: When the armed ticket teleport path constructs the `0x21 / 0x0d` request block used to ask or confirm ticket use. Why you would care: This is the best hook if you want the real ticket-use request instead of only the earlier arm helper. Extra context: It uses text ids `0x1911e`, `0x1911f`, and `0x19120`, then sends through `FUN_1400eb850(..., 0x21, 0x0d, ...)`. Pairs with: Teleport_WithTickets, Teleport_RequestOutboundHelper
 ----------------------------------------
 NAME: TeleportHistoryModule_AddHistoryEntry
 SIG:  48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 20 44 88 44 24 18 57 41 54 41 55 41 56 41 57 48 83 EC 30 0F B6 AC 24 88 00 00 00 48 8D 59 4E 44 0F B6 B4 24 80 00 00 00 33 FF 44 8B EF 44 8B D7 48 8B C3
 DESC: What it is: The teleport history writer used by the teleport history module. When it runs: After a destination is accepted and the client stores it into recent teleport history. Why you would care: This is the strongest practical destination-history hook if you want to track where the player has actually teleported.
+----------------------------------------
+NAME: TeleportHistoryModule_IsInHistory
+SIG:  48 8D 41 4E 45 33 D2 0F B6 4C 24 28 0F 1F 40 00 66 39 50 FC 75 10 44 38 40 FF 75 0A 44 38 08 75 05 38 48 01 74 10 49 FF C2 48 83 C0 06 49 83 FA 14 7C DD 32 C0 C3
+DESC: What it is: Read-side history check for the teleport history module. When it runs: When the client tests whether one destination tuple is already present in the recent teleport history list. Why you would care: Useful if you want the compact history-membership check instead of only the write-side add path. Pairs with: TeleportHistoryModule_GetHistoryEntry, TeleportHistoryModule_AddHistoryEntry
+----------------------------------------
+NAME: TeleportHistoryModule_GetHistoryEntry
+SIG:  44 0F B6 5C 24 28 48 8D 41 4E 45 33 D2 0F 1F 00 66 39 50 FC 75 11 44 38 40 FF 75 0B 44 38 08 75 06 44 38 58 01 74 10 49 FF C2 48 83 C0 06 49 83 FA 14 7C DC 33 C0 C3
+DESC: What it is: Read-side history lookup for the teleport history module. When it runs: When the client searches the recent teleport history list and wants the matching entry instead of a simple yes or no result. Why you would care: Good support hook if you need the actual history row after the match has already been found. Pairs with: TeleportHistoryModule_IsInHistory, TeleportHistoryModule_AddHistoryEntry
 ----------------------------------------
 NAME: Teleport_OpenFriendEstateTeleportation
 SIG:  57 48 83 EC 20 48 83 79 28 00 48 8B FA 48 8B D9 75 1E 48 8B
@@ -2192,6 +2548,26 @@ DESC: What it is: The helper that opens the world-travel UI for supported aether
 NAME: Teleport_OpenTeleportTownUI
 SIG:  48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 41 54 41 55 41 56 41 57 48 81 EC 90 06 00 00 48 8B 05 ??
 DESC: What it is: The event/UI layer that populates the visible teleport-town window. When it runs: When the client is building the on-screen town teleport interface and its destination entries. Why you would care: Useful when you want the concrete UI-population hook instead of the higher-level request helper.
+----------------------------------------
+NAME: TeleportInfo_GetFlags
+SIG:  48 89 5C 24 08 57 48 83 EC 30 0F B7 11 48 8B F9 48 8D 0D ?? ?? ?? ?? 33 DB E8 ?? ?? ?? ?? 84 C0 74 07 BB 32 00 00 00 EB 2E 38 5F 1C 74 1E
+DESC: What it is: Builds the flag bits for one `TeleportInfo` row. When it runs: When the teleport UI or row logic needs the combined flag state for a destination before deciding how to present or route it. Why you would care: Good hook when you want the client's own destination flags instead of rebuilding them from raw row fields and free-destination checks. Extra context: This folds together row-local flags, the PS Plus free-destination check, and one later compatibility check before returning the final bitfield. Pairs with: AgentTeleport_GetRegion, AgentTeleport_GetTimelineId, Aetheryte_IsSetAsFreePSPlus
+----------------------------------------
+NAME: AgentTeleport_GetRegionLabel
+SIG:  48 83 EC 28 83 FA 12 0F 87 ?? ?? ?? ?? 8B C2 4C 8D 05 ?? ?? ?? ?? 41 8B 94 80 ?? ?? ?? ?? 49 03 D0 FF E2 48 8B 49 10 48 8B 01 FF 50 30 BA 48 21 00 00 41 B8 16 00 00 00
+DESC: What it is: AgentTeleport helper that returns the localized label for one teleport region bucket. When it runs: When the teleport UI needs the visible text for the current region grouping instead of the raw numeric region id. Why you would care: Useful if you want to mirror the client's own region labels in a plugin without hardcoding text ids yourself. Extra context: It is a jump-table mapper from region bucket to Excel text lookup ids. Pairs with: AgentTeleport_GetRegion, AgentTeleport_GetTimelineId
+----------------------------------------
+NAME: AgentTeleport_GetRegion
+SIG:  48 83 EC 28 0F B7 4A 08 E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 80 78 31 0D 75 0A B8 0A 00 00 00 48 83 C4 28 C3 0F B7 40 1C 66 83 F8 16 75 07 33 C0 48 83 C4 28 C3
+DESC: What it is: AgentTeleport helper that maps one destination row to the region bucket used by the teleport window. When it runs: When the client sorts or groups teleport destinations into the region sections shown in the UI. Why you would care: This is the cleanest non-UI hook for the client's own teleport region grouping logic. Extra context: It maps the destination's row values into the bucket ids later consumed by `AgentTeleport_GetRegionLabel` and `AgentTeleport_GetTimelineId`. Pairs with: AgentTeleport_GetRegionLabel, AgentTeleport_GetTimelineId
+----------------------------------------
+NAME: AgentTeleport_GetTimelineId
+SIG:  41 81 F8 33 03 00 00 75 06 B8 08 00 00 00 C3 41 81 F8 34 03 00 00 75 06 B8 09 00 00 00 C3 41 81 F8 BE 03 00 00 75 06 B8 0B 00 00 00 C3 41 81 F8 A2 04 00 00 74 67 41 81
+DESC: What it is: AgentTeleport helper that picks the timeline or presentation bucket id for one region or travel variant. When it runs: When the teleport agent is deciding which bucket or timeline id should drive the current destination presentation. Why you would care: Useful if you want to reproduce the client's own region-to-timeline routing instead of guessing from raw region ids. Extra context: It has direct special cases for a few travel variants before falling back to the normal region-bucket mapping. Pairs with: AgentTeleport_GetRegion, AgentTeleport_GetRegionLabel, Teleport_SetupWorldTravelInfo
+----------------------------------------
+NAME: Return_Execute
+SIG:  48 89 5C 24 10 48 89 74 24 18 57 48 83 EC 40 48 8B 3D ?? ?? ?? ?? 48 8B D9 48 8D 0D ?? ?? ?? ?? BA 08 00 00 00 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 0D ?? ?? ?? ?? 8B F0
+DESC: What it is: The real `/return` action path. When it runs: When the player confirms Return and the client begins the request path for sending the character back to the home point. Why you would care: Good direct hook for Return as a travel action instead of treating it as just another generic teleport branch. Extra context: This path checks the return-state gate first, then falls into the request logic or the client-side error route if Return is not currently allowed. Pairs with: Aetheryte_GetHomePoint, Teleport_CanUseTeleport
 ----------------------------------------
 NAME: Aetheryte_GetAetheryteId
 SIG:  48 83 EC 58 48 8B D1 48 8D 4C 24 20 E8 ?? ?? ?? ?? BA 01 00 00 00 48 8D 4C 24 20 E8 ?? ?? ?? ?? 48 8B 4C 24 28 4C 8B C0 BA 01 00 00 00 E8 ?? ?? ?? ?? 48 8B 08 0F B7 91 D8
@@ -2280,6 +2656,78 @@ DESC: What it is: The low-level helper that checks whether an aetheryte id match
 NAME: Aetheryte_IsSetAsFreePSPlus
 SIG:  66 85 D2 75 03 32 C0 C3 66 39 91 E2 02 00 00 0F 94 C0 C3 CC
 DESC: What it is: The low-level helper that checks whether an aetheryte id matches the PS Plus free-destination slot. When it runs: When the client applies the platform-specific free-destination comparison. Why you would care: Useful if you want the smallest practical check for the PS Plus free-aetheryte state.
+----------------------------------------
+NAME: Aetheryte_GetFreeDestinationTier
+SIG:  40 53 48 83 EC 20 33 DB 85 D2 74 13 83 FA 01 75 6B 48 39 1D ?? ?? ?? ?? 74 62 8D 4B 11 EB 0E 48 39 1D ?? ?? ?? ?? 74 54 B9 10 00 00 00 E8 ?? ?? ?? ??
+DESC: What it is: Small helper that returns the current free-destination tier for one of the two special destination channels the client tracks. When it runs: When telepo UI or support code needs the live tier value before rebuilding free-destination buckets or related checks. Why you would care: Useful if you want the compact read-side helper above the free-destination list rebuild logic. Extra context: The mode arg chooses between the two tracked channels, and the helper uses the live override when the current territory matches. Pairs with: Teleport_RebuildFreeDestinationBuckets, Telepo_ApplyFreeDestinationOverride
+----------------------------------------
+NAME: Aetheryte_GetSpecialDestinationTier
+SIG:  48 89 5C 24 08 57 48 83 EC 20 41 0F B6 F8 48 8B D9 83 FA 2E 7D 6E 48 8B 81 80 00 00 00 48 85 C0 74 62 83 FA FF 74 0C 8B CA E8 ?? ?? ?? ?? 48 85 C0 74 51 80 78 5A 00 74
+DESC: What it is: Read helper for the special-destination tier tied to one aetheryte row. When it runs: When telepo code needs the grouped tier for one destination instead of the smaller mode-based free-destination helper. Why you would care: Useful if you want the general tier lookup that the config and apply paths both read from. Extra context: In live-override mode, it can return the current override tier for the active territory row. Pairs with: Telepo_SetSpecialDestinationTier, Telepo_ApplySpecialDestinationTierUpdate, Aetheryte_GetFreeDestinationTier
+----------------------------------------
+NAME: Teleport_RebuildFreeDestinationBuckets
+SIG:  48 89 5C 24 18 55 56 57 41 54 41 55 41 56 41 57 48 83 EC 20 48 8B F9 48 8B 89 90 06 00 00 48 85 C9 74 0C E8 ?? ?? ?? ?? 48 8B 8F 90 06 00 00 45 33 FF
+DESC: What it is: Rebuilds the grouped free-destination bucket data the telepo UI uses. When it runs: After the client recalculates the two special free-destination tiers and needs fresh counts and aetheryte id lists. Why you would care: Good hook when you want the client's rebuilt grouped destination state instead of only one raw free-slot field. Extra context: This routine consumes the tier helper, counts matching rows, and fills the working arrays used by later telepo presentation code. Pairs with: Aetheryte_GetFreeDestinationTier, Telepo_ApplyFreeDestinationOverride, Teleport_UpdateAetheryteList
+----------------------------------------
+NAME: Teleport_RebuildFreeDestinationModel
+SIG:  40 56 57 41 57 48 83 EC 20 48 83 3D ?? ?? ?? ?? 00 48 8B F1 48 89 5C 24 40 48 8B DA 4C 89 74 24 50 0F 84 ?? ?? ?? ?? B9 10 00 00 00 E8 ?? ?? ?? ??
+DESC: What it is: Rebuilds the downstream free-destination presentation model that sits above the grouped bucket data. When it runs: After special destination state changes and the client needs a fresh UI-ready model instead of only the raw bucket arrays. Why you would care: Good hook when you want the later presentation rebuild after the bucket logic has already run. Extra context: This routine calls the free-destination bucket rebuild, repopulates a 13-entry working model, then hands that model to its owning presentation/controller object. Pairs with: Teleport_RebuildFreeDestinationBuckets, Teleport_UpdateAetheryteList
+----------------------------------------
+NAME: Telepo_ApplyFreeDestinationOverride
+SIG:  48 89 5C 24 10 48 89 6C 24 18 56 57 41 54 41 56 41 57 48 83 EC 30 48 8B 35 ?? ?? ?? ?? 33 FF 0F B7 EA 48 8B D9 66 85 ED 75 4C
+DESC: What it is: Apply-side setter for the live telepo free-destination override field. When it runs: When the client applies or clears the server-fed free-destination override and then kicks the follow-up notifications tied to the change. Why you would care: Good hook when you need the moment the client's live free-destination state actually changes, not just when code reads it later. Extra context: This is the write-side companion to the existing free-destination getters and comparisons. Pairs with: Aetheryte_GetFavoritePointSecurityToken, Aetheryte_IsSetAsFree, Telepo_SyncUpdateVariant
+----------------------------------------
+NAME: Teleport_RequestSpecialDestinationConfig
+SIG:  48 89 5C 24 18 48 89 6C 24 20 56 57 41 56 48 81 EC C0 00 00 00 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 B0 00 00 00 48 8B D9 44 0F B6 F2
+DESC: What it is: Outbound sender for special-destination config changes. When it runs: When the player changes one of the telepo special-destination settings and the client builds the `0x46` request for it. Why you would care: Good hook when you want the real request for special-destination changes instead of normal teleport execution. Extra context: It packs seven fields into the `0x46` send, then rebuilds the special-destination model afterward. Pairs with: Teleport_RebuildFreeDestinationModel, Telepo_SetSpecialDestinationTier, Telepo_ApplyFreeDestinationOverride
+----------------------------------------
+NAME: Telepo_SetSpecialDestinationTier
+SIG:  83 FA 2E 0F 8D ?? ?? ?? ?? 53 55 56 48 83 EC 20 48 8B D9 44 0F B7 E8 8B CA 8B F2 E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 48 0F BE 50 68 80 FA 22
+DESC: What it is: Low-level setter for one special-destination tier in live telepo state. When it runs: When higher apply code writes a new tier for the grouped destination state behind the free/security-style rules. Why you would care: Useful if you want the smallest write-side hook under the broader apply helpers. Extra context: It maps the aetheryte row to the grouped tier array, updates the cached value, and only posts the client event when the tier changed. Pairs with: Telepo_ApplySpecialDestinationTierUpdate, Telepo_ApplySpecialDestinationUnlock, Aetheryte_GetFreeDestinationTier
+----------------------------------------
+NAME: Telepo_ApplySpecialDestinationTierUpdate
+SIG:  40 55 57 41 55 41 56 41 57 48 83 EC 30 44 8B F9 41 0F B7 F8 48 8B 0D ?? ?? ?? ?? 8B EA E8 ?? ?? ?? ?? 8B CD 4C 8B F0 E8 ?? ?? ?? ?? 4C 8B E8
+DESC: What it is: Higher apply-side update for one special-destination tier. When it runs: When upstream state hands the client a new tier value and the client updates cache, notifications, and any live override tied to it. Why you would care: This is the cleanest high-level hook for tier changes before the later UI rebuild hides where the change came from. Extra context: If the new tier crosses the live threshold for the current row, this path calls `Telepo_ApplyFreeDestinationOverride`. Pairs with: Telepo_SetSpecialDestinationTier, Telepo_ApplyFreeDestinationOverride, Teleport_RebuildFreeDestinationModel
+----------------------------------------
+NAME: Telepo_ApplySpecialDestinationUnlock
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F9 41 B8 01 00 00 00 48 8D 0D ?? ?? ?? ?? 8B DA E8 ?? ?? ?? ?? 3B 3D ?? ?? ?? ?? 75 14 41 B8 01
+DESC: What it is: Apply-side unlock helper for a special-destination channel. When it runs: When one of the tracked special destinations becomes active instead of just moving between higher tier values. Why you would care: Good hook for simple on/off activation events that are easy to miss in the broader tier-update path. Extra context: It forces tier `1` for the target channel, then falls through the normal notification path. Pairs with: Telepo_SetSpecialDestinationTier, Telepo_ApplySpecialDestinationTierUpdate, Telepo_ApplyFreeDestinationOverride
+----------------------------------------
+NAME: Telepo_IncrementalSyncCore
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 48 8D 0D ?? ?? ?? ?? 33 D2 33 FF E8 ?? ?? ?? ?? 0F B6 13 B9 01 00 00 00 3A C2 0F 45 F9
+DESC: What it is: The shared core that applies one incremental telepo-state update into the live telepo data block. When it runs: When the client receives one of the smaller server-fed telepo update variants and normalizes it into the common apply path. Why you would care: This is the best deep hook when you want one stable place for incremental telepo state changes instead of tracking several wrapper formats. Extra context: This is not the raw packet-dispatch edge; it is the shared apply layer underneath several hidden wrapper variants. Pairs with: Telepo_IncrementalSyncWrapperA, Telepo_IncrementalSyncWrapperB, Telepo_IncrementalSyncWrapperC
+----------------------------------------
+NAME: Telepo_IncrementalSyncWrapperA
+SIG:  48 89 5C 24 08 57 48 83 EC 20 44 0F B6 4A 01 48 8B DA 44 0F B6 42 02 8B F9 0F B6 12 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 53 04 8B CF
+DESC: What it is: One hidden wrapper that reshapes a small telepo update packet into the shared incremental sync core format. When it runs: When the client receives the first of the currently confirmed compact telepo sync layouts before the common core applies it. Why you would care: Use this if you want to distinguish this specific incoming compact telepo format instead of only watching the shared core after normalization. Pairs with: Telepo_IncrementalSyncCore
+----------------------------------------
+NAME: Telepo_IncrementalSyncWrapperB
+SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B DA 8B F9 0F B6 12 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 53 04 8B CF
+DESC: What it is: A second hidden wrapper that converts another compact telepo update layout into the shared incremental sync core format. When it runs: When the client receives the second confirmed compact telepo sync layout before the common apply layer runs. Why you would care: Useful when you need to tell this specific compact telepo variant apart from the other wrapper paths instead of only hooking the shared core. Pairs with: Telepo_IncrementalSyncCore
+----------------------------------------
+NAME: Telepo_IncrementalSyncWrapperC
+SIG:  48 89 5C 24 08 57 48 83 EC 20 44 0F B6 42 01 48 8B DA 0F B6 12 8B F9 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8D 53 04 8B CF
+DESC: What it is: A third hidden wrapper that converts another compact telepo update layout into the shared incremental sync core format. When it runs: When the client receives the third confirmed compact telepo sync layout before the common apply layer runs. Why you would care: Use this when you need the earliest hook for this specific compact telepo variant instead of the later shared core. Pairs with: Telepo_IncrementalSyncCore
+----------------------------------------
+NAME: Telepo_ApplyBatchState
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 FF 48 8B F2 8B DF E8 ?? ?? ?? ?? 85 C0 74 2F 90 8B CB E8 ?? ?? ?? ?? 48 0F BE 48 44 83 F9 FF 74 12
+DESC: What it is: The batch telepo-state apply helper that walks multiple telepo entries and copies their values into the live telepo state block. When it runs: When the client is applying a broader server-fed telepo refresh that contains many destination-related values rather than only one compact incremental update. Why you would care: This is the strongest deep hook when you want one place that sees a wider telepo-state refresh instead of only the smaller incremental sync packets. Extra context: This sits between the hidden receive/apply family and the lower telepo state writers, so it is best treated as a batch apply layer rather than a raw packet handler. Pairs with: Telepo_FullApply, Telepo_SyncUpdateVariant
+----------------------------------------
+NAME: Telepo_FullApply
+SIG:  40 53 48 83 EC 20 48 8D 0D ?? ?? ?? ?? 48 8B DA E8 ?? ?? ?? ?? 48 8B D3 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B D3 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ??
+DESC: What it is: The heavier telepo apply path that copies a broader server-fed telepo payload into several live client telepo structures. When it runs: When the client receives the fuller telepo-state update path rather than one of the smaller compact sync variants. Why you would care: This is the best deep apply hook if you want the point where a larger telepo refresh becomes usable live client state. Extra context: This is downstream of a hidden caller site and upstream of several telepo-side state holders, so it is the strongest shared full-apply anchor we confirmed. Pairs with: Telepo_HiddenFullApplyCaller, Telepo_ApplyBatchState, Telepo_SyncUpdateVariant
+----------------------------------------
+NAME: Telepo_SyncUpdateVariant
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 48 8B 3D ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 48 8B DA 33 D2 E8 ?? ?? ?? ?? 0F B6 13 48 8D 0D ?? ?? ?? ?? 0F B6 F0 E8 ?? ?? ?? ??
+DESC: What it is: A hidden telepo sync/update apply path that updates live telepo state and then kicks the follow-up notification or refresh work that depends on that state. When it runs: When the client receives one of the non-full telepo update cases that still needs more than the tiny incremental core path. Why you would care: Use this when the full-apply hook is too broad but the tiny incremental core is too narrow and you want the middle update layer that still reflects real server-fed telepo state. Pairs with: Telepo_HiddenSyncVariantCaller, Telepo_ApplyBatchState, Telepo_FullApply
+----------------------------------------
+NAME: Telepo_HiddenFullApplyCaller
+SIG:  8D 57 10 8B CE E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 4C 8D 47 10 8B D6 48 8D 0D
+DESC: What it is: The hidden branch-local caller that feeds the full telepo apply path from the broader internal update pipeline. When it runs: When the client reaches the hidden receive-side telepo branch that forwards execution into the heavier full-apply handler. Why you would care: This is the earliest proven hidden telepo ingress we confirmed live for the full-apply path, so it is useful when you want the branch edge before the larger apply routine starts. Extra context: This is a mid-block hidden caller rather than a neat named top-level function, so it is best treated as a branch-local telepo ingress marker. Pairs with: Telepo_FullApply
+----------------------------------------
+NAME: Telepo_HiddenSyncVariantCaller
+SIG:  48 8D 57 10 8B CE E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 57 10 8B CE
+DESC: What it is: The hidden branch-local caller that feeds the telepo sync/update variant path from the broader internal update pipeline. When it runs: When the client reaches the hidden receive-side telepo branch that forwards execution into the sync/update variant handler. Why you would care: Use this when you want the earliest proven hidden telepo ingress for the sync/update variant instead of the later apply routine itself. Extra context: Like the paired full-apply caller, this is a branch-local ingress marker rather than a clean top-level function. Pairs with: Telepo_SyncUpdateVariant
 ----------------------------------------
 
 CATEGORY: Speed and Mobility - Emote and Emote Speed
@@ -4135,3 +4583,4 @@ NAME: WKSMechaEvent_IsPilotRegistrationTimeframeOpen
 SIG:  40 53 48 83 EC 20 8B 81 ?? ?? ?? ?? 48 8B D9 C1 E8 08 A8 01 74 ?? E8 ?? ?? ?? ?? 3B 83 ?? ?? ?? ?? 73 ?? B0 01 48 83 C4 20 5B C3 32 C0 48 83 C4 20
 DESC: What it is: The time-window check for whether pilot registration is currently open in a Cosmic mecha event. When it runs: When the client decides if the player is still inside the registration period for a mecha event. Why you would care: Use this if you want a direct gate for pilot-registration availability.
 ----------------------------------------
+
