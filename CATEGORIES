@@ -27,6 +27,15 @@ CATEGORY: Market Board
 CATEGORY: Retainers
 CATEGORY: Housing and Workshop
 CATEGORY: Animation Lock
+CATEGORY: APIs
+CATEGORY: Crafting and Recipes
+CATEGORY: Profile and Banner
+CATEGORY: Items and UI Content
+CATEGORY: Speed and Mobility
+CATEGORY: Contents Finder
+CATEGORY: Island Sanctuary
+CATEGORY: Wondrous Tails
+CATEGORY: Custom Delivery
 
 Search one exact section with:
 CATEGORY: Network - Core Packet Dispatcher Hooks
@@ -44,14 +53,26 @@ CATEGORY: Local Character - Core PlayerState Hooks
 CATEGORY: Other Players - Packet and Server-Fed Hooks
 CATEGORY: Market Board - Packet and Server-Fed Hooks
 CATEGORY: Retainers - Packet and Server-Fed Hooks
+CATEGORY: Retainers - Comments and Notes
 CATEGORY: Housing and Workshop - Packet, Server-Fed, and Support Hooks
 CATEGORY: Animation Lock - Core State and Action Hooks
+CATEGORY: APIs - UI, Text, and Presentation Helpers
+CATEGORY: APIs - World and Region Helpers
+CATEGORY: Crafting and Recipes - Favorites and Recommended Gear
+CATEGORY: Profile and Banner - User File Hooks
+CATEGORY: Items and UI Content - Name, Icon, and Formatting Helpers
+CATEGORY: Speed and Mobility - Teleport
+CATEGORY: Contents Finder - Agent and UI State
+CATEGORY: Island Sanctuary - Manager and Expedition State
+CATEGORY: Wondrous Tails - UI and Reward Flow
+CATEGORY: Custom Delivery - UI and Reward Flow
 
 Full Category List
 
 CATEGORY: General and Core Signatures
 CATEGORY: Market Board - Packet and Server-Fed Hooks
 CATEGORY: Retainers - Packet and Server-Fed Hooks
+CATEGORY: Retainers - Comments and Notes
 CATEGORY: Housing and Workshop - Packet, Server-Fed, and Support Hooks
 CATEGORY: Local Character - Core PlayerState Hooks
 CATEGORY: Local Character - Identity and Access Hooks
@@ -70,8 +91,13 @@ CATEGORY: Animation Lock - Non-Core Timing and Support
 CATEGORY: Local Character - Territory, Targeting, and Instance Context
 CATEGORY: Local Character - Cooldown, Combo, Duty Action, and Limit Break
 CATEGORY: Local Character - Glamour, Title, and Presentation
+CATEGORY: Crafting and Recipes - Favorites and Recommended Gear
+CATEGORY: Profile and Banner - User File Hooks
 CATEGORY: APIs - Framework and Service Entry Points
 CATEGORY: APIs - Action and Gameplay Services
+CATEGORY: APIs - UI, Text, and Presentation Helpers
+CATEGORY: APIs - World and Region Helpers
+CATEGORY: Items and UI Content - Name, Icon, and Formatting Helpers
 CATEGORY: Network - Infrastructure, IPC, Compression, and Lobby Hooks
 CATEGORY: Network - Core Packet Dispatcher Hooks
 CATEGORY: Network - Actor and Status Packet Hooks
@@ -86,7 +112,7 @@ CATEGORY: Network - Content Packet Hooks - Markers, Map, and World State
 CATEGORY: Network - Content Packet Hooks - Player, Inventory, and UI Readers
 CATEGORY: Network - Non-Core and UI Packet Support
 CATEGORY: Network - Non-Core Content Packet Support
-CATEGORY: Network - Event Packet Stand-Ins and Framework Support
+CATEGORY: Network - Event Framework Support
 CATEGORY: Shared Boss Mechanics - Core Combat Delivery
 CATEGORY: Shared Boss Mechanics - Packet and Server-Fed Delivery
 CATEGORY: Shared Boss Mechanics - Visual Indicators
@@ -114,7 +140,6 @@ CATEGORY: Treasure Maps - Door Choice and Instance State
 CATEGORY: Quest - Redo and Recomplete Progression
 CATEGORY: Quest - Deep Event and Presentation Logic
 CATEGORY: Treasure Maps - Shared Door and Interaction Hooks
-CATEGORY: Treasure Maps - Mob Radius and Range Hooks
 CATEGORY: Treasure Maps - Non-Core Object and UI Support
 CATEGORY: Variant and Criterion Dungeons - Core Systems
 CATEGORY: Variant and Criterion Dungeons - Agents and UI
@@ -130,7 +155,6 @@ CATEGORY: Armoury Chest - UI and State Hooks
 CATEGORY: Armoury Chest - Packet and Server-Fed Hooks
 CATEGORY: Armoury Chest - Support and Context Hooks
 CATEGORY: Gil - Core State Hooks
-CATEGORY: Gil - Packet and Server-Fed Hooks
 CATEGORY: Gil - Shop and Server-Fed Support
 CATEGORY: Gil - UI and State Hooks
 CATEGORY: Gil - Non-Core State Hooks
@@ -148,6 +172,7 @@ CATEGORY: Speed and Mobility - Attack Speed
 CATEGORY: Speed and Mobility - Movement Speed
 CATEGORY: Speed and Mobility - Teleport
 CATEGORY: Speed and Mobility - Emote and Emote Speed
+CATEGORY: Contents Finder - Agent and UI State
 CATEGORY: Party Finder - Network and Listing Hooks
 CATEGORY: Party Finder - Non-Core and Request Hooks
 CATEGORY: PvP Core Systems
@@ -172,19 +197,23 @@ CATEGORY: Crystalline Conflict State
 CATEGORY: Crystalline Conflict Director Methods
 CATEGORY: Crystalline Conflict Agents and Records
 CATEGORY: Crystalline Conflict UI
+CATEGORY: Gold Saucer - GATE and FGS Gameplay
 CATEGORY: Crystalline Conflict / MKS UI
 CATEGORY: Gold Saucer - Core State and Director
-CATEGORY: Gold Saucer - GATE and FGS Gameplay
 CATEGORY: Gold Saucer - FGS HUD and Result Flow
+CATEGORY: Gold Saucer - Verminion and Mahjong
 CATEGORY: Gold Saucer - Triple Triad and Card Management
 CATEGORY: Gold Saucer - Chocobo Racing and Gameplay
-CATEGORY: Gold Saucer - Verminion and Mahjong
 CATEGORY: Gold Saucer - Cactpot and Air Force One
 CATEGORY: Gold Saucer - Gathering Mini-Games
 CATEGORY: Gold Saucer - Reward Flow
 CATEGORY: Gold Saucer - Module State and Collectibles
 CATEGORY: Gold Saucer - Weekly History and Arcade Machines
 CATEGORY: Gold Saucer - Mini and Jumbo Cactpot Deep State
+CATEGORY: Wondrous Tails - UI and Reward Flow
+CATEGORY: Custom Delivery - UI and Reward Flow
+CATEGORY: Island Sanctuary - Manager and Expedition State
+CATEGORY: Island Sanctuary - Pouch and Item State
 CATEGORY: Fashion Report - Manager Anchors
 CATEGORY: Fashion Report - Core UI and Scoring
 CATEGORY: Fashion Report - Packet and Server-Fed State
@@ -197,8 +226,3 @@ CATEGORY: Cosmic Exploration - Mecha Event and Stage Flow
 CATEGORY: Cosmic Exploration - Research and Unlock Progression
 CATEGORY: Cosmic Exploration - Todo and HUD Flow
 CATEGORY: Cosmic Exploration - UI Windows and Interaction
-CATEGORY: Contents Finder - Ready Popup and Confirm Flow
-CATEGORY: Contents Finder - Agent and UI State
-CATEGORY: Island Sanctuary - Manager and Expedition State
-CATEGORY: Speed and Mobility - Teleport
-CATEGORY: Network - Network State and Update Hooks
