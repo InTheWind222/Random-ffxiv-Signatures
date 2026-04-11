@@ -200,3 +200,5 @@ CATEGORY: Cosmic Exploration - UI Windows and Interaction
 CATEGORY: Contents Finder - Ready Popup and Confirm Flow
 CATEGORY: Contents Finder - Agent and UI State
 CATEGORY: Island Sanctuary - Manager and Expedition State
+CATEGORY: Speed and Mobility - Teleport
+CATEGORY: Network - Network State and Update Hooks
