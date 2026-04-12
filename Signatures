@@ -564,7 +564,7 @@ SIG:  40 53 48 8B D9 85 D2 78 2E 48 63 C2 45 33 DB 45 8B D3 4C 8D 0C 80 4D 03 C9
 DESC: What it is: Recipe-favorite write-side add path for one recipe id inside one bucket. When it runs: When the client stores a new recipe favorite or refreshes an existing favorite slot before writing it back. Why you would care: Use this as the main add/update hook when you want recipe favorites at the moment they are actually committed. Pairs with: RecipeFavoriteModule_RemoveFromFavorites, RecipeFavoriteModule_IsFavorited
 ----------------------------------------
 NAME: RecommendEquipModule_SetupForClassJob
-SIG:  40 56 41 54 41 55 41 57 48 83 EC 48 48 8B F1 44 0F B6 FA 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 44 0F B6 2D ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 33 D2 44 0F B6 E0 E8 ?? ?? ?? ?? 45 33 C0 88 44 24 20 48 8D 0D ?? ?? ?? ?? 41 8D 50 FF E8 ?? ?? ?? ?? 80 3E 00
+SIG:  40 56 41 54 41 55 41 57 48 83 EC 48 48 8B F1 44 0F B6 FA 48 8D 0D ??
 DESC: What it is: Recommended-gear setup path for one selected class/job. When it runs: When the client rebuilds the Recommend Equip working model for a chosen class/job before the candidate list is shown or refreshed. Why you would care: This is the clean setup anchor if you want recommended-gear state before the final equip request is issued. Pairs with: RecommendEquipModule_Clear, RecommendEquipModule_EquipRecommendedGear
 ----------------------------------------
 NAME: RecommendEquipModule_Clear
@@ -697,24 +697,12 @@ NAME: AgentCharaCardProfileSetting_ExportToCharaCardData
 SIG:  40 56 41 57 48 83 EC 38 48 8B 01 48 8B F2 4C 8B F9 FF 50 30 84 C0 0F 84 ?? ?? ?? ?? 48 89 5C 24 58 48 89 6C 24 60 49 8B 6F 28 48 89 7C 24 68 4C 89 64 24 30 4C 89 6C 24 28 0F B7 45 58 66 89 46
 DESC: What it is: Agent-side export path from the CharaCard profile-setting UI into the packed CharaCard data structure. When it runs: When the profile-setting UI finalizes its current state into the card-data blob used by the helper send/apply paths. Why you would care: Strong UI-to-data bridge hook if you want the point where profile-setting edits become real CharaCard payload data. Pairs with: CharaCardHelper_SendCharaCardData, CharaCardData_ApplyCharaViewCharacterDataAndBannerModuleEntry
 ----------------------------------------
-NAME: BannerHelper_TryCopyCurrentBannerData
-SIG:  F6 05 ?? ?? ?? ?? 01 75 03 32 C0 C3 0F 10 05 ?? ?? ?? ?? 0F 11 02 0F 10 0D ?? ?? ?? ?? 0F 11 4A 10 0F 10 05 ?? ?? ?? ?? 0F 11 42 20 8B 05
-DESC: What it is: Cached current-banner copy helper. When it runs: When code wants the live banner state and first checks whether a current banner snapshot is already present. Why you would care: Useful read-side hook if you want the current banner data without waiting for the full apply or packet path.
-----------------------------------------
 NAME: BannerHelper_TryCopyCurrentCharaCard
 SIG:  F6 05 ?? ?? ?? ?? 02 4C 8B C2 75 03 32 C0 C3 48 8D 0D ?? ?? ?? ?? 0F 10 01 0F 11 02 0F 10 49 10 0F 11 4A 10 0F 10 41 20 0F 11 42 20 0F 10 49 30 0F 11 4A 30
 DESC: What it is: Cached current CharaCard copy helper. When it runs: When the client wants the current card blob and first checks whether the cached copy is valid. Why you would care: Good read-side anchor for grabbing the current card state without going through the editor or packet handlers.
 ----------------------------------------
-NAME: CharaCardHelper_RequestCurrentCharaCard
-SIG:  F6 05 ?? ?? ?? ?? 02 75 0C 48 8D 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? C3
-DESC: What it is: Request helper for current CharaCard data. When it runs: When something needs the current card and the local cache is not marked valid. Why you would care: Useful when you want the fetch path that wakes up current-card sync instead of only the later apply handlers.
-----------------------------------------
-NAME: CharaCardHelper_HasCurrentCharaCard
-SIG:  0F B6 05 ?? ?? ?? ?? D0 E8 24 01 C3
-DESC: What it is: Tiny cache-valid check for current CharaCard data. When it runs: When code only needs to know whether a current card snapshot is present. Why you would care: Simple state check if you are tracking whether the card cache exists before copying or requesting it.
-----------------------------------------
 NAME: CharaCardHelper_HasCharaCardCreated
-SIG:  F6 05 ?? ?? ?? ?? 02 75 03 32 C0 C3 80 3D ?? ?? ?? ?? 00 0F 97 C0 C3
+SIG:  F6 05 ?? ?? ?? ?? 02 75 03 32 C0 C3 80 3D ?? ?? ?? ?? 00 0F 97 C0 C3 CC CC CC CC CC
 DESC: What it is: Helper that tells whether a CharaCard has actually been created, not just cached. When it runs: When the client needs to distinguish a real created card from an empty or default current-card state. Why you would care: Useful gate when you want to know whether portrait/card data is meaningful before exporting, applying, or syncing it.
 ----------------------------------------
 NAME: CharaCardHelper_HandleCharaCardUpdatePacket
@@ -722,7 +710,7 @@ SIG:  48 89 5C 24 08 57 48 83 EC 20 41 8B F8 8B DA 85 D2 0F 85 ?? ?? ?? ?? 38 51
 DESC: What it is: Main CharaCard update-packet handler. When it runs: When the client receives current-card update data or a clear or failure response. Why you would care: Good apply-side hook for the live card sync path because it decides whether to keep, clear, or rewrite the current card state.
 ----------------------------------------
 NAME: CharaCardHelper_HandleCharaCardTimestampPacket
-SIG:  80 89 E0 01 00 00 04 89 91 AC 01 00 00 C3
+SIG:  80 89 E0 01 00 00 04 89 91 AC 01 00 00 C3 CC CC CC CC CC CC
 DESC: What it is: Tiny timestamp or status apply helper for current CharaCard data. When it runs: When the client stores the latest card timestamp or related status field after an update. Why you would care: Useful if you care about staleness or last-update tracking around the current CharaCard cache.
 ----------------------------------------
 
@@ -768,7 +756,7 @@ SIG:  48 89 5C 24 20 55 56 57 41 56 41 57 48 81 EC B0 00 00 00 48 8B 05 ?? ?? ??
 DESC: What it is: Text-module helper that resolves one text label id through the client's live localized text path. When it runs: When UI code wants a text-label string by id instead of hardcoding text or looking up sheet rows itself. Why you would care: This is the best named hook when you want localized client text at the same boundary the UI uses.
 ----------------------------------------
 NAME: ScreenLog_ConvertLogMessageIdToScreenLogKind
-SIG:  C7 02 05 00 00 00 81 F9 C0 05 00 00 0F 8F ?? ?? ?? ?? 0F 84 ?? ?? ?? ?? 81 C1 41 FE FF FF 81 F9 B8 00 00 00 0F 87 ?? ?? ?? ?? 48 63 C1 4C 8D 05 ?? ?? ?? ?? 41 0F B6 84 00 ?? ?? ?? ?? 41 8B 8C 80 ?? ?? ?? ?? 49 03 C8 FF E1
+SIG:  C7 02 05 00 00 00 81 F9 C0 05 00 00 0F 8F ?? ?? ?? ?? 0F 84 ?? ?? ?? ?? 81 C1 41 FE
 DESC: What it is: Screen-log classifier that maps one log-message id to the client's screen-log kind and channel bucket. When it runs: When a system message is being routed into one of the screen-log lanes. Why you would care: Useful if you want to classify or filter screen-log traffic the same way the client does.
 ----------------------------------------
 NAME: ClientUI_OpenWebURL
@@ -856,11 +844,11 @@ SIG:  48 89 5C 24 20 55 56 57 41 56 41 57 48 8D 6C 24 80 48 81 EC 80 01 00 00 48
 DESC: What it is: General client-side number formatting helper. When it runs: When the UI needs to turn an integer into a formatted localized string instead of just printing raw digits. Why you would care: Useful formatting anchor for plugins or hooks that want the same number presentation rules the client uses.
 ----------------------------------------
 NAME: Item_GetItemRowById
-SIG:  48 83 EC 28 8D 81 BF BD F0 FF 3D 3E 42 0F 00 8D 91 C0 BD F0 FF 0F 47 D1 8D 82 DF 5E F8 FF 3D 1E A1 07 00 44 8D 82 E0 5E F8 FF 44 0F 47 C2 41 81
+SIG:  48 83 EC 28 8D 81 BF BD F0 FF 3D ?? ?? ?? ?? 8D 91 C0 BD F0 FF 0F 47 D1 8D 82 DF 5E F8 FF 3D ?? ?? ?? ?? 44 8D 82 E0 5E F8 FF 44 0F 47 C2 41 81 F8 D5 C6 00 00 73 1D 48 8B 05 ?? ?? ?? ?? BA 0A
 DESC: What it is: Core item-row resolver behind the name and icon helpers. When it runs: When the client needs to normalize an item id and fetch the backing item row from Excel data. Why you would care: Useful shared hook if you want the real item lookup path instead of only the higher item name or icon wrappers. Pairs with: Item_GetItemName, Item_GetItemIcon, Item_GetEventItemName
 ----------------------------------------
 NAME: Item_IsCompanySealItemId
-SIG:  8D 41 EC 83 F8 02 0F 96 C0 C3
+SIG:  8D 41 EC 83 F8 02 0F 96 C0 C3 CC CC CC CC CC CC 0F B6 D1 83
 DESC: What it is: Tiny company-seal item-id classifier. When it runs: When the client only needs to know whether an item id falls into the company-seal range. Why you would care: Useful support hook if you are splitting normal items from seal pseudo-items without reimplementing the range check.
 ----------------------------------------
 NAME: Item_GetTomestonesItem
@@ -868,7 +856,7 @@ SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F1 E8 ?? ?? ?? ?? 33 DB 8B
 DESC: What it is: Tomestone-item table lookup helper. When it runs: When the client wants the tomestone record associated with a given item id instead of treating it like a normal item row. Why you would care: Useful anchor if you need the client’s own tomestone mapping instead of maintaining a duplicate table in plugin code.
 ----------------------------------------
 NAME: Item_IsTomestonesItemId
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F1 E8 ?? ?? ?? ?? 33 DB 8B F8 85 C0 74 19 66 90 8B CB E8 ?? ?? ?? ?? 83 78 04 00 74 04 39 30 74
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 8B F1 E8 ?? ?? ?? ?? 33 DB 8B F8 85 C0 74 19 66 90 8B CB E8 ?? ?? ?? ?? 83 78 04 00 74 04 39 30 74 08 FF C3 3B DF 72 E9 33 C0 48 8B 5C 24 30 48 85
 DESC: What it is: Boolean tomestone-item classifier. When it runs: When the client only needs to know whether an item id belongs to the tomestone table. Why you would care: Useful check if you want the same tomestone split the client uses without pulling the full record every time.
 ----------------------------------------
 NAME: Item_IsItemStainConditionUnlocked
@@ -876,7 +864,7 @@ SIG:  48 89 5C 24 08 57 48 83 EC 20 48 8B FA E8 ?? ?? ?? ?? 48 85 C0 75 04 33 DB
 DESC: What it is: Item stain-condition unlock resolver. When it runs: When the client checks whether an item’s linked dye or glamour condition is unlocked and may also return the resolved condition id. Why you would care: Useful for plugins that need the same unlock gate the client uses for item appearance conditions.
 ----------------------------------------
 NAME: Item_IsEventItemId
-SIG:  8D 81 80 7B E1 FF 3D E7 0E 00 00 0F 96 C0 C3
+SIG:  8D 81 80 7B E1 FF 3D ?? ?? ?? ?? 0F 96 C0 C3 CC CC CC CC CC CC CC CC CC
 DESC: What it is: Tiny event-item classifier. When it runs: When the client wants to know whether an id belongs to the event-item range before routing it to event-item handling. Why you would care: Useful support hook if you need to split event items from normal items the same way the client does.
 ----------------------------------------
 
@@ -2682,7 +2670,7 @@ SIG:  48 89 5C 24 18 48 89 6C 24 20 56 57 41 56 48 81 EC C0 00 00 00 48 8B 05 ??
 DESC: What it is: Outbound sender for special-destination config changes. When it runs: When the player changes one of the telepo special-destination settings and the client builds the `0x46` request for it. Why you would care: Good hook when you want the real request for special-destination changes instead of normal teleport execution. Extra context: It packs seven fields into the `0x46` send, then rebuilds the special-destination model afterward. Pairs with: Teleport_RebuildFreeDestinationModel, Telepo_SetSpecialDestinationTier, Telepo_ApplyFreeDestinationOverride
 ----------------------------------------
 NAME: Telepo_SetSpecialDestinationTier
-SIG:  83 FA 2E 0F 8D ?? ?? ?? ?? 53 55 56 48 83 EC 20 48 8B D9 44 0F B7 E8 8B CA 8B F2 E8 ?? ?? ?? ?? 48 85 C0 0F 84 ?? ?? ?? ?? 48 0F BE 50 68 80 FA 22
+SIG:  83 FA 2E 0F 8D ?? ?? ?? ?? 53 55 56 48 83 EC 20 48 8B D9 41 0F B7 E8 8B
 DESC: What it is: Low-level setter for one special-destination tier in live telepo state. When it runs: When higher apply code writes a new tier for the grouped destination state behind the free/security-style rules. Why you would care: Useful if you want the smallest write-side hook under the broader apply helpers. Extra context: It maps the aetheryte row to the grouped tier array, updates the cached value, and only posts the client event when the tier changed. Pairs with: Telepo_ApplySpecialDestinationTierUpdate, Telepo_ApplySpecialDestinationUnlock, Aetheryte_GetFreeDestinationTier
 ----------------------------------------
 NAME: Telepo_ApplySpecialDestinationTierUpdate
@@ -2714,20 +2702,12 @@ SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 20 33 FF 48 8B F2 8B DF E8 ?? ??
 DESC: What it is: The batch telepo-state apply helper that walks multiple telepo entries and copies their values into the live telepo state block. When it runs: When the client is applying a broader server-fed telepo refresh that contains many destination-related values rather than only one compact incremental update. Why you would care: This is the strongest deep hook when you want one place that sees a wider telepo-state refresh instead of only the smaller incremental sync packets. Extra context: This sits between the hidden receive/apply family and the lower telepo state writers, so it is best treated as a batch apply layer rather than a raw packet handler. Pairs with: Telepo_FullApply, Telepo_SyncUpdateVariant
 ----------------------------------------
 NAME: Telepo_FullApply
-SIG:  40 53 48 83 EC 20 48 8D 0D ?? ?? ?? ?? 48 8B DA E8 ?? ?? ?? ?? 48 8B D3 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 48 8B D3 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ??
+SIG:  8B 10 FF 92 28 01 00 00 48 8B C8 33 D2 E8 ?? ?? ?? ?? 48 85 C0 74 10 48
 DESC: What it is: The heavier telepo apply path that copies a broader server-fed telepo payload into several live client telepo structures. When it runs: When the client receives the fuller telepo-state update path rather than one of the smaller compact sync variants. Why you would care: This is the best deep apply hook if you want the point where a larger telepo refresh becomes usable live client state. Extra context: This is downstream of a hidden caller site and upstream of several telepo-side state holders, so it is the strongest shared full-apply anchor we confirmed. Pairs with: Telepo_HiddenFullApplyCaller, Telepo_ApplyBatchState, Telepo_SyncUpdateVariant
 ----------------------------------------
 NAME: Telepo_SyncUpdateVariant
-SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 48 8B 3D ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? 48 8B DA 33 D2 E8 ?? ?? ?? ?? 0F B6 13 48 8D 0D ?? ?? ?? ?? 0F B6 F0 E8 ?? ?? ?? ??
+SIG:  48 89 5C 24 08 48 89 74 24 10 57 48 83 EC 30 48 8B 3D ?? ?? ?? ?? 48 8D
 DESC: What it is: A hidden telepo sync/update apply path that updates live telepo state and then kicks the follow-up notification or refresh work that depends on that state. When it runs: When the client receives one of the non-full telepo update cases that still needs more than the tiny incremental core path. Why you would care: Use this when the full-apply hook is too broad but the tiny incremental core is too narrow and you want the middle update layer that still reflects real server-fed telepo state. Pairs with: Telepo_HiddenSyncVariantCaller, Telepo_ApplyBatchState, Telepo_FullApply
-----------------------------------------
-NAME: Telepo_HiddenFullApplyCaller
-SIG:  8D 57 10 8B CE E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 4C 8D 47 10 8B D6 48 8D 0D
-DESC: What it is: The hidden branch-local caller that feeds the full telepo apply path from the broader internal update pipeline. When it runs: When the client reaches the hidden receive-side telepo branch that forwards execution into the heavier full-apply handler. Why you would care: This is the earliest proven hidden telepo ingress we confirmed live for the full-apply path, so it is useful when you want the branch edge before the larger apply routine starts. Extra context: This is a mid-block hidden caller rather than a neat named top-level function, so it is best treated as a branch-local telepo ingress marker. Pairs with: Telepo_FullApply
-----------------------------------------
-NAME: Telepo_HiddenSyncVariantCaller
-SIG:  48 8D 57 10 8B CE E8 ?? ?? ?? ?? E9 ?? ?? ?? ?? 48 8D 57 10 8B CE
-DESC: What it is: The hidden branch-local caller that feeds the telepo sync/update variant path from the broader internal update pipeline. When it runs: When the client reaches the hidden receive-side telepo branch that forwards execution into the sync/update variant handler. Why you would care: Use this when you want the earliest proven hidden telepo ingress for the sync/update variant instead of the later apply routine itself. Extra context: Like the paired full-apply caller, this is a branch-local ingress marker rather than a clean top-level function. Pairs with: Telepo_SyncUpdateVariant
 ----------------------------------------
 
 CATEGORY: Speed and Mobility - Emote and Emote Speed
